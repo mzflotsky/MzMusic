@@ -31,8 +31,7 @@
             --safe-bottom: env(safe-area-inset-bottom, 0px);
             --safe-left: env(safe-area-inset-left, 0px);
             --safe-right: env(safe-area-inset-right, 0px);
-            --mobile-nav-height: 64px;
-            --player-height: 130px;
+            --mobile-nav-height: 60px;
         }
 
         html, body {
@@ -51,7 +50,7 @@
             text-rendering: optimizeLegibility;
         }
 
-        /* ================= DESKTOP (default) ================= */
+        /* ================= SIDEBAR (desktop) ================= */
         .sidebar {
             width: 86px;
             background: var(--bg-secondary);
@@ -60,8 +59,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: 24px 0 calc(24px + var(--safe-bottom));
+            padding: 24px 0;
             padding-top: calc(24px + var(--safe-top));
+            padding-bottom: calc(24px + var(--safe-bottom));
             flex-shrink: 0;
             height: 100vh;
             height: 100dvh;
@@ -104,7 +104,6 @@
         }
 
         .nav-btn .material-icons { font-size: 28px; }
-
         .nav-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
         .nav-btn.active { background: var(--accent-soft); color: white; }
 
@@ -152,14 +151,10 @@
             transition: color 0.2s ease, transform 0.2s ease;
         }
 
-        .settings-btn:hover {
-            background: transparent;
-            color: var(--accent);
-            transform: rotate(30deg);
-        }
-
+        .settings-btn:hover { background: transparent; color: var(--accent); transform: rotate(30deg); }
         .settings-btn .material-icons { font-size: 26px; }
 
+        /* ================= MAIN ================= */
         .main {
             flex: 1;
             height: 100vh;
@@ -221,12 +216,9 @@
             font-size: 0.85rem;
         }
 
-        .upload-btn:hover {
-            background: var(--accent-soft);
-            border-color: var(--accent);
-            color: white;
-        }
+        .upload-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: white; }
 
+        /* Track grid */
         .track-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -246,16 +238,8 @@
             overflow: hidden;
         }
 
-        .track-card:hover {
-            background: var(--bg-elevated);
-            border-color: var(--accent-soft);
-            transform: translateY(-2px);
-        }
-
-        .track-card.active {
-            border-color: var(--accent);
-            background: var(--bg-elevated);
-        }
+        .track-card:hover { background: var(--bg-elevated); border-color: var(--accent-soft); transform: translateY(-2px); }
+        .track-card.active { border-color: var(--accent); background: var(--bg-elevated); }
 
         .track-cover {
             width: 100%;
@@ -306,7 +290,7 @@
         .track-card.active .cover-play .play-icon::before { content: 'pause'; }
         .track-card:not(.active) .cover-play .play-icon::before { content: 'play_arrow'; }
 
-        .track-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+        .track-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-right: 36px; }
 
         .track-title {
             font-weight: 600;
@@ -320,11 +304,7 @@
             transition: color 0.15s;
         }
 
-        .track-title:hover {
-            color: var(--accent);
-            text-decoration: underline;
-            text-underline-offset: 3px;
-        }
+        .track-title:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
 
         .track-artist {
             font-size: 0.72rem;
@@ -334,6 +314,13 @@
             text-overflow: ellipsis;
         }
 
+        .track-footer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
         .track-badge {
             font-size: 0.65rem;
             padding: 3px 8px;
@@ -341,7 +328,6 @@
             border-radius: 30px;
             color: var(--text-secondary);
             border: 1px solid var(--border-light);
-            align-self: flex-start;
         }
 
         .video-badge {
@@ -379,6 +365,77 @@
             transition: width 0.15s linear;
         }
 
+        /* Three-dot menu on track card */
+        .track-menu-btn {
+            position: absolute;
+            top: 22px;
+            right: 22px;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(15, 15, 18, 0.75);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transition: var(--transition);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        .track-menu-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
+        .track-menu-btn .material-icons { font-size: 18px; }
+
+        /* Dropdown */
+        .track-dropdown {
+            position: absolute;
+            top: 58px;
+            right: 22px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            min-width: 200px;
+            padding: 6px;
+            display: none;
+        }
+
+        .track-dropdown.open { display: block; }
+
+        .dropdown-item {
+            padding: 10px 14px;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font-mono);
+        }
+
+        .dropdown-item:hover { background: var(--bg-primary); }
+        .dropdown-item .material-icons { font-size: 16px; color: var(--accent); }
+        .dropdown-item.pl { padding-left: 32px; font-size: 0.78rem; }
+        .dropdown-item.pl .material-icons { font-size: 14px; }
+        .dropdown-header {
+            padding: 8px 14px 4px 14px;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Settings panel */
         .settings-panel {
             display: none;
             flex-direction: column;
@@ -392,12 +449,7 @@
         .settings-panel.visible { display: flex; }
 
         .settings-group { display: flex; flex-direction: column; gap: 12px; }
-
-        .settings-group label {
-            font-weight: 500;
-            color: var(--text-primary);
-            letter-spacing: -0.2px;
-        }
+        .settings-group label { font-weight: 500; color: var(--text-primary); letter-spacing: -0.2px; }
 
         .color-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
 
@@ -437,11 +489,7 @@
             gap: 8px;
         }
 
-        .theme-btn.active {
-            border-color: var(--accent);
-            background: var(--accent-soft);
-            color: white;
-        }
+        .theme-btn.active { border-color: var(--accent); background: var(--accent-soft); color: white; }
 
         .settings-note { opacity: 0.7; font-size: 0.9rem; }
 
@@ -485,6 +533,7 @@
 
         .clear-storage-btn:hover { background: rgba(255,107,107,0.1); }
 
+        /* Playlists */
         .playlist-section { display: flex; flex-direction: column; gap: 20px; }
 
         .custom-input-row {
@@ -547,12 +596,7 @@
             user-select: none;
         }
 
-        .playlist-chip:hover {
-            border-color: var(--accent);
-            background: var(--bg-secondary);
-            transform: translateY(-1px);
-        }
-
+        .playlist-chip:hover { border-color: var(--accent); background: var(--bg-secondary); transform: translateY(-1px); }
         .playlist-chip .material-icons { font-size: 18px; color: var(--accent); }
         .playlist-chip.expanded { border-color: var(--accent); background: var(--bg-secondary); }
 
@@ -592,7 +636,7 @@
             max-width: 40%;
         }
 
-        /* Bottom player bar */
+        /* ================= PLAYER BAR ================= */
         .player-bar {
             flex-shrink: 0;
             background: var(--bg-secondary);
@@ -604,6 +648,24 @@
             gap: 20px;
             z-index: 15;
         }
+
+        .player-controls { display: flex; align-items: center; gap: 6px; }
+
+        .player-ctrl-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .player-ctrl-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
 
         .player-info {
             display: flex;
@@ -629,24 +691,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        .player-controls { display: flex; align-items: center; gap: 6px; }
-
-        .player-ctrl-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .player-ctrl-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
 
         .player-timeline { flex: 1; display: flex; align-items: center; gap: 12px; min-width: 0; }
 
@@ -921,8 +965,10 @@
 
         .remove-video-btn:hover { background: rgba(255,107,107,0.1); }
 
+        /* helper */
         .hidden { display: none !important; }
 
+        /* toast */
         .toast {
             position: fixed;
             bottom: calc(100px + var(--safe-bottom));
@@ -977,6 +1023,74 @@
         /* Mobile bottom navigation - hidden on desktop */
         .mobile-nav { display: none; }
 
+        /* Toast for mobile "add to playlist" popup */
+        .playlist-picker-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 150;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .playlist-picker-overlay.open { display: flex; }
+
+        .playlist-picker {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 360px;
+            width: 100%;
+            max-height: 70vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+        }
+
+        .playlist-picker h3 {
+            font-size: 1rem;
+            margin-bottom: 14px;
+            color: var(--text-primary);
+        }
+
+        .playlist-picker-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: var(--bg-elevated);
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+            width: 100%;
+            text-align: left;
+        }
+
+        .playlist-picker-item:hover { border-color: var(--accent); }
+        .playlist-picker-item .material-icons { font-size: 18px; color: var(--accent); }
+
+        .playlist-picker-cancel {
+            margin-top: 8px;
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            padding: 12px;
+            border-radius: 10px;
+            width: 100%;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .playlist-picker-cancel:hover { color: var(--text-primary); }
+
         /* ================= TABLET ================= */
         @media (max-width: 1100px) {
             .track-grid { grid-template-columns: repeat(3, 1fr); }
@@ -984,13 +1098,8 @@
 
         /* ================= MOBILE ================= */
         @media (max-width: 800px) {
-            :root {
-                --player-height: 110px;
-            }
-
             body { flex-direction: column; }
 
-            /* Hide desktop sidebar, show mobile bottom nav */
             .sidebar { display: none; }
 
             .mobile-nav {
@@ -1003,7 +1112,7 @@
                 padding-bottom: var(--safe-bottom);
                 background: var(--bg-secondary);
                 border-top: 1px solid var(--border-light);
-                z-index: 30;
+                z-index: 60;
                 align-items: center;
                 justify-content: space-around;
                 padding-left: var(--safe-left);
@@ -1028,48 +1137,36 @@
                 min-width: 0;
             }
 
-            .mobile-nav-btn .material-icons { font-size: 24px; }
+            .mobile-nav-btn .material-icons { font-size: 22px; }
             .mobile-nav-btn .nav-label {
-                font-size: 0.6rem;
+                font-size: 0.55rem;
                 font-family: var(--font-mono);
                 font-weight: 500;
                 white-space: nowrap;
             }
 
-            .mobile-nav-btn.active {
-                color: var(--accent);
-                background: var(--bg-elevated);
-            }
+            .mobile-nav-btn.active { color: var(--accent); background: var(--bg-elevated); }
 
-            .mobile-nav-btn:active {
-                background: var(--bg-elevated);
-            }
-
-            /* Hide settings & social from old sidebar since sidebar is gone */
-            .sidebar-bottom { display: none; }
-
+            /* Main area on mobile: reserve space for bottom nav AND player */
             .main {
                 height: 100vh;
                 height: 100dvh;
-                padding-bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
+                padding-bottom: calc(var(--mobile-nav-height) + 118px + var(--safe-bottom));
                 padding-left: var(--safe-left);
                 padding-right: var(--safe-right);
             }
 
+            /* Scroll area with proper top spacing */
             .main-scroll {
-                padding: 16px 16px 12px 16px;
+                padding: 16px 14px 14px 14px;
                 padding-top: calc(16px + var(--safe-top));
-                gap: 16px;
+                gap: 14px;
             }
 
-            .page-title { font-size: 1.35rem; }
-
+            .page-title { font-size: 1.3rem; }
             .page-header { gap: 10px; }
 
-            .upload-btn {
-                padding: 10px 16px;
-                font-size: 0.8rem;
-            }
+            .upload-btn { padding: 9px 14px; font-size: 0.78rem; }
 
             .track-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -1077,186 +1174,150 @@
             }
 
             .track-card { padding: 10px; gap: 8px; border-radius: 14px; }
-
             .track-cover { border-radius: 10px; }
+            .track-cover .cover-icon { font-size: 34px; }
 
-            .track-cover .cover-icon { font-size: 36px; }
+            /* Mobile: always show indicator (no hover) */
+            .cover-play { opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.35), transparent 50%); }
+            .cover-play .play-icon { font-size: 44px; }
 
-            /* Mobile: always show indicator (no hover), but smaller */
-            .cover-play { opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent); }
+            .track-meta { padding-right: 32px; }
+            .track-title { font-size: 0.8rem; }
+            .track-artist { font-size: 0.66rem; }
+            .track-badge { font-size: 0.58rem; padding: 2px 6px; }
 
-            .cover-play .play-icon { font-size: 48px; }
+            /* menu button smaller on mobile */
+            .track-menu-btn {
+                top: 18px;
+                right: 18px;
+                width: 30px;
+                height: 30px;
+                border-radius: 9px;
+            }
+            .track-menu-btn .material-icons { font-size: 16px; }
 
-            .track-title { font-size: 0.82rem; }
-            .track-artist { font-size: 0.68rem; }
-            .track-badge { font-size: 0.6rem; padding: 2px 6px; }
+            .track-dropdown {
+                top: 52px;
+                right: 18px;
+                min-width: 180px;
+            }
 
-            /* Larger tap targets */
-            .nav-btn, .settings-btn { min-width: 44px; min-height: 44px; }
+            .dropdown-item { padding: 12px 12px; font-size: 0.78rem; }
+            .dropdown-item.pl { padding-left: 26px; font-size: 0.75rem; }
 
-            /* Bottom player bar above mobile nav */
+            /* Bottom player bar above mobile nav — fixed positioning */
             .player-bar {
                 position: fixed;
                 bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
                 left: 0;
                 right: 0;
-                padding: 10px 16px;
-                padding-left: calc(16px + var(--safe-left));
-                padding-right: calc(16px + var(--safe-right));
-                gap: 12px;
-                z-index: 25;
-                flex-wrap: nowrap;
-                border-top: 1px solid var(--border-light);
-                box-shadow: 0 -4px 16px rgba(0,0,0,0.3);
-            }
-
-            .player-info {
-                min-width: 0;
-                max-width: none;
-                flex: 1;
-                order: 1;
-            }
-
-            .player-info .now-title { font-size: 0.78rem; }
-            .player-info .now-artist { font-size: 0.65rem; }
-
-            .player-controls { order: 0; gap: 2px; }
-
-            .player-ctrl-btn { width: 38px; height: 38px; }
-            .player-ctrl-btn .material-icons { font-size: 22px; }
-
-            /* On mobile, timeline becomes a second row below */
-            .player-timeline {
-                position: absolute;
-                bottom: -6px;
-                left: 16px;
-                right: 16px;
-                gap: 8px;
-                order: 5;
-                width: calc(100% - 32px);
-            }
-
-            .player-timeline .time-label { font-size: 0.6rem; min-width: 30px; }
-
-            /* Restructure player bar into two rows using flex-wrap trick:
-               We'll use grid instead for clarity */
-            .player-bar {
+                padding: 10px 14px;
+                padding-left: calc(14px + var(--safe-left));
+                padding-right: calc(14px + var(--safe-right));
+                z-index: 55;
                 display: grid;
                 grid-template-columns: auto 1fr auto;
                 grid-template-areas:
                     "controls info video"
                     "timeline timeline timeline";
-                gap: 8px 12px;
+                gap: 6px 10px;
                 align-items: center;
-                padding-top: 10px;
-                padding-bottom: 20px;
+                border-top: 1px solid var(--border-light);
+                box-shadow: 0 -4px 16px rgba(0,0,0,0.35);
             }
 
-            .player-controls { grid-area: controls; }
-            .player-info { grid-area: info; }
+            .player-controls { grid-area: controls; gap: 0; }
+            .player-info { grid-area: info; min-width: 0; max-width: none; }
             .video-toggle-btn { grid-area: video; }
-            .player-timeline { grid-area: timeline; position: static; width: 100%; }
+            .player-timeline { grid-area: timeline; position: static; width: 100%; gap: 8px; }
 
+            .player-info .now-title { font-size: 0.76rem; }
+            .player-info .now-artist { font-size: 0.63rem; }
+
+            .player-ctrl-btn { width: 34px; height: 34px; }
+            .player-ctrl-btn .material-icons { font-size: 20px; }
+
+            .video-toggle-btn { width: 34px; height: 34px; }
+            .video-toggle-btn .material-icons { font-size: 18px; }
+
+            .player-timeline .time-label { font-size: 0.6rem; min-width: 30px; }
             .player-timeline .timeline-track { height: 8px; }
-
-            /* Make it easier to tap the timeline handle */
             .timeline-fill::after { opacity: 1; width: 16px; height: 16px; right: -8px; }
-
-            .video-toggle-btn { width: 38px; height: 38px; }
 
             /* Drawer full-width on mobile */
             .details-drawer {
                 width: 100%;
                 max-width: 100%;
                 border-left: none;
-                border-top: 1px solid var(--border-light);
                 transform: translateY(100%);
                 padding: 20px;
                 padding-top: calc(20px + var(--safe-top));
-                padding-bottom: calc(20px + var(--safe-bottom));
+                padding-bottom: calc(28px + var(--safe-bottom));
                 top: 0;
                 right: 0;
                 left: 0;
                 height: 100vh;
                 height: 100dvh;
                 border-radius: 0;
-                transition: transform 0.3s ease;
             }
 
             .details-drawer.open { transform: translateY(0); }
 
             .drawer-cover { max-width: 260px; align-self: center; }
 
-            /* settings adjustments */
+            /* Settings adjustments */
             .settings-panel { padding: 20px; gap: 20px; }
-
             .color-row { gap: 10px; }
-
-            .color-input { padding: 6px 12px; gap: 6px; font-size: 0.85rem; }
+            .color-input { padding: 6px 12px; gap: 6px; font-size: 0.82rem; }
             .color-input input[type="color"] { width: 36px; height: 36px; }
-
             .theme-toggle { gap: 10px; }
-            .theme-btn { padding: 10px 16px; font-size: 0.8rem; }
+            .theme-btn { padding: 10px 16px; font-size: 0.78rem; }
 
-            /* playlist input */
-            .custom-input-row {
-                padding: 6px 6px 6px 18px;
-                gap: 6px;
-            }
+            .custom-input-row { padding: 6px 6px 6px 18px; gap: 6px; }
+            .custom-input-row input { padding: 12px 4px; font-size: 16px; }
+            .create-playlist-btn { padding: 12px 16px; font-size: 0.82rem; }
 
-            .custom-input-row input { padding: 12px 4px; font-size: 0.9rem; }
-
-            .create-playlist-btn {
-                padding: 12px 16px;
-                font-size: 0.85rem;
-            }
-
-            .playlist-chip { padding: 8px 14px; font-size: 0.82rem; }
-
+            .playlist-chip { padding: 8px 14px; font-size: 0.8rem; }
             .playlist-track-row { padding: 8px 10px; }
-            .playlist-track-row .pl-title { font-size: 0.8rem; }
-            .playlist-track-row .pl-artist { font-size: 0.65rem; }
+            .playlist-track-row .pl-title { font-size: 0.78rem; }
+            .playlist-track-row .pl-artist { font-size: 0.63rem; }
 
             /* toast above mobile nav + player */
             .toast {
-                bottom: calc(var(--mobile-nav-height) + var(--player-height) + 12px + var(--safe-bottom));
-                font-size: 0.78rem;
+                bottom: calc(var(--mobile-nav-height) + 118px + 12px + var(--safe-bottom));
+                font-size: 0.76rem;
                 padding: 10px 18px;
             }
 
-            /* Make close button bigger for touch */
             .drawer-close { width: 44px; height: 44px; }
 
-            /* Prevent iOS zoom on input focus */
             input, .custom-input-row input, .drawer-field .field-value input { font-size: 16px; }
             .track-title, .track-artist, .drawer-field .field-value { -webkit-user-select: none; user-select: none; }
+
+            /* Playlist picker overlay styling on mobile */
+            .playlist-picker {
+                max-width: 90vw;
+                padding: 18px;
+            }
         }
 
         /* Small phones */
         @media (max-width: 420px) {
             .track-grid { gap: 8px; }
 
-            .player-bar {
-                grid-template-columns: auto 1fr auto;
-                padding: 8px 12px 18px 12px;
-                gap: 6px;
-            }
-
-            .player-ctrl-btn { width: 34px; height: 34px; }
-            .player-ctrl-btn .material-icons { font-size: 20px; }
-
+            .player-bar { padding: 8px 12px; gap: 4px 8px; }
+            .player-ctrl-btn { width: 32px; height: 32px; }
+            .player-ctrl-btn .material-icons { font-size: 18px; }
             .player-info .now-title { font-size: 0.72rem; }
             .player-info .now-artist { font-size: 0.6rem; }
-
-            .video-toggle-btn { width: 34px; height: 34px; }
-
-            .mobile-nav-btn .nav-label { font-size: 0.55rem; }
-            .mobile-nav-btn .material-icons { font-size: 22px; }
-
-            .page-title { font-size: 1.2rem; }
-
-            .track-cover .cover-icon { font-size: 30px; }
-            .cover-play .play-icon { font-size: 42px; }
+            .video-toggle-btn { width: 32px; height: 32px; }
+            .video-toggle-btn .material-icons { font-size: 16px; }
+            .mobile-nav-btn .nav-label { font-size: 0.52rem; }
+            .mobile-nav-btn .material-icons { font-size: 20px; }
+            .page-title { font-size: 1.15rem; }
+            .track-cover .cover-icon { font-size: 28px; }
+            .cover-play .play-icon { font-size: 38px; }
+            .main { padding-bottom: calc(var(--mobile-nav-height) + 110px + var(--safe-bottom)); }
         }
 
         /* Landscape phones */
@@ -1269,20 +1330,15 @@
                 padding-right: calc(16px + var(--safe-right));
                 padding-bottom: calc(8px + var(--safe-bottom));
                 gap: 8px;
-                height: auto;
             }
 
-            .player-timeline { grid-area: timeline; position: static; }
-
-            .main { padding-bottom: calc(var(--mobile-nav-height) + 60px + var(--safe-bottom)); }
-
+            .player-timeline { grid-area: timeline; }
+            .main { padding-bottom: calc(var(--mobile-nav-height) + 70px + var(--safe-bottom)); }
             .details-drawer { padding: 16px; gap: 14px; }
             .drawer-cover { max-width: 140px; }
-
-            .toast { bottom: calc(var(--mobile-nav-height) + 70px + var(--safe-bottom)); }
+            .toast { bottom: calc(var(--mobile-nav-height) + 75px + var(--safe-bottom)); }
         }
 
-        /* Reduce motion for accessibility */
         @media (prefers-reduced-motion: reduce) {
             * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
         }
@@ -1357,9 +1413,9 @@
                 <div class="settings-group">
                     <label>Хранилище</label>
                     <div class="storage-info" id="storageInfo">
-                        <div>Использовано: <span id="storageUsed">—</span></div>
+                        <div>Аудио и клипы: <span id="storageUsed">—</span></div>
                         <div class="storage-bar"><div class="storage-bar-fill" id="storageBarFill" style="width:0%"></div></div>
-                        <div style="margin-top:6px; font-size:0.75rem;">Лимит браузера: ~5–10 МБ (зависит от браузера).</div>
+                        <div style="margin-top:6px; font-size:0.75rem;">Аудио и клипы хранятся в IndexedDB (без лимита 5 МБ).</div>
                     </div>
                 </div>
                 <div class="settings-group">
@@ -1369,20 +1425,6 @@
                         Очистить сохранённые данные
                     </button>
                     <span class="settings-note">Музыка, клипы, метаданные и плейлисты сохраняются в браузере.</span>
-                </div>
-                <div class="settings-group social-links-mobile" style="display:none;">
-                    <label>Соцсети</label>
-                    <div style="display:flex; gap:12px;">
-                        <a class="social-link" href="https://t.me/" target="_blank" title="Telegram" style="border:1px solid var(--border-light); background:var(--bg-elevated);">
-                            <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
-                        </a>
-                        <a class="social-link" href="https://github.com/" target="_blank" title="GitHub" style="border:1px solid var(--border-light); background:var(--bg-elevated);">
-                            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                        </a>
-                        <a class="social-link" href="https://youtube.com/" target="_blank" title="YouTube" style="border:1px solid var(--border-light); background:var(--bg-elevated);">
-                            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1479,6 +1521,10 @@
             <div class="field-value" id="detailFormat">—</div>
         </div>
         <div class="drawer-field">
+            <span class="field-label">Плейлисты</span>
+            <div class="field-value" id="detailPlaylists" style="font-size:0.85rem;">—</div>
+        </div>
+        <div class="drawer-field">
             <span class="field-label">Клип</span>
             <div class="field-value" id="detailVideoContainer">
                 <button class="upload-video-btn" id="uploadVideoBtn">
@@ -1488,6 +1534,15 @@
             </div>
         </div>
     </aside>
+
+    <!-- PLAYLIST PICKER (for mobile-friendly add-to-playlist) -->
+    <div class="playlist-picker-overlay" id="playlistPickerOverlay">
+        <div class="playlist-picker">
+            <h3>Добавить в плейлист</h3>
+            <div id="playlistPickerList"></div>
+            <button class="playlist-picker-cancel" id="playlistPickerCancel">Отмена</button>
+        </div>
+    </div>
 
     <!-- TOAST -->
     <div class="toast" id="toast">
@@ -1502,11 +1557,11 @@
     <script>
         (function() {
             // ---------- CONSTANTS ----------
-            const LS_KEY = 'mzmusic_data_v1';
-            const LS_AUDIO_PREFIX = 'mzmusic_audio_';
-            const LS_VIDEO_PREFIX = 'mzmusic_video_';
-            const MAX_VIDEO_SIZE_MB = 50;
-            const MAX_TOTAL_STORAGE_WARN_MB = 4.5;
+            const LS_KEY = 'mzmusic_data_v2';
+            const MAX_VIDEO_SIZE_MB = 200;
+            const MAX_AUDIO_SIZE_MB = 100;
+            const DB_NAME = 'MzMusicDB';
+            const DB_VERSION = 2;
 
             // ---------- STATE ----------
             let tracks = [];
@@ -1519,13 +1574,14 @@
             let currentDetailIndex = -1;
             let expandedPlaylist = null;
             let objectUrls = {};
-            let videoDb = null;
+            let db = null;
+            let openMenuIndex = -1;
+            let pendingAddTrackIndex = -1;
 
             // ---------- DOM ----------
             const libraryBtn = document.getElementById('libraryBtn');
             const playlistsBtn = document.getElementById('playlistsBtn');
             const settingsBtn = document.getElementById('settingsBtn');
-
             const mobileLibraryBtn = document.getElementById('mobileLibraryBtn');
             const mobilePlaylistsBtn = document.getElementById('mobilePlaylistsBtn');
             const mobileSettingsBtn = document.getElementById('mobileSettingsBtn');
@@ -1564,167 +1620,177 @@
             const detailAlbum = document.getElementById('detailAlbum');
             const detailDuration = document.getElementById('detailDuration');
             const detailFormat = document.getElementById('detailFormat');
+            const detailPlaylists = document.getElementById('detailPlaylists');
             const detailVideoContainer = document.getElementById('detailVideoContainer');
             const uploadVideoBtn = document.getElementById('uploadVideoBtn');
             const videoFileInput = document.getElementById('videoFileInput');
 
+            const playlistPickerOverlay = document.getElementById('playlistPickerOverlay');
+            const playlistPickerList = document.getElementById('playlistPickerList');
+            const playlistPickerCancel = document.getElementById('playlistPickerCancel');
+
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toastText');
 
-            // Show mobile social links block inside settings on mobile
-            const mobileSocialBlock = document.querySelector('.social-links-mobile');
-            if (window.matchMedia('(max-width: 800px)').matches && mobileSocialBlock) {
-                mobileSocialBlock.style.display = 'flex';
-            }
-
             // ---------- INDEXED DB ----------
-            function openVideoDB() {
+            function openDB() {
                 return new Promise((resolve, reject) => {
-                    if (videoDb) return resolve(videoDb);
-                    const req = indexedDB.open('MzMusicDB', 1);
+                    if (db) return resolve(db);
+                    const req = indexedDB.open(DB_NAME, DB_VERSION);
                     req.onupgradeneeded = (e) => {
-                        const db = e.target.result;
-                        if (!db.objectStoreNames.contains('videos')) db.createObjectStore('videos');
+                        const database = e.target.result;
+                        if (!database.objectStoreNames.contains('videos')) database.createObjectStore('videos');
+                        if (!database.objectStoreNames.contains('audio')) database.createObjectStore('audio');
                     };
-                    req.onsuccess = (e) => { videoDb = e.target.result; resolve(videoDb); };
+                    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
                     req.onerror = (e) => reject(e.target.error);
                 });
             }
 
-            function saveVideoToIDB(id, blob) {
+            function idbPut(store, id, blob) {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        const db = await openVideoDB();
-                        const tx = db.transaction('videos', 'readwrite');
-                        tx.objectStore('videos').put(blob, id);
+                        const database = await openDB();
+                        const tx = database.transaction(store, 'readwrite');
+                        tx.objectStore(store).put(blob, id);
                         tx.oncomplete = () => resolve(true);
                         tx.onerror = (e) => reject(e.target.error);
                     } catch (e) { reject(e); }
                 });
             }
 
-            function loadVideoFromIDB(id) {
+            function idbGet(store, id) {
                 return new Promise(async (resolve, reject) => {
                     try {
-                        const db = await openVideoDB();
-                        const tx = db.transaction('videos', 'readonly');
-                        const req = tx.objectStore('videos').get(id);
+                        const database = await openDB();
+                        const tx = database.transaction(store, 'readonly');
+                        const req = tx.objectStore(store).get(id);
                         req.onsuccess = () => resolve(req.result || null);
                         req.onerror = (e) => reject(e.target.error);
                     } catch (e) { reject(e); }
                 });
             }
 
-            function deleteVideoFromIDB(id) {
+            function idbDelete(store, id) {
                 return new Promise(async (resolve) => {
                     try {
-                        const db = await openVideoDB();
-                        const tx = db.transaction('videos', 'readwrite');
-                        tx.objectStore('videos').delete(id);
+                        const database = await openDB();
+                        const tx = database.transaction(store, 'readwrite');
+                        tx.objectStore(store).delete(id);
                         tx.oncomplete = () => resolve(true);
                         tx.onerror = () => resolve(false);
                     } catch (e) { resolve(false); }
                 });
             }
 
-            // ---------- LOCAL STORAGE ----------
-            function base64ToBlob(base64, mime) {
-                const byteChars = atob(base64);
-                const byteNums = new Array(byteChars.length);
-                for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
-                return new Blob([new Uint8Array(byteNums)], { type: mime });
-            }
-
-            function blobToBase64(blob) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result.split(',')[1]);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
+            function idbClear(store) {
+                return new Promise(async (resolve) => {
+                    try {
+                        const database = await openDB();
+                        const tx = database.transaction(store, 'readwrite');
+                        tx.objectStore(store).clear();
+                        tx.oncomplete = () => resolve(true);
+                        tx.onerror = () => resolve(false);
+                    } catch (e) { resolve(false); }
                 });
             }
 
+            // Save/get audio via IDB (no size limit)
             async function saveAudioBlob(id, blob) {
-                try {
-                    const base64 = await blobToBase64(blob);
-                    localStorage.setItem(LS_AUDIO_PREFIX + id, base64);
-                    return true;
-                } catch (e) { return false; }
+                try { await idbPut('audio', id, blob); return true; }
+                catch (e) { return false; }
             }
 
-            function loadAudioBlob(id, mime) {
-                const base64 = localStorage.getItem(LS_AUDIO_PREFIX + id);
-                if (!base64) return null;
-                try { return base64ToBlob(base64, mime || 'audio/mpeg'); } catch (e) { return null; }
+            async function loadAudioBlob(id) {
+                try { return await idbGet('audio', id); }
+                catch (e) { return null; }
             }
 
-            function removeAudioBlob(id) {
-                localStorage.removeItem(LS_AUDIO_PREFIX + id);
-                if (objectUrls[id]) { try { URL.revokeObjectURL(objectUrls[id]); } catch (e) {} delete objectUrls[id]; }
+            async function removeAudioBlob(id) {
+                await idbDelete('audio', id);
+                if (objectUrls['a_' + id]) {
+                    try { URL.revokeObjectURL(objectUrls['a_' + id]); } catch (e) {}
+                    delete objectUrls['a_' + id];
+                }
             }
 
             async function saveVideoBlob(id, blob) {
-                try {
-                    if (blob.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) return { ok: false, reason: 'too_large' };
-                    try { await saveVideoToIDB(id, blob); return { ok: true, backend: 'idb' }; } catch (e) {}
-                    const base64 = await blobToBase64(blob);
-                    localStorage.setItem(LS_VIDEO_PREFIX + id, base64);
-                    return { ok: true, backend: 'ls' };
-                } catch (e) { return { ok: false, reason: 'error' }; }
+                if (blob.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) return { ok: false, reason: 'too_large' };
+                try { await idbPut('videos', id, blob); return { ok: true }; }
+                catch (e) { return { ok: false, reason: 'error' }; }
             }
 
             async function loadVideoBlob(id) {
-                try { const blob = await loadVideoFromIDB(id); if (blob) return blob; } catch (e) {}
-                const base64 = localStorage.getItem(LS_VIDEO_PREFIX + id);
-                if (!base64) return null;
-                try { return base64ToBlob(base64, 'video/mp4'); } catch (e) { return null; }
+                try { return await idbGet('videos', id); }
+                catch (e) { return null; }
             }
 
             async function removeVideoBlob(id) {
-                localStorage.removeItem(LS_VIDEO_PREFIX + id);
-                try { await deleteVideoFromIDB(id); } catch (e) {}
-                if (objectUrls['v_' + id]) { try { URL.revokeObjectURL(objectUrls['v_' + id]); } catch (e) {} delete objectUrls['v_' + id]; }
+                await idbDelete('videos', id);
+                if (objectUrls['v_' + id]) {
+                    try { URL.revokeObjectURL(objectUrls['v_' + id]); } catch (e) {}
+                    delete objectUrls['v_' + id];
+                }
             }
 
-            function getAudioUrlForTrack(track) {
+            async function getAudioUrlForTrack(track) {
                 if (!track.audioId) return null;
-                if (objectUrls[track.audioId]) return objectUrls[track.audioId];
-                const blob = loadAudioBlob(track.audioId, track.mime);
+                const key = 'a_' + track.audioId;
+                if (objectUrls[key]) return objectUrls[key];
+                const blob = await loadAudioBlob(track.audioId);
                 if (!blob) return null;
                 const url = URL.createObjectURL(blob);
-                objectUrls[track.audioId] = url;
+                objectUrls[key] = url;
                 return url;
             }
 
             async function getVideoUrlForTrack(track) {
                 if (!track.videoId) return null;
-                if (objectUrls['v_' + track.videoId]) return objectUrls['v_' + track.videoId];
+                const key = 'v_' + track.videoId;
+                if (objectUrls[key]) return objectUrls[key];
                 const blob = await loadVideoBlob(track.videoId);
                 if (!blob) return null;
                 const url = URL.createObjectURL(blob);
-                objectUrls['v_' + track.videoId] = url;
+                objectUrls[key] = url;
                 return url;
             }
 
             // ---------- STORAGE INFO ----------
-            function updateStorageInfo() {
+            async function updateStorageInfo() {
                 try {
-                    let total = 0;
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const key = localStorage.key(i);
-                        if (key && (key.startsWith(LS_AUDIO_PREFIX) || key.startsWith(LS_VIDEO_PREFIX) || key === LS_KEY)) {
-                            total += (localStorage.getItem(key) || '').length;
-                        }
+                    const database = await openDB();
+                    let audioCount = 0, videoCount = 0;
+                    await new Promise((resolve) => {
+                        const tx = database.transaction('audio', 'readonly');
+                        const req = tx.objectStore('audio').count();
+                        req.onsuccess = () => { audioCount = req.result || 0; resolve(); };
+                        req.onerror = () => resolve();
+                    });
+                    await new Promise((resolve) => {
+                        const tx = database.transaction('videos', 'readonly');
+                        const req = tx.objectStore('videos').count();
+                        req.onsuccess = () => { videoCount = req.result || 0; resolve(); };
+                        req.onerror = () => resolve();
+                    });
+
+                    if (navigator.storage && navigator.storage.estimate) {
+                        const est = await navigator.storage.estimate();
+                        const usedMB = (est.usage || 0) / (1024 * 1024);
+                        const quotaMB = (est.quota || 0) / (1024 * 1024);
+                        storageUsedEl.textContent = `${usedMB.toFixed(2)} МБ / ${quotaMB.toFixed(0)} МБ (аудио: ${audioCount}, клипы: ${videoCount})`;
+                        const percent = quotaMB ? Math.min(100, (usedMB / quotaMB) * 100) : 0;
+                        storageBarFill.style.width = percent + '%';
+                        storageBarFill.style.background = percent > 85 ? '#ff6b6b' : 'var(--accent)';
+                    } else {
+                        storageUsedEl.textContent = `Аудио: ${audioCount}, клипы: ${videoCount}`;
+                        storageBarFill.style.width = '0%';
                     }
-                    const mb = total / (1024 * 1024);
-                    storageUsedEl.textContent = mb.toFixed(2) + ' МБ';
-                    const percent = Math.min(100, (mb / MAX_TOTAL_STORAGE_WARN_MB) * 100);
-                    storageBarFill.style.width = percent + '%';
-                    storageBarFill.style.background = percent > 85 ? '#ff6b6b' : 'var(--accent)';
-                } catch (e) { storageUsedEl.textContent = '—'; }
+                } catch (e) {
+                    storageUsedEl.textContent = '—';
+                }
             }
 
-            // ---------- PERSISTENCE ----------
+            // ---------- PERSISTENCE (metadata) ----------
             function serializeData() {
                 return {
                     tracks: tracks.map(t => ({
@@ -1739,16 +1805,11 @@
             }
 
             function persistState() {
-                try {
-                    localStorage.setItem(LS_KEY, JSON.stringify(serializeData()));
-                    updateStorageInfo();
-                } catch (e) {
-                    if (e.name === 'QuotaExceededError') showToast('Хранилище переполнено. Удалите часть клипов.');
-                }
+                try { localStorage.setItem(LS_KEY, JSON.stringify(serializeData())); } catch (e) {}
             }
 
             async function loadState() {
-                const raw = localStorage.getItem(LS_KEY);
+                const raw = localStorage.getItem(LS_KEY) || localStorage.getItem('mzmusic_data_v1');
                 if (!raw) return false;
                 try {
                     const data = JSON.parse(raw);
@@ -1774,15 +1835,9 @@
 
             async function clearAllStorage() {
                 localStorage.removeItem(LS_KEY);
-                for (let i = localStorage.length - 1; i >= 0; i--) {
-                    const key = localStorage.key(i);
-                    if (key && (key.startsWith(LS_AUDIO_PREFIX) || key.startsWith(LS_VIDEO_PREFIX))) localStorage.removeItem(key);
-                }
-                try {
-                    const db = await openVideoDB();
-                    const tx = db.transaction('videos', 'readwrite');
-                    tx.objectStore('videos').clear();
-                } catch (e) {}
+                localStorage.removeItem('mzmusic_data_v1');
+                await idbClear('audio');
+                await idbClear('videos');
                 Object.keys(objectUrls).forEach(k => { try { URL.revokeObjectURL(objectUrls[k]); } catch (e) {} });
                 objectUrls = {};
                 tracks = [];
@@ -1879,6 +1934,107 @@
 
             function getTrackById(id) { return tracks.find(t => t.id === id); }
 
+            // ---------- PLAYLIST MANAGEMENT ----------
+            function getPlaylistsForTrack(trackId) {
+                const result = [];
+                playlists.forEach(p => {
+                    if ((playlistTrackMap[p] || []).includes(trackId)) result.push(p);
+                });
+                return result;
+            }
+
+            function addTrackToPlaylist(trackId, playlistName) {
+                if (!playlistTrackMap[playlistName]) playlistTrackMap[playlistName] = [];
+                if (!playlistTrackMap[playlistName].includes(trackId)) {
+                    playlistTrackMap[playlistName].push(trackId);
+                    persistState();
+                    return true;
+                }
+                return false;
+            }
+
+            function removeTrackFromPlaylist(trackId, playlistName) {
+                if (!playlistTrackMap[playlistName]) return false;
+                const idx = playlistTrackMap[playlistName].indexOf(trackId);
+                if (idx >= 0) {
+                    playlistTrackMap[playlistName].splice(idx, 1);
+                    persistState();
+                    return true;
+                }
+                return false;
+            }
+
+            // ---------- ADD TO PLAYLIST PICKER ----------
+            function openPlaylistPicker(trackIndex) {
+                pendingAddTrackIndex = trackIndex;
+                playlistPickerList.innerHTML = '';
+                if (playlists.length === 0) {
+                    playlistPickerList.innerHTML = `<div style="color:var(--text-secondary); font-size:0.8rem; padding:8px;">Нет плейлистов. Создайте на вкладке «Плейлисты».</div>`;
+                } else {
+                    const track = tracks[trackIndex];
+                    playlists.forEach(p => {
+                        const already = (playlistTrackMap[p] || []).includes(track.id);
+                        const btn = document.createElement('button');
+                        btn.className = 'playlist-picker-item';
+                        btn.innerHTML = `
+                            <span class="material-icons">${already ? 'check_circle' : 'playlist_add'}</span>
+                            <span style="flex:1;">${p}</span>
+                            ${already ? '<span style="font-size:0.65rem; color:var(--accent);">добавлено</span>' : ''}
+                        `;
+                        btn.addEventListener('click', () => {
+                            if (already) {
+                                removeTrackFromPlaylist(track.id, p);
+                                showToast('Удалено из «' + p + '»');
+                            } else {
+                                addTrackToPlaylist(track.id, p);
+                                showToast('Добавлено в «' + p + '»');
+                            }
+                            closePlaylistPicker();
+                            if (currentView === 'playlists') renderPlaylists();
+                            if (currentView === 'library') renderLibrary();
+                        });
+                        playlistPickerList.appendChild(btn);
+                    });
+                }
+                playlistPickerOverlay.classList.add('open');
+            }
+
+            function closePlaylistPicker() {
+                playlistPickerOverlay.classList.remove('open');
+                pendingAddTrackIndex = -1;
+            }
+
+            playlistPickerCancel.addEventListener('click', closePlaylistPicker);
+            playlistPickerOverlay.addEventListener('click', (e) => {
+                if (e.target === playlistPickerOverlay) closePlaylistPicker();
+            });
+
+            // ---------- DROPDOWN MENU (three dots) ----------
+            function closeAllDropdowns() {
+                document.querySelectorAll('.track-dropdown.open').forEach(d => d.classList.remove('open'));
+                openMenuIndex = -1;
+            }
+
+            function toggleDropdown(index, btnEl) {
+                closeAllDropdowns();
+                const dropdown = document.getElementById('dropdown-' + index);
+                if (!dropdown) return;
+                if (openMenuIndex === index) {
+                    dropdown.classList.remove('open');
+                    openMenuIndex = -1;
+                    return;
+                }
+                dropdown.classList.add('open');
+                openMenuIndex = index;
+            }
+
+            // Close dropdowns on outside click
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.track-dropdown') && !e.target.closest('.track-menu-btn')) {
+                    closeAllDropdowns();
+                }
+            });
+
             // ---------- VIDEO SYNC ----------
             async function hardSyncVideo() {
                 if (activeTrackIndex < 0) return;
@@ -1909,7 +2065,7 @@
             async function playTrack(index, autoPlay = true) {
                 if (index < 0 || index >= tracks.length) return;
                 const track = tracks[index];
-                const audioUrl = getAudioUrlForTrack(track);
+                const audioUrl = await getAudioUrlForTrack(track);
                 if (!audioUrl) { showToast('Аудиофайл не найден'); return; }
 
                 if (activeTrackIndex === index) {
@@ -2048,7 +2204,6 @@
             prevBtn.addEventListener('click', () => playPrev());
             nextBtn.addEventListener('click', () => playNext());
 
-            // Timeline scrubbing - support touch and mouse
             function handleTimelineSeek(clientX) {
                 if (activeTrackIndex < 0) return;
                 const t = tracks[activeTrackIndex];
@@ -2070,16 +2225,13 @@
 
             timelineTrack.addEventListener('click', (e) => handleTimelineSeek(e.clientX));
 
-            // Touch support for timeline
             let isTimelineDragging = false;
             timelineTrack.addEventListener('touchstart', (e) => {
                 isTimelineDragging = true;
                 if (e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
             }, { passive: true });
             timelineTrack.addEventListener('touchmove', (e) => {
-                if (isTimelineDragging && e.touches[0]) {
-                    handleTimelineSeek(e.touches[0].clientX);
-                }
+                if (isTimelineDragging && e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
             }, { passive: true });
             timelineTrack.addEventListener('touchend', () => { isTimelineDragging = false; });
 
@@ -2116,12 +2268,13 @@
                 }, 120);
             });
 
-            // ---------- RENDER LIBRARY ----------
+            // ---------- RENDER LIBRARY (with 3-dot menu) ----------
             function renderLibrary() {
                 pageTitle.textContent = 'Библиотека';
                 settingsPanel.classList.remove('visible');
                 settingsVisible = false;
                 headerActions.style.display = 'flex';
+                openMenuIndex = -1;
 
                 if (tracks.length === 0) {
                     dynamicContent.innerHTML = `<div style="text-align:center; padding:60px 20px; color:var(--text-secondary); background:var(--bg-secondary); border-radius:var(--radius-card); border:1px dashed var(--border-light);">
@@ -2134,6 +2287,28 @@
                 let html = `<div class="track-grid">`;
                 tracks.forEach((track, index) => {
                     const isActive = (index === activeTrackIndex && isPlaying);
+
+                    // Build dropdown items
+                    let dropdownItems = `<div class="dropdown-header">Добавить в плейлист</div>`;
+                    playlists.forEach(p => {
+                        const already = (playlistTrackMap[p] || []).includes(track.id);
+                        dropdownItems += `
+                            <button class="dropdown-item pl" data-add-playlist="${p.replace(/"/g, '&quot;')}" data-track-index="${index}">
+                                <span class="material-icons">${already ? 'check' : 'playlist_add'}</span>
+                                ${p}
+                            </button>
+                        `;
+                    });
+                    if (playlists.length === 0) {
+                        dropdownItems += `<div style="padding:8px 14px; font-size:0.7rem; color:var(--text-secondary);">Нет плейлистов</div>`;
+                    }
+                    dropdownItems += `<div style="border-top:1px solid var(--border-light); margin:4px 0;"></div>`;
+                    dropdownItems += `
+                        <button class="dropdown-item" data-details-index="${index}">
+                            <span class="material-icons">info</span> Подробнее
+                        </button>
+                    `;
+
                     html += `
                         <div class="track-card ${isActive ? 'active' : ''}" data-index="${index}">
                             <div class="track-cover" data-play-index="${index}">
@@ -2142,11 +2317,17 @@
                                     <span class="material-icons play-icon"></span>
                                 </div>
                             </div>
+                            <button class="track-menu-btn" data-menu-index="${index}" title="Опции">
+                                <span class="material-icons">more_vert</span>
+                            </button>
+                            <div class="track-dropdown" id="dropdown-${index}">
+                                ${dropdownItems}
+                            </div>
                             <div class="track-meta">
                                 <span class="track-title" data-detail-index="${index}">${track.title}</span>
                                 <span class="track-artist">${track.artist || 'Неизвестный исполнитель'}</span>
                             </div>
-                            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                            <div class="track-footer">
                                 <span class="track-badge">${formatTime(track.duration || 0)}</span>
                                 ${track.videoId ? '<span class="video-badge"><span class="material-icons">videocam</span> клип</span>' : ''}
                             </div>
@@ -2157,6 +2338,7 @@
                 html += `</div>`;
                 dynamicContent.innerHTML = html;
 
+                // cover play
                 document.querySelectorAll('.track-cover').forEach(cover => {
                     cover.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -2164,10 +2346,50 @@
                     });
                 });
 
+                // title → drawer
                 document.querySelectorAll('.track-title').forEach(titleEl => {
                     titleEl.addEventListener('click', (e) => {
                         e.stopPropagation();
                         openDrawer(parseInt(titleEl.dataset.detailIndex, 10));
+                    });
+                });
+
+                // 3-dot menu
+                document.querySelectorAll('.track-menu-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(btn.dataset.menuIndex, 10);
+                        toggleDropdown(idx, btn);
+                    });
+                });
+
+                // Dropdown item handlers
+                document.querySelectorAll('.track-dropdown').forEach(dropdown => {
+                    dropdown.addEventListener('click', (e) => {
+                        const item = e.target.closest('.dropdown-item');
+                        if (!item) return;
+                        e.stopPropagation();
+
+                        if (item.hasAttribute('data-add-playlist')) {
+                            const p = item.getAttribute('data-add-playlist');
+                            const trackIndex = parseInt(item.dataset.trackIndex, 10);
+                            const track = tracks[trackIndex];
+                            const already = (playlistTrackMap[p] || []).includes(track.id);
+                            if (already) {
+                                removeTrackFromPlaylist(track.id, p);
+                                showToast('Удалено из «' + p + '»');
+                            } else {
+                                addTrackToPlaylist(track.id, p);
+                                showToast('Добавлено в «' + p + '»');
+                            }
+                            closeAllDropdowns();
+                            if (currentView === 'library') renderLibrary();
+                            if (currentView === 'playlists') renderPlaylists();
+                        } else if (item.hasAttribute('data-details-index')) {
+                            const idx = parseInt(item.dataset.detailsIndex, 10);
+                            closeAllDropdowns();
+                            openDrawer(idx);
+                        }
                     });
                 });
 
@@ -2284,6 +2506,9 @@
                 detailDuration.textContent = formatTime(t.duration || 0);
                 detailFormat.textContent = t.format || '—';
 
+                const inLists = getPlaylistsForTrack(t.id);
+                detailPlaylists.textContent = inLists.length ? inLists.join(', ') : 'Не добавлен ни в один';
+
                 if (t.videoId) {
                     const url = await getVideoUrlForTrack(t);
                     if (url) {
@@ -2317,6 +2542,7 @@
                                 showToast('Клип удалён');
                                 if (currentView === 'library') renderLibrary();
                                 updatePlayerInfo();
+                                updateStorageInfo();
                             });
                         }
                     } else {
@@ -2420,7 +2646,7 @@
                 showToast('Сохранение клипа...');
                 const result = await saveVideoBlob(videoId, file);
                 if (!result.ok) {
-                    showToast(result.reason === 'too_large' ? `Клип слишком большой` : 'Не удалось сохранить');
+                    showToast(result.reason === 'too_large' ? 'Клип слишком большой' : 'Не удалось сохранить');
                     videoFileInput.value = '';
                     return;
                 }
@@ -2438,9 +2664,10 @@
                 videoFileInput.value = '';
                 if (currentView === 'library') renderLibrary();
                 updatePlayerInfo();
+                updateStorageInfo();
             });
 
-            // ---------- UPLOAD MUSIC ----------
+            // ---------- UPLOAD MUSIC (via IndexedDB, no size limit) ----------
             uploadBtn.addEventListener('click', () => fileInput.click());
 
             fileInput.addEventListener('change', async (e) => {
@@ -2450,11 +2677,16 @@
                 let added = 0, failed = 0;
                 for (const file of files) {
                     if (!file.type.startsWith('audio/')) { showToast('Пропущен: ' + file.name); failed++; continue; }
+                    if (file.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) {
+                        showToast(`Файл слишком большой (макс. ${MAX_AUDIO_SIZE_MB} МБ): ${file.name}`);
+                        failed++;
+                        continue;
+                    }
                     const audioId = uid('a');
                     const saved = await saveAudioBlob(audioId, file);
                     if (!saved) { failed++; continue; }
                     const url = URL.createObjectURL(file);
-                    objectUrls[audioId] = url;
+                    objectUrls['a_' + audioId] = url;
                     const meta = await readMetadata(file, url);
                     tracks.push({
                         id: uid('t'),
@@ -2476,6 +2708,7 @@
                 showToast(`Добавлено: ${added}${failed ? ', ошибок: ' + failed : ''}`);
                 if (currentView === 'library') renderLibrary();
                 else goToView('library');
+                updateStorageInfo();
             });
 
             function readMetadata(file, url) {
@@ -2566,6 +2799,7 @@
                 settingsPanel.classList.remove('visible');
                 settingsVisible = false;
                 expandedPlaylist = null;
+                closeAllDropdowns();
                 if (view === 'library') {
                     updateNavButtons('library');
                     renderLibrary();
@@ -2674,28 +2908,31 @@
                 overlay.innerHTML = `<div class="spinner"></div><span>Загрузка MzMusic...</span>`;
                 document.body.appendChild(overlay);
 
-                await openVideoDB().catch(() => {});
+                try { await openDB(); } catch (e) { console.warn('IDB init failed', e); }
+
                 const loaded = await loadState();
                 if (loaded) {
-                    tracks.forEach(t => {
-                        if (t.audioId) getAudioUrlForTrack(t);
-                        if (t.videoId) getVideoUrlForTrack(t);
-                    });
+                    // Pre-create object urls for tracks
+                    for (const t of tracks) {
+                        if (t.audioId) await getAudioUrlForTrack(t);
+                        if (t.videoId) await getVideoUrlForTrack(t);
+                    }
                 }
 
                 goToView('library');
                 updatePlayPauseIcon();
                 updatePlayerInfo();
-                updateStorageInfo();
+                await updateStorageInfo();
 
                 overlay.remove();
                 if (loaded && tracks.length > 0) showToast(`MzMusic: загружено ${tracks.length} треков`);
             })();
 
-            // Prevent double-tap zoom on iOS (for controls)
+            // Prevent double-tap zoom on iOS
             document.querySelectorAll('.player-ctrl-btn, .nav-btn, .mobile-nav-btn, .settings-btn, .cover-play, .timeline-track').forEach(el => {
                 el.addEventListener('touchstart', () => {}, { passive: true });
             });
+
         })();
     </script>
 </body>
