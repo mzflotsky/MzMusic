@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f12">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>MzMusic</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
             --bg-primary: #0f0f12;
@@ -24,19 +27,31 @@
             --radius-card: 16px;
             --transition: all 0.2s ease;
             --font-mono: 'JetBrains Mono', monospace;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+            --mobile-nav-height: 64px;
+            --player-height: 130px;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
         }
 
         body {
             font-family: var(--font-mono);
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            height: 100vh;
             display: flex;
-            overflow: hidden;
             transition: background-color 0.2s, color 0.2s;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
 
-        /* ---------- SIDEBAR ---------- */
+        /* ================= DESKTOP (default) ================= */
         .sidebar {
             width: 86px;
             background: var(--bg-secondary);
@@ -45,9 +60,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: 24px 0;
+            padding: 24px 0 calc(24px + var(--safe-bottom));
+            padding-top: calc(24px + var(--safe-top));
             flex-shrink: 0;
             height: 100vh;
+            height: 100dvh;
             z-index: 20;
         }
 
@@ -60,7 +77,6 @@
         }
 
         .brand {
-            font-family: var(--font-mono);
             font-size: 1.05rem;
             font-weight: 700;
             letter-spacing: -0.6px;
@@ -68,7 +84,6 @@
             text-align: center;
             line-height: 1.1;
             padding: 0 4px;
-            margin-bottom: 4px;
             user-select: none;
         }
 
@@ -90,15 +105,8 @@
 
         .nav-btn .material-icons { font-size: 28px; }
 
-        .nav-btn:hover {
-            background: var(--bg-elevated);
-            color: var(--text-primary);
-        }
-
-        .nav-btn.active {
-            background: var(--accent-soft);
-            color: white;
-        }
+        .nav-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
+        .nav-btn.active { background: var(--accent-soft); color: white; }
 
         .sidebar-bottom {
             width: 100%;
@@ -127,16 +135,8 @@
             transition: var(--transition);
         }
 
-        .social-link:hover {
-            color: var(--accent);
-            transform: translateY(-1px);
-        }
-
-        .social-link svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-        }
+        .social-link:hover { color: var(--accent); transform: translateY(-1px); }
+        .social-link svg { width: 18px; height: 18px; fill: currentColor; }
 
         .settings-btn {
             background: transparent;
@@ -160,24 +160,28 @@
 
         .settings-btn .material-icons { font-size: 26px; }
 
-        /* ---------- MAIN ---------- */
         .main {
             flex: 1;
             height: 100vh;
+            height: 100dvh;
             display: flex;
             flex-direction: column;
             background: var(--bg-primary);
             overflow: hidden;
             position: relative;
+            min-width: 0;
         }
 
         .main-scroll {
             flex: 1;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             padding: 28px 36px 20px 36px;
+            padding-top: calc(28px + var(--safe-top));
             display: flex;
             flex-direction: column;
             gap: 24px;
+            min-height: 0;
         }
 
         .main-scroll::-webkit-scrollbar { width: 8px; }
@@ -199,11 +203,7 @@
             color: var(--text-primary);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
 
         .upload-btn {
             background: var(--bg-elevated);
@@ -227,7 +227,6 @@
             color: white;
         }
 
-        /* ---------- TRACK GRID ---------- */
         .track-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -244,6 +243,7 @@
             gap: 10px;
             transition: var(--transition);
             position: relative;
+            overflow: hidden;
         }
 
         .track-card:hover {
@@ -277,9 +277,7 @@
             transition: opacity 0.2s;
         }
 
-        .track-card:hover .track-cover .cover-icon {
-            opacity: 0.15;
-        }
+        .track-card:hover .track-cover .cover-icon { opacity: 0.15; }
 
         .cover-play {
             position: absolute;
@@ -293,9 +291,7 @@
             cursor: pointer;
         }
 
-        .track-card:hover .cover-play {
-            opacity: 1;
-        }
+        .track-card:hover .cover-play { opacity: 1; }
 
         .cover-play .play-icon {
             font-size: 64px;
@@ -305,24 +301,12 @@
             line-height: 1;
         }
 
-        .cover-play:hover .play-icon {
-            transform: scale(1.12);
-        }
+        .cover-play:hover .play-icon { transform: scale(1.12); }
 
-        .track-card.active .cover-play .play-icon::before {
-            content: 'pause';
-        }
+        .track-card.active .cover-play .play-icon::before { content: 'pause'; }
+        .track-card:not(.active) .cover-play .play-icon::before { content: 'play_arrow'; }
 
-        .track-card:not(.active) .cover-play .play-icon::before {
-            content: 'play_arrow';
-        }
-
-        .track-meta {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            min-width: 0;
-        }
+        .track-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 
         .track-title {
             font-weight: 600;
@@ -385,9 +369,7 @@
             margin-top: 2px;
         }
 
-        .track-card.active .mini-timeline {
-            display: block;
-        }
+        .track-card.active .mini-timeline { display: block; }
 
         .mini-timeline-fill {
             height: 100%;
@@ -397,7 +379,6 @@
             transition: width 0.15s linear;
         }
 
-        /* ---------- SETTINGS PANEL ---------- */
         .settings-panel {
             display: none;
             flex-direction: column;
@@ -410,11 +391,7 @@
 
         .settings-panel.visible { display: flex; }
 
-        .settings-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .settings-group { display: flex; flex-direction: column; gap: 12px; }
 
         .settings-group label {
             font-weight: 500;
@@ -422,12 +399,7 @@
             letter-spacing: -0.2px;
         }
 
-        .color-row {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
+        .color-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
 
         .color-input {
             display: flex;
@@ -448,11 +420,7 @@
             border-radius: 12px;
         }
 
-        .theme-toggle {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
+        .theme-toggle { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
 
         .theme-btn {
             background: var(--bg-elevated);
@@ -475,10 +443,7 @@
             color: white;
         }
 
-        .settings-note {
-            opacity: 0.7;
-            font-size: 0.9rem;
-        }
+        .settings-note { opacity: 0.7; font-size: 0.9rem; }
 
         .storage-info {
             font-size: 0.8rem;
@@ -518,16 +483,9 @@
             align-self: flex-start;
         }
 
-        .clear-storage-btn:hover {
-            background: rgba(255,107,107,0.1);
-        }
+        .clear-storage-btn:hover { background: rgba(255,107,107,0.1); }
 
-        /* ---------- PLAYLIST SECTION ---------- */
-        .playlist-section {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .playlist-section { display: flex; flex-direction: column; gap: 20px; }
 
         .custom-input-row {
             display: flex;
@@ -549,12 +507,10 @@
             padding: 14px 6px;
             outline: none;
             flex: 1;
+            min-width: 0;
         }
 
-        .custom-input-row input::placeholder {
-            color: var(--text-secondary);
-            opacity: 0.7;
-        }
+        .custom-input-row input::placeholder { color: var(--text-secondary); opacity: 0.7; }
 
         .create-playlist-btn {
             background: var(--accent);
@@ -570,15 +526,12 @@
             align-items: center;
             gap: 8px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .create-playlist-btn:hover { background: var(--accent-soft); }
 
-        .playlist-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        .playlist-chips { display: flex; flex-wrap: wrap; gap: 10px; }
 
         .playlist-chip {
             background: var(--bg-elevated);
@@ -600,15 +553,8 @@
             transform: translateY(-1px);
         }
 
-        .playlist-chip .material-icons {
-            font-size: 18px;
-            color: var(--accent);
-        }
-
-        .playlist-chip.expanded {
-            border-color: var(--accent);
-            background: var(--bg-secondary);
-        }
+        .playlist-chip .material-icons { font-size: 18px; color: var(--accent); }
+        .playlist-chip.expanded { border-color: var(--accent); background: var(--bg-secondary); }
 
         .playlist-tracks {
             display: none;
@@ -633,32 +579,26 @@
             transition: var(--transition);
         }
 
-        .playlist-track-row:hover {
-            background: var(--bg-primary);
-        }
-
-        .playlist-track-row .material-icons {
-            font-size: 18px;
-            color: var(--accent);
-        }
-
-        .playlist-track-row .pl-title {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
+        .playlist-track-row:hover { background: var(--bg-primary); }
+        .playlist-track-row .material-icons { font-size: 18px; color: var(--accent); }
+        .playlist-track-row .pl-title { font-size: 0.85rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .playlist-track-row .pl-artist {
             font-size: 0.7rem;
             color: var(--text-secondary);
             margin-left: auto;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 40%;
         }
 
-        /* ---------- BOTTOM PLAYER BAR ---------- */
+        /* Bottom player bar */
         .player-bar {
             flex-shrink: 0;
             background: var(--bg-secondary);
             border-top: 1px solid var(--border-light);
             padding: 14px 28px;
+            padding-bottom: calc(14px + var(--safe-bottom));
             display: flex;
             align-items: center;
             gap: 20px;
@@ -690,11 +630,7 @@
             text-overflow: ellipsis;
         }
 
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .player-controls { display: flex; align-items: center; gap: 6px; }
 
         .player-ctrl-btn {
             background: transparent;
@@ -710,17 +646,9 @@
             transition: var(--transition);
         }
 
-        .player-ctrl-btn:hover {
-            background: var(--bg-elevated);
-            color: var(--text-primary);
-        }
+        .player-ctrl-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
 
-        .player-timeline {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+        .player-timeline { flex: 1; display: flex; align-items: center; gap: 12px; min-width: 0; }
 
         .time-label {
             font-size: 0.7rem;
@@ -737,6 +665,7 @@
             background: var(--bg-elevated);
             position: relative;
             cursor: pointer;
+            touch-action: none;
         }
 
         .timeline-fill {
@@ -776,20 +705,13 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
-        .video-toggle-btn:hover {
-            color: var(--text-primary);
-            border-color: var(--accent);
-        }
+        .video-toggle-btn:hover { color: var(--text-primary); border-color: var(--accent); }
+        .video-toggle-btn.active { background: var(--accent-soft); border-color: var(--accent); color: white; }
 
-        .video-toggle-btn.active {
-            background: var(--accent-soft);
-            border-color: var(--accent);
-            color: white;
-        }
-
-        /* ---------- DETAILS DRAWER ---------- */
+        /* Drawer */
         .drawer-overlay {
             position: fixed;
             inset: 0;
@@ -800,18 +722,16 @@
             z-index: 40;
         }
 
-        .drawer-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
 
         .details-drawer {
             position: fixed;
             top: 0;
             right: 0;
             width: 380px;
-            max-width: 90vw;
+            max-width: 100vw;
             height: 100vh;
+            height: 100dvh;
             background: var(--bg-secondary);
             border-left: 1px solid var(--border-light);
             box-shadow: -12px 0 30px rgba(0, 0, 0, 0.4);
@@ -821,8 +741,11 @@
             display: flex;
             flex-direction: column;
             padding: 28px;
+            padding-top: calc(28px + var(--safe-top));
+            padding-bottom: calc(28px + var(--safe-bottom));
             gap: 20px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .details-drawer.open { transform: translateX(0); }
@@ -831,21 +754,22 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            padding-bottom: 8px;
+            z-index: 2;
         }
 
-        .drawer-header h2 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+        .drawer-header h2 { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
 
         .drawer-close {
             background: transparent;
             border: none;
             color: var(--text-secondary);
             cursor: pointer;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -853,10 +777,7 @@
             transition: var(--transition);
         }
 
-        .drawer-close:hover {
-            background: var(--bg-elevated);
-            color: var(--text-primary);
-        }
+        .drawer-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
 
         .drawer-cover {
             width: 100%;
@@ -869,18 +790,11 @@
             color: var(--text-secondary);
             overflow: hidden;
             position: relative;
+            flex-shrink: 0;
         }
 
-        .drawer-cover video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .drawer-cover .material-icons {
-            font-size: 80px;
-            opacity: 0.5;
-        }
+        .drawer-cover video { width: 100%; height: 100%; object-fit: cover; }
+        .drawer-cover .material-icons { font-size: 80px; opacity: 0.5; }
 
         .drawer-field {
             display: flex;
@@ -909,21 +823,15 @@
             cursor: pointer;
             font-size: 14px;
             line-height: 1;
-            padding: 2px;
+            padding: 4px;
             border-radius: 4px;
             display: flex;
             align-items: center;
             transition: var(--transition);
         }
 
-        .drawer-field .field-label .edit-btn:hover {
-            color: var(--accent);
-            background: var(--bg-elevated);
-        }
-
-        .drawer-field .field-label .edit-btn .material-icons {
-            font-size: 14px;
-        }
+        .drawer-field .field-label .edit-btn:hover { color: var(--accent); background: var(--bg-elevated); }
+        .drawer-field .field-label .edit-btn .material-icons { font-size: 16px; }
 
         .drawer-field .field-value {
             font-size: 0.95rem;
@@ -945,15 +853,13 @@
             transition: var(--transition);
         }
 
-        .drawer-field .field-value input:focus {
-            border-color: var(--accent);
-        }
+        .drawer-field .field-value input:focus { border-color: var(--accent); }
 
         .drawer-field .field-value .save-btn,
         .drawer-field .field-value .cancel-btn {
             font-family: var(--font-mono);
             font-size: 0.75rem;
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 8px;
             border: 1px solid var(--border-light);
             cursor: pointer;
@@ -964,12 +870,7 @@
             transition: var(--transition);
         }
 
-        .drawer-field .field-value .save-btn {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-        }
-
+        .drawer-field .field-value .save-btn { background: var(--accent); border-color: var(--accent); color: white; }
         .drawer-field .field-value .save-btn:hover { background: var(--accent-soft); }
         .drawer-field .field-value .cancel-btn:hover { background: var(--bg-primary); }
 
@@ -990,11 +891,7 @@
             width: 100%;
         }
 
-        .upload-video-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: var(--bg-primary);
-        }
+        .upload-video-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-primary); }
 
         .video-status {
             display: flex;
@@ -1024,13 +921,11 @@
 
         .remove-video-btn:hover { background: rgba(255,107,107,0.1); }
 
-        /* helper */
         .hidden { display: none !important; }
 
-        /* toast */
         .toast {
             position: fixed;
-            bottom: 100px;
+            bottom: calc(100px + var(--safe-bottom));
             left: 50%;
             transform: translateX(-50%) translateY(20px);
             background: var(--bg-elevated);
@@ -1047,18 +942,13 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            max-width: 80vw;
+            max-width: 90vw;
             text-align: center;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .toast .material-icons { font-size: 18px; color: var(--accent); }
 
-        /* loading overlay */
         .loading-overlay {
             position: fixed;
             inset: 0;
@@ -1084,28 +974,323 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* responsive */
+        /* Mobile bottom navigation - hidden on desktop */
+        .mobile-nav { display: none; }
+
+        /* ================= TABLET ================= */
         @media (max-width: 1100px) {
             .track-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
+        /* ================= MOBILE ================= */
         @media (max-width: 800px) {
-            .track-grid { grid-template-columns: repeat(2, 1fr); }
-            .main-scroll { padding: 20px; }
-            .sidebar { width: 72px; }
-            .nav-btn, .settings-btn { width: 46px; height: 46px; }
-            .player-info { display: none; }
-            .brand { font-size: 0.85rem; }
+            :root {
+                --player-height: 110px;
+            }
+
+            body { flex-direction: column; }
+
+            /* Hide desktop sidebar, show mobile bottom nav */
+            .sidebar { display: none; }
+
+            .mobile-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: calc(var(--mobile-nav-height) + var(--safe-bottom));
+                padding-bottom: var(--safe-bottom);
+                background: var(--bg-secondary);
+                border-top: 1px solid var(--border-light);
+                z-index: 30;
+                align-items: center;
+                justify-content: space-around;
+                padding-left: var(--safe-left);
+                padding-right: var(--safe-right);
+            }
+
+            .mobile-nav-btn {
+                background: transparent;
+                border: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 2px;
+                padding: 6px 12px;
+                border-radius: 12px;
+                transition: var(--transition);
+                flex: 1;
+                max-width: 88px;
+                min-width: 0;
+            }
+
+            .mobile-nav-btn .material-icons { font-size: 24px; }
+            .mobile-nav-btn .nav-label {
+                font-size: 0.6rem;
+                font-family: var(--font-mono);
+                font-weight: 500;
+                white-space: nowrap;
+            }
+
+            .mobile-nav-btn.active {
+                color: var(--accent);
+                background: var(--bg-elevated);
+            }
+
+            .mobile-nav-btn:active {
+                background: var(--bg-elevated);
+            }
+
+            /* Hide settings & social from old sidebar since sidebar is gone */
+            .sidebar-bottom { display: none; }
+
+            .main {
+                height: 100vh;
+                height: 100dvh;
+                padding-bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
+                padding-left: var(--safe-left);
+                padding-right: var(--safe-right);
+            }
+
+            .main-scroll {
+                padding: 16px 16px 12px 16px;
+                padding-top: calc(16px + var(--safe-top));
+                gap: 16px;
+            }
+
+            .page-title { font-size: 1.35rem; }
+
+            .page-header { gap: 10px; }
+
+            .upload-btn {
+                padding: 10px 16px;
+                font-size: 0.8rem;
+            }
+
+            .track-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .track-card { padding: 10px; gap: 8px; border-radius: 14px; }
+
+            .track-cover { border-radius: 10px; }
+
+            .track-cover .cover-icon { font-size: 36px; }
+
+            /* Mobile: always show indicator (no hover), but smaller */
+            .cover-play { opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.4), transparent); }
+
+            .cover-play .play-icon { font-size: 48px; }
+
+            .track-title { font-size: 0.82rem; }
+            .track-artist { font-size: 0.68rem; }
+            .track-badge { font-size: 0.6rem; padding: 2px 6px; }
+
+            /* Larger tap targets */
+            .nav-btn, .settings-btn { min-width: 44px; min-height: 44px; }
+
+            /* Bottom player bar above mobile nav */
+            .player-bar {
+                position: fixed;
+                bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
+                left: 0;
+                right: 0;
+                padding: 10px 16px;
+                padding-left: calc(16px + var(--safe-left));
+                padding-right: calc(16px + var(--safe-right));
+                gap: 12px;
+                z-index: 25;
+                flex-wrap: nowrap;
+                border-top: 1px solid var(--border-light);
+                box-shadow: 0 -4px 16px rgba(0,0,0,0.3);
+            }
+
+            .player-info {
+                min-width: 0;
+                max-width: none;
+                flex: 1;
+                order: 1;
+            }
+
+            .player-info .now-title { font-size: 0.78rem; }
+            .player-info .now-artist { font-size: 0.65rem; }
+
+            .player-controls { order: 0; gap: 2px; }
+
+            .player-ctrl-btn { width: 38px; height: 38px; }
+            .player-ctrl-btn .material-icons { font-size: 22px; }
+
+            /* On mobile, timeline becomes a second row below */
+            .player-timeline {
+                position: absolute;
+                bottom: -6px;
+                left: 16px;
+                right: 16px;
+                gap: 8px;
+                order: 5;
+                width: calc(100% - 32px);
+            }
+
+            .player-timeline .time-label { font-size: 0.6rem; min-width: 30px; }
+
+            /* Restructure player bar into two rows using flex-wrap trick:
+               We'll use grid instead for clarity */
+            .player-bar {
+                display: grid;
+                grid-template-columns: auto 1fr auto;
+                grid-template-areas:
+                    "controls info video"
+                    "timeline timeline timeline";
+                gap: 8px 12px;
+                align-items: center;
+                padding-top: 10px;
+                padding-bottom: 20px;
+            }
+
+            .player-controls { grid-area: controls; }
+            .player-info { grid-area: info; }
+            .video-toggle-btn { grid-area: video; }
+            .player-timeline { grid-area: timeline; position: static; width: 100%; }
+
+            .player-timeline .timeline-track { height: 8px; }
+
+            /* Make it easier to tap the timeline handle */
+            .timeline-fill::after { opacity: 1; width: 16px; height: 16px; right: -8px; }
+
+            .video-toggle-btn { width: 38px; height: 38px; }
+
+            /* Drawer full-width on mobile */
+            .details-drawer {
+                width: 100%;
+                max-width: 100%;
+                border-left: none;
+                border-top: 1px solid var(--border-light);
+                transform: translateY(100%);
+                padding: 20px;
+                padding-top: calc(20px + var(--safe-top));
+                padding-bottom: calc(20px + var(--safe-bottom));
+                top: 0;
+                right: 0;
+                left: 0;
+                height: 100vh;
+                height: 100dvh;
+                border-radius: 0;
+                transition: transform 0.3s ease;
+            }
+
+            .details-drawer.open { transform: translateY(0); }
+
+            .drawer-cover { max-width: 260px; align-self: center; }
+
+            /* settings adjustments */
+            .settings-panel { padding: 20px; gap: 20px; }
+
+            .color-row { gap: 10px; }
+
+            .color-input { padding: 6px 12px; gap: 6px; font-size: 0.85rem; }
+            .color-input input[type="color"] { width: 36px; height: 36px; }
+
+            .theme-toggle { gap: 10px; }
+            .theme-btn { padding: 10px 16px; font-size: 0.8rem; }
+
+            /* playlist input */
+            .custom-input-row {
+                padding: 6px 6px 6px 18px;
+                gap: 6px;
+            }
+
+            .custom-input-row input { padding: 12px 4px; font-size: 0.9rem; }
+
+            .create-playlist-btn {
+                padding: 12px 16px;
+                font-size: 0.85rem;
+            }
+
+            .playlist-chip { padding: 8px 14px; font-size: 0.82rem; }
+
+            .playlist-track-row { padding: 8px 10px; }
+            .playlist-track-row .pl-title { font-size: 0.8rem; }
+            .playlist-track-row .pl-artist { font-size: 0.65rem; }
+
+            /* toast above mobile nav + player */
+            .toast {
+                bottom: calc(var(--mobile-nav-height) + var(--player-height) + 12px + var(--safe-bottom));
+                font-size: 0.78rem;
+                padding: 10px 18px;
+            }
+
+            /* Make close button bigger for touch */
+            .drawer-close { width: 44px; height: 44px; }
+
+            /* Prevent iOS zoom on input focus */
+            input, .custom-input-row input, .drawer-field .field-value input { font-size: 16px; }
+            .track-title, .track-artist, .drawer-field .field-value { -webkit-user-select: none; user-select: none; }
         }
 
-        @media (max-width: 520px) {
-            .track-grid { grid-template-columns: 1fr; }
+        /* Small phones */
+        @media (max-width: 420px) {
+            .track-grid { gap: 8px; }
+
+            .player-bar {
+                grid-template-columns: auto 1fr auto;
+                padding: 8px 12px 18px 12px;
+                gap: 6px;
+            }
+
+            .player-ctrl-btn { width: 34px; height: 34px; }
+            .player-ctrl-btn .material-icons { font-size: 20px; }
+
+            .player-info .now-title { font-size: 0.72rem; }
+            .player-info .now-artist { font-size: 0.6rem; }
+
+            .video-toggle-btn { width: 34px; height: 34px; }
+
+            .mobile-nav-btn .nav-label { font-size: 0.55rem; }
+            .mobile-nav-btn .material-icons { font-size: 22px; }
+
+            .page-title { font-size: 1.2rem; }
+
+            .track-cover .cover-icon { font-size: 30px; }
+            .cover-play .play-icon { font-size: 42px; }
+        }
+
+        /* Landscape phones */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .player-bar {
+                grid-template-areas: "controls info timeline video";
+                grid-template-columns: auto 1fr 1fr auto;
+                padding: 8px 16px;
+                padding-left: calc(16px + var(--safe-left));
+                padding-right: calc(16px + var(--safe-right));
+                padding-bottom: calc(8px + var(--safe-bottom));
+                gap: 8px;
+                height: auto;
+            }
+
+            .player-timeline { grid-area: timeline; position: static; }
+
+            .main { padding-bottom: calc(var(--mobile-nav-height) + 60px + var(--safe-bottom)); }
+
+            .details-drawer { padding: 16px; gap: 14px; }
+            .drawer-cover { max-width: 140px; }
+
+            .toast { bottom: calc(var(--mobile-nav-height) + 70px + var(--safe-bottom)); }
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
         }
     </style>
 </head>
 <body>
 
-    <!-- LEFT SIDEBAR -->
+    <!-- DESKTOP SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-top">
             <div class="brand">Mz<span>Music</span></div>
@@ -1185,15 +1370,25 @@
                     </button>
                     <span class="settings-note">Музыка, клипы, метаданные и плейлисты сохраняются в браузере.</span>
                 </div>
+                <div class="settings-group social-links-mobile" style="display:none;">
+                    <label>Соцсети</label>
+                    <div style="display:flex; gap:12px;">
+                        <a class="social-link" href="https://t.me/" target="_blank" title="Telegram" style="border:1px solid var(--border-light); background:var(--bg-elevated);">
+                            <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+                        </a>
+                        <a class="social-link" href="https://github.com/" target="_blank" title="GitHub" style="border:1px solid var(--border-light); background:var(--bg-elevated);">
+                            <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                        <a class="social-link" href="https://youtube.com/" target="_blank" title="YouTube" style="border:1px solid var(--border-light); background:var(--bg-elevated);">
+                            <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- BOTTOM PLAYER BAR -->
         <div class="player-bar">
-            <div class="player-info">
-                <span class="now-title" id="nowTitle">Ничего не играет</span>
-                <span class="now-artist" id="nowArtist">—</span>
-            </div>
             <div class="player-controls">
                 <button class="player-ctrl-btn" id="prevBtn" title="Предыдущий">
                     <span class="material-icons">skip_previous</span>
@@ -1205,6 +1400,13 @@
                     <span class="material-icons">skip_next</span>
                 </button>
             </div>
+            <div class="player-info">
+                <span class="now-title" id="nowTitle">Ничего не играет</span>
+                <span class="now-artist" id="nowArtist">—</span>
+            </div>
+            <button class="video-toggle-btn" id="videoToggleBtn" title="Показать видео">
+                <span class="material-icons">videocam</span>
+            </button>
             <div class="player-timeline">
                 <span class="time-label" id="currentTime">0:00</span>
                 <div class="timeline-track" id="timelineTrack">
@@ -1212,11 +1414,24 @@
                 </div>
                 <span class="time-label" id="totalTime">0:00</span>
             </div>
-            <button class="video-toggle-btn" id="videoToggleBtn" title="Показать видео">
-                <span class="material-icons">videocam</span>
-            </button>
         </div>
     </main>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <nav class="mobile-nav">
+        <button class="mobile-nav-btn active" id="mobileLibraryBtn">
+            <span class="material-icons">library_music</span>
+            <span class="nav-label">Библиотека</span>
+        </button>
+        <button class="mobile-nav-btn" id="mobilePlaylistsBtn">
+            <span class="material-icons">queue_music</span>
+            <span class="nav-label">Плейлисты</span>
+        </button>
+        <button class="mobile-nav-btn" id="mobileSettingsBtn">
+            <span class="material-icons">settings</span>
+            <span class="nav-label">Настройки</span>
+        </button>
+    </nav>
 
     <!-- TRACK DETAILS DRAWER -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
@@ -1290,9 +1505,8 @@
             const LS_KEY = 'mzmusic_data_v1';
             const LS_AUDIO_PREFIX = 'mzmusic_audio_';
             const LS_VIDEO_PREFIX = 'mzmusic_video_';
-            // Increased video size limit — we try IndexedDB first, fallback to localStorage for metadata.
-            const MAX_VIDEO_SIZE_MB = 50;   // max single clip size
-            const MAX_TOTAL_STORAGE_WARN_MB = 4.5; // warn before exceeding typical localStorage quota
+            const MAX_VIDEO_SIZE_MB = 50;
+            const MAX_TOTAL_STORAGE_WARN_MB = 4.5;
 
             // ---------- STATE ----------
             let tracks = [];
@@ -1311,6 +1525,11 @@
             const libraryBtn = document.getElementById('libraryBtn');
             const playlistsBtn = document.getElementById('playlistsBtn');
             const settingsBtn = document.getElementById('settingsBtn');
+
+            const mobileLibraryBtn = document.getElementById('mobileLibraryBtn');
+            const mobilePlaylistsBtn = document.getElementById('mobilePlaylistsBtn');
+            const mobileSettingsBtn = document.getElementById('mobileSettingsBtn');
+
             const pageTitle = document.getElementById('pageTitle');
             const dynamicContent = document.getElementById('dynamicContent');
             const settingsPanel = document.getElementById('settingsPanel');
@@ -1352,21 +1571,22 @@
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toastText');
 
-            // ---------- INDEXED DB FOR VIDEO ----------
+            // Show mobile social links block inside settings on mobile
+            const mobileSocialBlock = document.querySelector('.social-links-mobile');
+            if (window.matchMedia('(max-width: 800px)').matches && mobileSocialBlock) {
+                mobileSocialBlock.style.display = 'flex';
+            }
+
+            // ---------- INDEXED DB ----------
             function openVideoDB() {
                 return new Promise((resolve, reject) => {
                     if (videoDb) return resolve(videoDb);
                     const req = indexedDB.open('MzMusicDB', 1);
                     req.onupgradeneeded = (e) => {
                         const db = e.target.result;
-                        if (!db.objectStoreNames.contains('videos')) {
-                            db.createObjectStore('videos');
-                        }
+                        if (!db.objectStoreNames.contains('videos')) db.createObjectStore('videos');
                     };
-                    req.onsuccess = (e) => {
-                        videoDb = e.target.result;
-                        resolve(videoDb);
-                    };
+                    req.onsuccess = (e) => { videoDb = e.target.result; resolve(videoDb); };
                     req.onerror = (e) => reject(e.target.error);
                 });
             }
@@ -1407,25 +1627,18 @@
                 });
             }
 
-            // ---------- LOCALSTORAGE HELPERS ----------
+            // ---------- LOCAL STORAGE ----------
             function base64ToBlob(base64, mime) {
                 const byteChars = atob(base64);
                 const byteNums = new Array(byteChars.length);
-                for (let i = 0; i < byteChars.length; i++) {
-                    byteNums[i] = byteChars.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNums);
-                return new Blob([byteArray], { type: mime });
+                for (let i = 0; i < byteChars.length; i++) byteNums[i] = byteChars.charCodeAt(i);
+                return new Blob([new Uint8Array(byteNums)], { type: mime });
             }
 
             function blobToBase64(blob) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
-                    reader.onload = () => {
-                        const dataUrl = reader.result;
-                        const base64 = dataUrl.split(',')[1];
-                        resolve(base64);
-                    };
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
                     reader.onerror = reject;
                     reader.readAsDataURL(blob);
                 });
@@ -1436,71 +1649,41 @@
                     const base64 = await blobToBase64(blob);
                     localStorage.setItem(LS_AUDIO_PREFIX + id, base64);
                     return true;
-                } catch (e) {
-                    console.warn('Failed to save audio', e);
-                    return false;
-                }
+                } catch (e) { return false; }
             }
 
             function loadAudioBlob(id, mime) {
                 const base64 = localStorage.getItem(LS_AUDIO_PREFIX + id);
                 if (!base64) return null;
-                try { return base64ToBlob(base64, mime || 'audio/mpeg'); }
-                catch (e) { return null; }
+                try { return base64ToBlob(base64, mime || 'audio/mpeg'); } catch (e) { return null; }
             }
 
             function removeAudioBlob(id) {
                 localStorage.removeItem(LS_AUDIO_PREFIX + id);
-                if (objectUrls[id]) {
-                    try { URL.revokeObjectURL(objectUrls[id]); } catch (e) {}
-                    delete objectUrls[id];
-                }
+                if (objectUrls[id]) { try { URL.revokeObjectURL(objectUrls[id]); } catch (e) {} delete objectUrls[id]; }
             }
 
-            // Video: prefer IndexedDB (large), fallback to localStorage (small)
             async function saveVideoBlob(id, blob) {
                 try {
-                    // check size limit
-                    if (blob.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) {
-                        return { ok: false, reason: 'too_large' };
-                    }
-                    // try IndexedDB first
-                    try {
-                        await saveVideoToIDB(id, blob);
-                        return { ok: true, backend: 'idb' };
-                    } catch (e) {
-                        console.warn('IDB save failed, falling back to localStorage', e);
-                    }
-                    // fallback to localStorage
+                    if (blob.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) return { ok: false, reason: 'too_large' };
+                    try { await saveVideoToIDB(id, blob); return { ok: true, backend: 'idb' }; } catch (e) {}
                     const base64 = await blobToBase64(blob);
                     localStorage.setItem(LS_VIDEO_PREFIX + id, base64);
                     return { ok: true, backend: 'ls' };
-                } catch (e) {
-                    console.warn('Failed to save video', e);
-                    return { ok: false, reason: 'error' };
-                }
+                } catch (e) { return { ok: false, reason: 'error' }; }
             }
 
             async function loadVideoBlob(id) {
-                // try IndexedDB first
-                try {
-                    const blob = await loadVideoFromIDB(id);
-                    if (blob) return blob;
-                } catch (e) {}
-                // fallback localStorage
+                try { const blob = await loadVideoFromIDB(id); if (blob) return blob; } catch (e) {}
                 const base64 = localStorage.getItem(LS_VIDEO_PREFIX + id);
                 if (!base64) return null;
-                try { return base64ToBlob(base64, 'video/mp4'); }
-                catch (e) { return null; }
+                try { return base64ToBlob(base64, 'video/mp4'); } catch (e) { return null; }
             }
 
             async function removeVideoBlob(id) {
                 localStorage.removeItem(LS_VIDEO_PREFIX + id);
                 try { await deleteVideoFromIDB(id); } catch (e) {}
-                if (objectUrls['v_' + id]) {
-                    try { URL.revokeObjectURL(objectUrls['v_' + id]); } catch (e) {}
-                    delete objectUrls['v_' + id];
-                }
+                if (objectUrls['v_' + id]) { try { URL.revokeObjectURL(objectUrls['v_' + id]); } catch (e) {} delete objectUrls['v_' + id]; }
             }
 
             function getAudioUrlForTrack(track) {
@@ -1538,9 +1721,7 @@
                     const percent = Math.min(100, (mb / MAX_TOTAL_STORAGE_WARN_MB) * 100);
                     storageBarFill.style.width = percent + '%';
                     storageBarFill.style.background = percent > 85 ? '#ff6b6b' : 'var(--accent)';
-                } catch (e) {
-                    storageUsedEl.textContent = '—';
-                }
+                } catch (e) { storageUsedEl.textContent = '—'; }
             }
 
             // ---------- PERSISTENCE ----------
@@ -1562,10 +1743,7 @@
                     localStorage.setItem(LS_KEY, JSON.stringify(serializeData()));
                     updateStorageInfo();
                 } catch (e) {
-                    console.warn('persist failed', e);
-                    if (e.name === 'QuotaExceededError') {
-                        showToast('Хранилище переполнено. Удалите часть клипов.');
-                    }
+                    if (e.name === 'QuotaExceededError') showToast('Хранилище переполнено. Удалите часть клипов.');
                 }
             }
 
@@ -1587,37 +1765,25 @@
                         videoId: t.videoId || null,
                         videoMime: t.videoMime || 'video/mp4',
                     }));
-                    playlists = Array.isArray(data.playlists) && data.playlists.length
-                        ? data.playlists
-                        : ['Мой плейлист', 'Избранное'];
+                    playlists = Array.isArray(data.playlists) && data.playlists.length ? data.playlists : ['Мой плейлист', 'Избранное'];
                     playlistTrackMap = data.playlistTrackMap || {};
-                    playlists.forEach(p => {
-                        if (!Array.isArray(playlistTrackMap[p])) playlistTrackMap[p] = [];
-                    });
+                    playlists.forEach(p => { if (!Array.isArray(playlistTrackMap[p])) playlistTrackMap[p] = []; });
                     return true;
-                } catch (e) {
-                    console.warn('load failed', e);
-                    return false;
-                }
+                } catch (e) { return false; }
             }
 
             async function clearAllStorage() {
                 localStorage.removeItem(LS_KEY);
                 for (let i = localStorage.length - 1; i >= 0; i--) {
                     const key = localStorage.key(i);
-                    if (key && (key.startsWith(LS_AUDIO_PREFIX) || key.startsWith(LS_VIDEO_PREFIX))) {
-                        localStorage.removeItem(key);
-                    }
+                    if (key && (key.startsWith(LS_AUDIO_PREFIX) || key.startsWith(LS_VIDEO_PREFIX))) localStorage.removeItem(key);
                 }
-                // clear IDB videos
                 try {
                     const db = await openVideoDB();
                     const tx = db.transaction('videos', 'readwrite');
                     tx.objectStore('videos').clear();
                 } catch (e) {}
-                Object.keys(objectUrls).forEach(k => {
-                    try { URL.revokeObjectURL(objectUrls[k]); } catch (e) {}
-                });
+                Object.keys(objectUrls).forEach(k => { try { URL.revokeObjectURL(objectUrls[k]); } catch (e) {} });
                 objectUrls = {};
                 tracks = [];
                 playlists = ['Мой плейлист', 'Избранное'];
@@ -1679,9 +1845,7 @@
                         const dur = audioEl.duration || t.duration || 0;
                         const percent = dur ? Math.min(100, (audioEl.currentTime / dur) * 100) : 0;
                         fill.style.width = percent + '%';
-                    } else {
-                        fill.style.width = '0%';
-                    }
+                    } else fill.style.width = '0%';
                 });
             }
 
@@ -1703,7 +1867,6 @@
                 if (audioEl.duration && isFinite(audioEl.duration)) {
                     timelineFill.style.width = Math.min(100, (audioEl.currentTime / audioEl.duration) * 100) + '%';
                 }
-                // video toggle state — reflect whether video is shown in drawer
                 if (t.videoId) {
                     videoToggleBtn.style.opacity = '1';
                     const isShown = drawerVideo.style.display !== 'none' && drawerVideo.src;
@@ -1714,9 +1877,7 @@
                 }
             }
 
-            function getTrackById(id) {
-                return tracks.find(t => t.id === id);
-            }
+            function getTrackById(id) { return tracks.find(t => t.id === id); }
 
             // ---------- VIDEO SYNC ----------
             async function hardSyncVideo() {
@@ -1725,16 +1886,10 @@
                 if (!t.videoId) return;
                 const url = await getVideoUrlForTrack(t);
                 if (!url) return;
-                if (videoEl.src !== url) {
-                    videoEl.src = url;
-                    videoEl.load();
-                }
+                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
                 videoEl.muted = true;
-                const target = audioEl.currentTime || 0;
                 try {
-                    if (Math.abs(videoEl.currentTime - target) > 0.05) {
-                        videoEl.currentTime = target;
-                    }
+                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.05) videoEl.currentTime = audioEl.currentTime;
                 } catch (e) {}
             }
 
@@ -1744,10 +1899,7 @@
                 if (!t.videoId) return;
                 const url = await getVideoUrlForTrack(t);
                 if (!url) return;
-                if (videoEl.src !== url) {
-                    videoEl.src = url;
-                    videoEl.load();
-                }
+                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
                 try { videoEl.currentTime = audioEl.currentTime || 0; } catch (e) {}
                 if (isPlaying) videoEl.play().catch(() => {});
                 else videoEl.pause();
@@ -1758,17 +1910,12 @@
                 if (index < 0 || index >= tracks.length) return;
                 const track = tracks[index];
                 const audioUrl = getAudioUrlForTrack(track);
-                if (!audioUrl) {
-                    showToast('Аудиофайл не найден');
-                    return;
-                }
+                if (!audioUrl) { showToast('Аудиофайл не найден'); return; }
 
                 if (activeTrackIndex === index) {
                     if (autoPlay) {
-                        if (isPlaying) {
-                            audioEl.pause();
-                            isPlaying = false;
-                        } else {
+                        if (isPlaying) { audioEl.pause(); isPlaying = false; }
+                        else {
                             audioEl.play().then(() => {
                                 isPlaying = true;
                                 updatePlayPauseIcon();
@@ -1780,12 +1927,7 @@
                                         drawerVideo.play().catch(() => {});
                                     }
                                 }
-                            }).catch(err => {
-                                console.warn('playback error:', err);
-                                isPlaying = false;
-                                updatePlayPauseIcon();
-                                updateTrackCardVisuals();
-                            });
+                            }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
                         }
                     }
                     updateTrackCardVisuals();
@@ -1795,7 +1937,6 @@
 
                 activeTrackIndex = index;
                 isPlaying = false;
-
                 audioEl.src = audioUrl;
                 audioEl.load();
 
@@ -1805,18 +1946,10 @@
                 currentTimeEl.textContent = '0:00';
                 timelineFill.style.width = '0%';
 
-                // prepare video element
                 const videoUrl = await getVideoUrlForTrack(track);
-                if (videoUrl) {
-                    videoEl.src = videoUrl;
-                    videoEl.load();
-                    videoEl.muted = true;
-                } else {
-                    videoEl.removeAttribute('src');
-                    videoEl.load();
-                }
+                if (videoUrl) { videoEl.src = videoUrl; videoEl.load(); videoEl.muted = true; }
+                else { videoEl.removeAttribute('src'); videoEl.load(); }
 
-                // if drawer is open on this track, refresh it
                 if (currentDetailIndex === index) refreshDrawer(index);
 
                 if (autoPlay) {
@@ -1827,18 +1960,12 @@
                         if (videoUrl) {
                             videoEl.currentTime = 0;
                             hardSyncVideo();
-                            // keep drawer video in sync if visible
                             if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
                                 try { drawerVideo.currentTime = 0; } catch (e) {}
                                 drawerVideo.play().catch(() => {});
                             }
                         }
-                    }).catch(err => {
-                        console.warn('play failed:', err);
-                        isPlaying = false;
-                        updatePlayPauseIcon();
-                        updateTrackCardVisuals();
-                    });
+                    }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
                 } else {
                     updatePlayPauseIcon();
                     updateTrackCardVisuals();
@@ -1848,27 +1975,22 @@
 
             function playNext() {
                 if (tracks.length === 0) return;
-                const nextIndex = (activeTrackIndex + 1) % tracks.length;
-                playTrack(nextIndex, true);
+                playTrack((activeTrackIndex + 1) % tracks.length, true);
             }
 
             function playPrev() {
                 if (tracks.length === 0) return;
-                const prevIndex = (activeTrackIndex - 1 + tracks.length) % tracks.length;
-                playTrack(prevIndex, true);
+                playTrack((activeTrackIndex - 1 + tracks.length) % tracks.length, true);
             }
 
-            // audio events
             audioEl.addEventListener('timeupdate', () => {
                 if (activeTrackIndex < 0) return;
                 const t = tracks[activeTrackIndex];
                 if (t.videoId && videoEl.src) {
-                    const target = audioEl.currentTime;
-                    if (Math.abs(videoEl.currentTime - target) > 0.15) {
-                        try { videoEl.currentTime = target; } catch (e) {}
+                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.15) {
+                        try { videoEl.currentTime = audioEl.currentTime; } catch (e) {}
                     }
                 }
-                // sync drawer video too
                 if (drawerVideo.style.display !== 'none' && drawerVideo.src && t.videoId) {
                     if (Math.abs(drawerVideo.currentTime - audioEl.currentTime) > 0.2) {
                         try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
@@ -1876,9 +1998,7 @@
                 }
                 const dur = audioEl.duration || t.duration || 0;
                 currentTimeEl.textContent = formatTime(audioEl.currentTime);
-                if (dur) {
-                    timelineFill.style.width = Math.min(100, (audioEl.currentTime / dur) * 100) + '%';
-                }
+                if (dur) timelineFill.style.width = Math.min(100, (audioEl.currentTime / dur) * 100) + '%';
                 updateMiniTimelines();
             });
 
@@ -1918,7 +2038,6 @@
                 if (tracks.length > 0) playNext();
             });
 
-            // player controls
             playPauseBtn.addEventListener('click', () => {
                 if (activeTrackIndex < 0) {
                     if (tracks.length > 0) playTrack(0, true);
@@ -1929,37 +2048,46 @@
             prevBtn.addEventListener('click', () => playPrev());
             nextBtn.addEventListener('click', () => playNext());
 
-            timelineTrack.addEventListener('click', (e) => {
+            // Timeline scrubbing - support touch and mouse
+            function handleTimelineSeek(clientX) {
                 if (activeTrackIndex < 0) return;
                 const t = tracks[activeTrackIndex];
                 const dur = audioEl.duration || t.duration || 0;
                 if (!dur) return;
                 const rect = timelineTrack.getBoundingClientRect();
-                const x = e.clientX - rect.left;
+                const x = clientX - rect.left;
                 const percent = Math.max(0, Math.min(1, x / rect.width));
                 const newTime = percent * dur;
                 if (audioEl.src) audioEl.currentTime = newTime;
-                if (t.videoId && videoEl.src) {
-                    try { videoEl.currentTime = newTime; } catch (e) {}
-                }
+                if (t.videoId && videoEl.src) { try { videoEl.currentTime = newTime; } catch (e) {} }
                 if (drawerVideo.style.display !== 'none' && drawerVideo.src && t.videoId) {
                     try { drawerVideo.currentTime = newTime; } catch (e) {}
                 }
                 currentTimeEl.textContent = formatTime(newTime);
                 timelineFill.style.width = (percent * 100) + '%';
                 updateMiniTimelines();
-            });
+            }
 
-            // FIX: video toggle button now uses async getVideoUrlForTrack and keeps state
-            // even after the track loops or re-renders.
+            timelineTrack.addEventListener('click', (e) => handleTimelineSeek(e.clientX));
+
+            // Touch support for timeline
+            let isTimelineDragging = false;
+            timelineTrack.addEventListener('touchstart', (e) => {
+                isTimelineDragging = true;
+                if (e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
+            }, { passive: true });
+            timelineTrack.addEventListener('touchmove', (e) => {
+                if (isTimelineDragging && e.touches[0]) {
+                    handleTimelineSeek(e.touches[0].clientX);
+                }
+            }, { passive: true });
+            timelineTrack.addEventListener('touchend', () => { isTimelineDragging = false; });
+
             videoToggleBtn.addEventListener('click', async () => {
                 if (activeTrackIndex < 0) return;
                 const t = tracks[activeTrackIndex];
-                if (!t.videoId) {
-                    showToast('У этого трека нет клипа');
-                    return;
-                }
-                // if drawer is open showing this track's video -> hide it
+                if (!t.videoId) { showToast('У этого трека нет клипа'); return; }
+
                 if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
                     drawerVideo.pause();
                     drawerVideo.style.display = 'none';
@@ -1970,14 +2098,8 @@
                     updatePlayerInfo();
                     return;
                 }
-                // otherwise open drawer & show video
-                if (currentDetailIndex !== activeTrackIndex) {
-                    openDrawer(activeTrackIndex);
-                } else {
-                    // drawer already open but video hidden — refresh to show
-                    await refreshDrawer(activeTrackIndex);
-                }
-                // after refresh, force show
+                if (currentDetailIndex !== activeTrackIndex) openDrawer(activeTrackIndex);
+                else await refreshDrawer(activeTrackIndex);
                 setTimeout(async () => {
                     const url = await getVideoUrlForTrack(t);
                     if (url) {
@@ -2038,16 +2160,14 @@
                 document.querySelectorAll('.track-cover').forEach(cover => {
                     cover.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const idx = parseInt(cover.dataset.playIndex, 10);
-                        playTrack(idx, true);
+                        playTrack(parseInt(cover.dataset.playIndex, 10), true);
                     });
                 });
 
                 document.querySelectorAll('.track-title').forEach(titleEl => {
                     titleEl.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const idx = parseInt(titleEl.dataset.detailIndex, 10);
-                        openDrawer(idx);
+                        openDrawer(parseInt(titleEl.dataset.detailIndex, 10));
                     });
                 });
 
@@ -2111,16 +2231,14 @@
                 document.querySelectorAll('.playlist-chip').forEach(chip => {
                     chip.addEventListener('click', () => {
                         const name = chip.dataset.playlistName;
-                        if (expandedPlaylist === name) expandedPlaylist = null;
-                        else expandedPlaylist = name;
+                        expandedPlaylist = (expandedPlaylist === name) ? null : name;
                         renderPlaylists();
                     });
                 });
 
                 document.querySelectorAll('.playlist-track-row').forEach(row => {
                     row.addEventListener('click', () => {
-                        const idx = parseInt(row.dataset.trackIdx, 10);
-                        playTrack(idx, true);
+                        playTrack(parseInt(row.dataset.trackIdx, 10), true);
                     });
                 });
 
@@ -2151,10 +2269,7 @@
 
                 createBtn.addEventListener('click', createPlaylist);
                 nameInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        createPlaylist();
-                    }
+                    if (e.key === 'Enter') { e.preventDefault(); createPlaylist(); }
                 });
                 nameInput.focus();
             }
@@ -2174,10 +2289,7 @@
                     if (url) {
                         drawerCover.querySelector('.material-icons').style.display = 'none';
                         drawerVideo.style.display = 'block';
-                        if (drawerVideo.src !== url) {
-                            drawerVideo.src = url;
-                            drawerVideo.load();
-                        }
+                        if (drawerVideo.src !== url) { drawerVideo.src = url; drawerVideo.load(); }
                         drawerVideo.muted = true;
                         try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
                         if (isPlaying) drawerVideo.play().catch(() => {});
@@ -2238,7 +2350,6 @@
                 detailsDrawer.classList.remove('open');
                 drawerOverlay.classList.remove('open');
                 currentDetailIndex = -1;
-                // pause drawer video but keep src for fast re-open
                 if (drawerVideo.style.display !== 'none') drawerVideo.pause();
             }
 
@@ -2252,13 +2363,11 @@
                 e.preventDefault();
                 e.stopPropagation();
                 const field = editBtn.dataset.edit;
-                if (!field) return;
-                if (currentDetailIndex < 0 || currentDetailIndex >= tracks.length) return;
+                if (!field || currentDetailIndex < 0) return;
                 const t = tracks[currentDetailIndex];
                 const currentVal = t[field] || '';
 
-                const fieldEl = field === 'title' ? detailTitle :
-                                field === 'artist' ? detailArtist : detailAlbum;
+                const fieldEl = field === 'title' ? detailTitle : field === 'artist' ? detailArtist : detailAlbum;
 
                 fieldEl.innerHTML = `
                     <input type="text" class="edit-input" value="${String(currentVal).replace(/"/g, '&quot;')}">
@@ -2291,7 +2400,6 @@
                 });
             });
 
-            // video upload in drawer
             uploadVideoBtn.addEventListener('click', () => videoFileInput.click());
 
             videoFileInput.addEventListener('change', async (e) => {
@@ -2312,9 +2420,7 @@
                 showToast('Сохранение клипа...');
                 const result = await saveVideoBlob(videoId, file);
                 if (!result.ok) {
-                    showToast(result.reason === 'too_large'
-                        ? `Клип слишком большой (макс. ${MAX_VIDEO_SIZE_MB} МБ)`
-                        : 'Не удалось сохранить клип');
+                    showToast(result.reason === 'too_large' ? `Клип слишком большой` : 'Не удалось сохранить');
                     videoFileInput.value = '';
                     return;
                 }
@@ -2341,22 +2447,16 @@
                 const files = Array.from(e.target.files || []);
                 if (files.length === 0) return;
 
-                let added = 0;
-                let failed = 0;
-
+                let added = 0, failed = 0;
                 for (const file of files) {
-                    if (!file.type.startsWith('audio/')) {
-                        showToast('Пропущен не-аудио файл: ' + file.name);
-                        failed++;
-                        continue;
-                    }
+                    if (!file.type.startsWith('audio/')) { showToast('Пропущен: ' + file.name); failed++; continue; }
                     const audioId = uid('a');
                     const saved = await saveAudioBlob(audioId, file);
                     if (!saved) { failed++; continue; }
                     const url = URL.createObjectURL(file);
                     objectUrls[audioId] = url;
                     const meta = await readMetadata(file, url);
-                    const track = {
+                    tracks.push({
                         id: uid('t'),
                         title: meta.title,
                         artist: meta.artist,
@@ -2367,8 +2467,7 @@
                         audioId: audioId,
                         videoId: null,
                         videoMime: null,
-                    };
-                    tracks.push(track);
+                    });
                     added++;
                 }
 
@@ -2396,20 +2495,14 @@
                     const done = (meta) => {
                         if (!meta.duration || meta.duration <= 0) {
                             const finish = () => {
-                                if (isFinite(tempAudio.duration) && tempAudio.duration > 0) {
-                                    meta.duration = tempAudio.duration;
-                                }
+                                if (isFinite(tempAudio.duration) && tempAudio.duration > 0) meta.duration = tempAudio.duration;
                                 tempAudio.src = '';
                                 resolve(meta);
                             };
                             tempAudio.addEventListener('loadedmetadata', finish, { once: true });
                             tempAudio.addEventListener('error', () => { tempAudio.src = ''; resolve(meta); }, { once: true });
-                            setTimeout(() => {
-                                if (!meta.duration) resolve(meta);
-                            }, 2000);
-                        } else {
-                            resolve(meta);
-                        }
+                            setTimeout(() => { if (!meta.duration) resolve(meta); }, 2000);
+                        } else resolve(meta);
                     };
 
                     if (window.jsmediatags) {
@@ -2417,32 +2510,26 @@
                             window.jsmediatags.read(file, {
                                 onSuccess: (tag) => {
                                     const tags = tag.tags || {};
-                                    const meta = {
+                                    done({
                                         title: tags.title || fallback.title,
                                         artist: tags.artist || fallback.artist,
                                         album: tags.album || fallback.album,
                                         duration: 0,
-                                        format: (tags.format || '').includes('MP3') ? 'MP3' :
-                                                file.type.split('/')[1]?.toUpperCase() || '—',
-                                    };
-                                    done(meta);
+                                        format: (tags.format || '').includes('MP3') ? 'MP3' : file.type.split('/')[1]?.toUpperCase() || '—',
+                                    });
                                 },
                                 onError: () => done(fallback),
                             });
-                        } catch (err) {
-                            done(fallback);
-                        }
+                        } catch (err) { done(fallback); }
                     } else {
                         tempAudio.addEventListener('loadedmetadata', () => {
                             if (isFinite(tempAudio.duration)) fallback.duration = tempAudio.duration;
                         }, { once: true });
-                        tempAudio.addEventListener('error', () => {}, { once: true });
                         done(fallback);
                     }
                 });
             }
 
-            // Load jsmediatags
             (function loadJsmediatags() {
                 const script = document.createElement('script');
                 script.src = 'https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js';
@@ -2452,6 +2539,14 @@
             })();
 
             // ---------- NAVIGATION ----------
+            function updateNavButtons(view) {
+                libraryBtn.classList.toggle('active', view === 'library');
+                playlistsBtn.classList.toggle('active', view === 'playlists');
+                if (mobileLibraryBtn) mobileLibraryBtn.classList.toggle('active', view === 'library');
+                if (mobilePlaylistsBtn) mobilePlaylistsBtn.classList.toggle('active', view === 'playlists');
+                if (mobileSettingsBtn) mobileSettingsBtn.classList.remove('active');
+            }
+
             function showSettings() {
                 pageTitle.textContent = 'Настройки';
                 settingsPanel.classList.add('visible');
@@ -2460,6 +2555,9 @@
                 headerActions.style.display = 'none';
                 libraryBtn.classList.remove('active');
                 playlistsBtn.classList.remove('active');
+                if (mobileLibraryBtn) mobileLibraryBtn.classList.remove('active');
+                if (mobilePlaylistsBtn) mobilePlaylistsBtn.classList.remove('active');
+                if (mobileSettingsBtn) mobileSettingsBtn.classList.add('active');
                 updateStorageInfo();
             }
 
@@ -2469,28 +2567,30 @@
                 settingsVisible = false;
                 expandedPlaylist = null;
                 if (view === 'library') {
-                    libraryBtn.classList.add('active');
-                    playlistsBtn.classList.remove('active');
+                    updateNavButtons('library');
                     renderLibrary();
                 } else {
-                    playlistsBtn.classList.add('active');
-                    libraryBtn.classList.remove('active');
+                    updateNavButtons('playlists');
                     renderPlaylists();
                 }
             }
 
             libraryBtn.addEventListener('click', () => goToView('library'));
             playlistsBtn.addEventListener('click', () => goToView('playlists'));
-
             settingsBtn.addEventListener('click', () => {
                 if (settingsVisible) goToView(currentView);
                 else showSettings();
             });
 
+            if (mobileLibraryBtn) mobileLibraryBtn.addEventListener('click', () => goToView('library'));
+            if (mobilePlaylistsBtn) mobilePlaylistsBtn.addEventListener('click', () => goToView('playlists'));
+            if (mobileSettingsBtn) mobileSettingsBtn.addEventListener('click', () => {
+                if (settingsVisible) goToView(currentView);
+                else showSettings();
+            });
+
             clearStorageBtn.addEventListener('click', () => {
-                if (confirm('Удалить все сохранённые треки, клипы и плейлисты?')) {
-                    clearAllStorage();
-                }
+                if (confirm('Удалить все сохранённые треки, клипы и плейлисты?')) clearAllStorage();
             });
 
             // ---------- THEME / COLORS ----------
@@ -2527,17 +2627,13 @@
             bgColorPicker.addEventListener('input', (e) => {
                 const color = e.target.value;
                 function adjustBrightness(hex, percent) {
-                    let r = parseInt(hex.slice(1,3), 16);
-                    let g = parseInt(hex.slice(3,5), 16);
-                    let b = parseInt(hex.slice(5,7), 16);
+                    let r = parseInt(hex.slice(1,3), 16), g = parseInt(hex.slice(3,5), 16), b = parseInt(hex.slice(5,7), 16);
                     r = Math.min(255, Math.max(0, r + percent));
                     g = Math.min(255, Math.max(0, g + percent));
                     b = Math.min(255, Math.max(0, b + percent));
                     return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
                 }
-                const r = parseInt(color.slice(1,3), 16);
-                const g = parseInt(color.slice(3,5), 16);
-                const b = parseInt(color.slice(5,7), 16);
+                const r = parseInt(color.slice(1,3), 16), g = parseInt(color.slice(3,5), 16), b = parseInt(color.slice(5,7), 16);
                 const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
                 let secondary, elevated, border, textPrimary, textSecondary;
                 if (luminance < 0.5) {
@@ -2579,7 +2675,6 @@
                 document.body.appendChild(overlay);
 
                 await openVideoDB().catch(() => {});
-
                 const loaded = await loadState();
                 if (loaded) {
                     tracks.forEach(t => {
@@ -2594,11 +2689,13 @@
                 updateStorageInfo();
 
                 overlay.remove();
-                if (loaded && tracks.length > 0) {
-                    showToast(`MzMusic: загружено ${tracks.length} треков`);
-                }
+                if (loaded && tracks.length > 0) showToast(`MzMusic: загружено ${tracks.length} треков`);
             })();
 
+            // Prevent double-tap zoom on iOS (for controls)
+            document.querySelectorAll('.player-ctrl-btn, .nav-btn, .mobile-nav-btn, .settings-btn, .cover-play, .timeline-track').forEach(el => {
+                el.addEventListener('touchstart', () => {}, { passive: true });
+            });
         })();
     </script>
 </body>
