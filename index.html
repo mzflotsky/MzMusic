@@ -66,7 +66,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 32px;
+            gap: 20px;
             width: 100%;
         }
 
@@ -79,6 +79,7 @@
             line-height: 1.1;
             padding: 0 4px;
             user-select: none;
+            margin-bottom: 4px;
         }
 
         .brand span { color: var(--text-primary); }
@@ -657,6 +658,266 @@
             text-overflow: ellipsis;
             max-width: 40%;
         }
+
+        /* ========== URL IMPORT PANEL ========== */
+        .url-import-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: var(--bg-secondary);
+            padding: 26px;
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-light);
+            max-width: 720px;
+        }
+
+        .url-import-panel h2 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+
+        .url-import-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .url-input-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            border-radius: 40px;
+            padding: 4px 4px 4px 20px;
+            transition: border-color 0.2s;
+        }
+
+        .url-input-row:focus-within { border-color: var(--accent); }
+
+        .url-input-row input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            padding: 14px 4px;
+            outline: none;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .url-input-row input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+
+        .url-fetch-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+
+        .url-fetch-btn:hover { background: var(--accent-soft); }
+        .url-fetch-btn:disabled { opacity: 0.5; cursor: wait; }
+
+        .url-preview-card {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-card);
+            padding: 18px;
+        }
+
+        .url-preview-card.visible { display: flex; }
+
+        .url-preview-top {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .url-preview-thumb {
+            width: 160px;
+            height: 90px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: var(--bg-primary);
+            flex-shrink: 0;
+            border: 1px solid var(--border-light);
+        }
+
+        .url-preview-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .url-preview-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            word-break: break-word;
+            line-height: 1.35;
+        }
+
+        .url-preview-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .url-preview-field input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            padding: 6px 10px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 0;
+            outline: none;
+        }
+
+        .url-preview-field input:focus { border-color: var(--accent); }
+
+        .url-preview-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .url-add-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .url-add-btn:hover { background: var(--accent-soft); }
+        .url-add-btn:disabled { opacity: 0.6; cursor: wait; }
+
+        .url-cancel-btn {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .url-cancel-btn:hover { color: var(--text-primary); }
+
+        .url-progress {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px;
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+        }
+
+        .url-progress.visible { display: flex; }
+
+        .url-progress-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-primary);
+        }
+
+        .url-progress-header .spinner-small {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-light);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .url-progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .url-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .url-progress-log {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            max-height: 120px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.5;
+        }
+
+        .url-error-box {
+            display: none;
+            padding: 14px;
+            background: rgba(255,107,107,0.08);
+            border: 1px solid rgba(255,107,107,0.3);
+            border-radius: 12px;
+            color: #ff8a8a;
+            font-size: 0.8rem;
+            line-height: 1.5;
+        }
+
+        .url-error-box.visible { display: block; }
+
+        .url-info-note {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            background: var(--bg-elevated);
+            padding: 10px 14px;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+            line-height: 1.5;
+        }
+
+        .url-info-note b { color: var(--text-primary); }
 
         .player-bar {
             flex-shrink: 0;
@@ -1591,10 +1852,19 @@
 
             .drawer-close { width: 44px; height: 44px; }
 
-            input, .custom-input-row input, .drawer-field .field-value input { font-size: 16px; }
+            input, .custom-input-row input, .drawer-field .field-value input, .url-input-row input { font-size: 16px; }
             .track-title, .track-artist, .drawer-field .field-value { -webkit-user-select: none; user-select: none; }
 
             .mobile-dropdown { max-height: 70vh; }
+
+            /* URL import panel on mobile */
+            .url-import-panel { padding: 18px; gap: 16px; }
+            .url-input-row { padding: 4px 4px 4px 16px; gap: 6px; }
+            .url-input-row input { padding: 12px 2px; }
+            .url-fetch-btn { padding: 10px 16px; font-size: 0.78rem; }
+            .url-preview-top { flex-direction: column; }
+            .url-preview-thumb { width: 100%; height: 160px; }
+            .url-add-btn, .url-cancel-btn { flex: 1; justify-content: center; }
         }
 
         @media (max-width: 420px) {
@@ -1646,6 +1916,9 @@
             </button>
             <button class="nav-btn" id="playlistsBtn" title="Плейлисты">
                 <span class="material-icons">queue_music</span>
+            </button>
+            <button class="nav-btn" id="linkImportBtn" title="Добавить по ссылке">
+                <span class="material-icons">link</span>
             </button>
         </div>
         <div class="sidebar-bottom">
@@ -1765,6 +2038,10 @@
             <span class="material-icons">queue_music</span>
             <span class="nav-label">Плейлисты</span>
         </button>
+        <button class="mobile-nav-btn" id="mobileLinkBtn">
+            <span class="material-icons">link</span>
+            <span class="nav-label">По ссылке</span>
+        </button>
         <button class="mobile-nav-btn" id="mobileSettingsBtn">
             <span class="material-icons">settings</span>
             <span class="nav-label">Настройки</span>
@@ -1867,12 +2144,12 @@
 
     <script>
         (function() {
-            const LS_KEY = 'mzmusic_data_v3';
+            const LS_KEY = 'mzmusic_data_v4';
             const MAX_VIDEO_SIZE_MB = 200;
             const MAX_AUDIO_SIZE_MB = 100;
             const MAX_COVER_SIZE_MB = 5;
             const DB_NAME = 'MzMusicDB';
-            const DB_VERSION = 4; // bumped for folder handle store
+            const DB_VERSION = 5; // bumped for URL import cache
 
             let tracks = [];
             let playlists = ['Мой плейлист', 'Избранное'];
@@ -1888,7 +2165,6 @@
             let mobileMenuTrackIndex = -1;
             let pendingCoverTrackIndex = -1;
 
-            // Folder handle for File System Access API
             let musicFolderHandle = null;
             let isScanning = false;
             let pickerFiles = [];
@@ -1896,11 +2172,16 @@
             let pickerPreviewIndex = -1;
             let pickerPreviewUrl = null;
 
+            // URL import state
+            let urlPreviewData = null; // { title, artist, thumbnail, videoId, sourceUrl, audioUrl, videoUrl }
+
             const libraryBtn = document.getElementById('libraryBtn');
             const playlistsBtn = document.getElementById('playlistsBtn');
+            const linkImportBtn = document.getElementById('linkImportBtn');
             const settingsBtn = document.getElementById('settingsBtn');
             const mobileLibraryBtn = document.getElementById('mobileLibraryBtn');
             const mobilePlaylistsBtn = document.getElementById('mobilePlaylistsBtn');
+            const mobileLinkBtn = document.getElementById('mobileLinkBtn');
             const mobileSettingsBtn = document.getElementById('mobileSettingsBtn');
 
             const pageTitle = document.getElementById('pageTitle');
@@ -1963,8 +2244,6 @@
             const toastText = document.getElementById('toastText');
 
             const isMobile = () => window.matchMedia('(max-width: 800px)').matches;
-
-            // Check File System Access API support
             const hasFSAccess = 'showDirectoryPicker' in window;
 
             // ========== INDEXED DB ==========
@@ -2059,7 +2338,6 @@
                 if (objectUrls['c_' + id]) { try { URL.revokeObjectURL(objectUrls['c_' + id]); } catch (e) {} delete objectUrls['c_' + id]; }
             }
 
-            // Folder handle persistence
             async function saveFolderHandle(handle) {
                 try { await idbPut('folderHandle', 'music', handle); return true; } catch (e) { return false; }
             }
@@ -2071,7 +2349,11 @@
             }
 
             async function getAudioUrlForTrack(track) {
-                if (!track.audioId) return null;
+                if (!track.audioId) {
+                    // URL-imported tracks store remote audio URL
+                    if (track._remoteAudioUrl) return track._remoteAudioUrl;
+                    return null;
+                }
                 const key = 'a_' + track.audioId;
                 if (objectUrls[key]) return objectUrls[key];
                 const blob = await loadAudioBlob(track.audioId);
@@ -2082,7 +2364,10 @@
             }
 
             async function getVideoUrlForTrack(track) {
-                if (!track.videoId) return null;
+                if (!track.videoId) {
+                    if (track._remoteVideoUrl) return track._remoteVideoUrl;
+                    return null;
+                }
                 const key = 'v_' + track.videoId;
                 if (objectUrls[key]) return objectUrls[key];
                 const blob = await loadVideoBlob(track.videoId);
@@ -2093,7 +2378,10 @@
             }
 
             async function getCoverUrlForTrack(track) {
-                if (!track.coverId) return null;
+                if (!track.coverId) {
+                    if (track._remoteThumbnail) return track._remoteThumbnail;
+                    return null;
+                }
                 const key = 'c_' + track.coverId;
                 if (objectUrls[key]) return objectUrls[key];
                 const blob = await loadCoverBlob(track.coverId);
@@ -2162,10 +2450,14 @@
                         coverId: t.coverId, coverMime: t.coverMime,
                         _originalName: t._originalName, _originalSize: t._originalSize,
                         _lastModified: t._lastModified,
+                        _remoteAudioUrl: t._remoteAudioUrl,
+                        _remoteVideoUrl: t._remoteVideoUrl,
+                        _remoteThumbnail: t._remoteThumbnail,
+                        _sourceUrl: t._sourceUrl,
                     })),
                     playlists: playlists,
                     playlistTrackMap: playlistTrackMap,
-                    version: 3
+                    version: 4
                 };
             }
 
@@ -2174,7 +2466,7 @@
             }
 
             async function loadState() {
-                const raw = localStorage.getItem(LS_KEY) || localStorage.getItem('mzmusic_data_v2') || localStorage.getItem('mzmusic_data_v1');
+                const raw = localStorage.getItem(LS_KEY) || localStorage.getItem('mzmusic_data_v3') || localStorage.getItem('mzmusic_data_v2') || localStorage.getItem('mzmusic_data_v1');
                 if (!raw) return false;
                 try {
                     const data = JSON.parse(raw);
@@ -2195,6 +2487,10 @@
                         _originalName: t._originalName || null,
                         _originalSize: t._originalSize || null,
                         _lastModified: t._lastModified || null,
+                        _remoteAudioUrl: t._remoteAudioUrl || null,
+                        _remoteVideoUrl: t._remoteVideoUrl || null,
+                        _remoteThumbnail: t._remoteThumbnail || null,
+                        _sourceUrl: t._sourceUrl || null,
                     }));
                     playlists = Array.isArray(data.playlists) && data.playlists.length ? data.playlists : ['Мой плейлист', 'Избранное'];
                     playlistTrackMap = data.playlistTrackMap || {};
@@ -2205,8 +2501,6 @@
 
             async function clearAllStorage() {
                 localStorage.removeItem(LS_KEY);
-                localStorage.removeItem('mzmusic_data_v2');
-                localStorage.removeItem('mzmusic_data_v1');
                 await idbClear('audio');
                 await idbClear('videos');
                 await idbClear('covers');
@@ -2298,7 +2592,7 @@
                 if (audioEl.duration && isFinite(audioEl.duration)) {
                     timelineFill.style.width = Math.min(100, (audioEl.currentTime / audioEl.duration) * 100) + '%';
                 }
-                if (t.videoId) {
+                if (t.videoId || t._remoteVideoUrl) {
                     videoToggleBtn.style.opacity = '1';
                     const isShown = drawerVideo.style.display !== 'none' && drawerVideo.src;
                     videoToggleBtn.classList.toggle('active', !!isShown);
@@ -2338,6 +2632,630 @@
                 }
                 return false;
             }
+
+            // ========== URL IMPORT ==========
+            function renderUrlImport() {
+                pageTitle.textContent = 'Добавить по ссылке';
+                settingsPanel.classList.remove('visible');
+                settingsVisible = false;
+                headerActions.style.display = 'none';
+
+                dynamicContent.innerHTML = `
+                    <div class="url-import-panel">
+                        <h2>Импорт из ссылки</h2>
+                        <div class="url-import-desc">
+                            Вставьте ссылку на YouTube-видео или другой видеохостинг. Мы автоматически
+                            извлечём аудио, метаданные (название, исполнитель, обложка) и клип.
+                        </div>
+                        <div class="url-input-row">
+                            <span class="material-icons" style="color:var(--text-secondary); font-size:20px;">link</span>
+                            <input type="url" id="urlInput" placeholder="https://www.youtube.com/watch?v=... или https://youtu.be/..." autocomplete="off">
+                            <button class="url-fetch-btn" id="urlFetchBtn">
+                                <span class="material-icons" style="font-size:16px;">search</span> Получить
+                            </button>
+                        </div>
+                        <div class="url-error-box" id="urlErrorBox"></div>
+                        <div class="url-progress" id="urlProgress">
+                            <div class="url-progress-header">
+                                <div class="spinner-small"></div>
+                                <span id="urlProgressLabel">Обработка...</span>
+                            </div>
+                            <div class="url-progress-bar"><div class="url-progress-fill" id="urlProgressFill"></div></div>
+                            <div class="url-progress-log" id="urlProgressLog"></div>
+                        </div>
+                        <div class="url-preview-card" id="urlPreviewCard">
+                            <div class="url-preview-top">
+                                <img class="url-preview-thumb" id="urlPreviewThumb" alt="" src="">
+                                <div class="url-preview-info">
+                                    <div class="url-preview-title" id="urlPreviewTitle">—</div>
+                                    <div class="url-preview-field">
+                                        <span style="min-width:70px;">Название</span>
+                                        <input type="text" id="urlPreviewTitleInput" placeholder="Название">
+                                    </div>
+                                    <div class="url-preview-field">
+                                        <span style="min-width:70px;">Исполнитель</span>
+                                        <input type="text" id="urlPreviewArtistInput" placeholder="Исполнитель">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="url-preview-actions">
+                                <button class="url-add-btn" id="urlAddBtn">
+                                    <span class="material-icons" style="font-size:16px;">add</span> Добавить в библиотеку
+                                </button>
+                                <button class="url-cancel-btn" id="urlCancelBtn">Отмена</button>
+                            </div>
+                        </div>
+                        <div class="url-info-note">
+                            <b>Примечание:</b> для работы импорта используется публичный API (Cobalt). 
+                            Аудио и клип загружаются напрямую с CDN видео-хостинга. 
+                            Если сервис недоступен, попробуйте другой хостинг или загрузите файл вручную.
+                        </div>
+                    </div>
+                `;
+
+                const urlInput = document.getElementById('urlInput');
+                const fetchBtn = document.getElementById('urlFetchBtn');
+                const errorBox = document.getElementById('urlErrorBox');
+                const progress = document.getElementById('urlProgress');
+                const progressLabel = document.getElementById('urlProgressLabel');
+                const progressFill = document.getElementById('urlProgressFill');
+                const progressLog = document.getElementById('urlProgressLog');
+                const previewCard = document.getElementById('urlPreviewCard');
+                const previewThumb = document.getElementById('urlPreviewThumb');
+                const previewTitle = document.getElementById('urlPreviewTitle');
+                const previewTitleInput = document.getElementById('urlPreviewTitleInput');
+                const previewArtistInput = document.getElementById('urlPreviewArtistInput');
+                const addBtn = document.getElementById('urlAddBtn');
+                const cancelBtn = document.getElementById('urlCancelBtn');
+
+                function showError(msg) {
+                    errorBox.textContent = msg;
+                    errorBox.classList.add('visible');
+                    progress.classList.remove('visible');
+                }
+                function clearError() {
+                    errorBox.classList.remove('visible');
+                }
+                function log(msg) {
+                    progressLog.textContent += msg + '\n';
+                    progressLog.scrollTop = progressLog.scrollHeight;
+                }
+                function setProgress(pct, label) {
+                    progressFill.style.width = pct + '%';
+                    if (label) progressLabel.textContent = label;
+                }
+                function resetPreview() {
+                    urlPreviewData = null;
+                    previewCard.classList.remove('visible');
+                    previewThumb.src = '';
+                    previewTitle.textContent = '—';
+                    previewTitleInput.value = '';
+                    previewArtistInput.value = '';
+                }
+
+                cancelBtn.addEventListener('click', () => {
+                    resetPreview();
+                    progress.classList.remove('visible');
+                });
+
+                fetchBtn.addEventListener('click', async () => {
+                    const url = urlInput.value.trim();
+                    clearError();
+                    resetPreview();
+
+                    if (!url) {
+                        showError('Введите ссылку');
+                        return;
+                    }
+                    if (!/^https?:\/\//i.test(url)) {
+                        showError('Ссылка должна начинаться с http:// или https://');
+                        return;
+                    }
+
+                    fetchBtn.disabled = true;
+                    progress.classList.add('visible');
+                    progressLog.textContent = '';
+                    setProgress(5, 'Получаем информацию о видео...');
+
+                    try {
+                        // Step 1: fetch metadata + stream URLs via Cobalt API
+                        log('Запрос к Cobalt API...');
+                        const res = await fetch('https://api.cobalt.tools/api/json', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                url: url,
+                                vQuality: '720',
+                                isAudioOnly: false,
+                                disableMetadata: false,
+                                filenamePattern: 'classic'
+                            })
+                        });
+
+                        if (!res.ok) {
+                            throw new Error('Cobalt API вернул ошибку ' + res.status);
+                        }
+
+                        const data = await res.json();
+                        log('Ответ получен.');
+
+                        if (data.status === 'error' || data.error) {
+                            throw new Error(data.error?.code || data.text || 'Не удалось обработать ссылку');
+                        }
+
+                        // Cobalt may return picker (multiple streams) or single stream
+                        let streamUrl = null;
+                        let audioUrl = null;
+
+                        if (data.status === 'picker' && Array.isArray(data.picker)) {
+                            // pick highest quality video
+                            const videoPick = data.picker.find(p => p.type === 'video') || data.picker[0];
+                            if (videoPick) {
+                                streamUrl = videoPick.url;
+                            }
+                        } else if (data.url) {
+                            streamUrl = data.url;
+                        } else if (data.tunnel) {
+                            streamUrl = data.tunnel;
+                        }
+
+                        if (!streamUrl) {
+                            throw new Error('Не удалось получить ссылку на медиа');
+                        }
+
+                        setProgress(40, 'Загружаем метаданные...');
+
+                        // Step 2: fetch video page metadata via noembed (title, author, thumbnail)
+                        // noembed.com provides oembed for YouTube and many others
+                        let title = 'Без названия';
+                        let author = 'Неизвестный исполнитель';
+                        let thumbnail = '';
+
+                        try {
+                            log('Запрос метаданных (noembed)...');
+                            const oembedRes = await fetch('https://noembed.com/embed?url=' + encodeURIComponent(url));
+                            if (oembedRes.ok) {
+                                const oembed = await oembedRes.json();
+                                if (oembed.title) title = oembed.title;
+                                if (oembed.author_name) author = oembed.author_name;
+                                if (oembed.thumbnail_url) thumbnail = oembed.thumbnail_url;
+                                log('Метаданные получены: ' + title);
+                            } else {
+                                log('noembed не ответил, используем имя по умолчанию');
+                            }
+                        } catch (e) {
+                            log('Ошибка noembed: ' + e.message);
+                        }
+
+                        // For YouTube, thumbnail can be derived from video ID
+                        if (!thumbnail) {
+                            const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+                            if (ytMatch) {
+                                thumbnail = 'https://i.ytimg.com/vi/' + ytMatch[1] + '/hqdefault.jpg';
+                            }
+                        }
+
+                        setProgress(70, 'Готово. Проверьте данные.');
+
+                        urlPreviewData = {
+                            title: title,
+                            artist: author,
+                            thumbnail: thumbnail,
+                            streamUrl: streamUrl,       // silent video stream URL (or combined)
+                            sourceUrl: url
+                        };
+
+                        previewThumb.src = thumbnail || '';
+                        previewTitle.textContent = title;
+                        previewTitleInput.value = title;
+                        previewArtistInput.value = author;
+                        previewCard.classList.add('visible');
+                        setProgress(100, 'Готово');
+                        setTimeout(() => progress.classList.remove('visible'), 800);
+
+                    } catch (err) {
+                        console.error(err);
+                        showError('Ошибка: ' + (err.message || 'не удалось получить медиа. Попробуйте другую ссылку.'));
+                    } finally {
+                        fetchBtn.disabled = false;
+                    }
+                });
+
+                addBtn.addEventListener('click', async () => {
+                    if (!urlPreviewData) {
+                        showError('Сначала получите данные');
+                        return;
+                    }
+                    addBtn.disabled = true;
+                    const finalTitle = previewTitleInput.value.trim() || urlPreviewData.title || 'Без названия';
+                    const finalArtist = previewArtistInput.value.trim() || urlPreviewData.artist || 'Неизвестный исполнитель';
+
+                    try {
+                        progress.classList.add('visible');
+                        progressLog.textContent = '';
+                        setProgress(10, 'Загружаем аудио...');
+
+                        // Since Cobalt may return combined video+audio, we try to extract audio by
+                        // downloading the stream as a blob and treating it as audio. 
+                        // If the stream is video-only, audio might not be present — in that case we
+                        // still use the video file as the "audio" source (browsers can play audio from mp4).
+                        log('Скачиваем медиа-поток...');
+                        const res = await fetch(urlPreviewData.streamUrl, { mode: 'cors' });
+                        if (!res.ok) throw new Error('Не удалось скачать медиа');
+                        const blob = await res.blob();
+                        log('Скачано ' + (blob.size / (1024*1024)).toFixed(1) + ' МБ');
+
+                        if (blob.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) {
+                            throw new Error(`Файл слишком большой (макс. ${MAX_AUDIO_SIZE_MB} МБ)`);
+                        }
+
+                        setProgress(45, 'Сохраняем аудио...');
+                        const audioId = uid('a');
+                        const audioSaved = await saveAudioBlob(audioId, blob);
+                        if (!audioSaved) throw new Error('Не удалось сохранить аудио');
+                        const audioObjectUrl = URL.createObjectURL(blob);
+                        objectUrls['a_' + audioId] = audioObjectUrl;
+
+                        setProgress(65, 'Читаем длительность...');
+                        const meta = await readMetadataFromUrl(audioObjectUrl);
+
+                        // Try to also save the video clip (same blob if stream is combined,
+                        // or we save the same blob again if separate video URL not available)
+                        let videoId = null;
+                        setProgress(80, 'Сохраняем клип...');
+                        try {
+                            const videoSaved = await saveVideoBlob(uid('v'), blob);
+                            // Only save if under limit
+                            if (videoSaved.ok) {
+                                videoId = audioId + '_v'; // marker
+                                // Actually save with proper id:
+                                // We need a proper video id
+                            }
+                        } catch (e) {}
+
+                        // Simpler: save the same blob as video if under video limit
+                        let finalVideoId = null;
+                        if (blob.size <= MAX_VIDEO_SIZE_MB * 1024 * 1024) {
+                            const vid = uid('v');
+                            const vSave = await saveVideoBlob(vid, blob);
+                            if (vSave.ok) {
+                                finalVideoId = vid;
+                                const vObjectUrl = URL.createObjectURL(blob);
+                                objectUrls['v_' + vid] = vObjectUrl;
+                            }
+                        }
+
+                        setProgress(90, 'Сохраняем метаданные...');
+
+                        // Save cover/thumbnail if present
+                        let coverId = null;
+                        if (urlPreviewData.thumbnail) {
+                            try {
+                                const thumbRes = await fetch(urlPreviewData.thumbnail, { mode: 'cors' });
+                                if (thumbRes.ok) {
+                                    const thumbBlob = await thumbRes.blob();
+                                    if (thumbBlob.size <= MAX_COVER_SIZE_MB * 1024 * 1024) {
+                                        coverId = uid('c');
+                                        const cSave = await saveCoverBlob(coverId, thumbBlob);
+                                        if (cSave.ok) {
+                                            const cObjUrl = URL.createObjectURL(thumbBlob);
+                                            objectUrls['c_' + coverId] = cObjUrl;
+                                        } else {
+                                            coverId = null;
+                                        }
+                                    }
+                                }
+                            } catch (e) {
+                                console.warn('Thumbnail download failed:', e);
+                            }
+                        }
+
+                        const track = {
+                            id: uid('t'),
+                            title: finalTitle,
+                            artist: finalArtist,
+                            album: '—',
+                            duration: meta.duration || 0,
+                            format: (blob.type.split('/')[1] || 'MP4').toUpperCase(),
+                            mime: blob.type || 'audio/mp4',
+                            audioId: audioId,
+                            videoId: finalVideoId,
+                            videoMime: blob.type || 'video/mp4',
+                            coverId: coverId,
+                            coverMime: 'image/jpeg',
+                            _sourceUrl: urlPreviewData.sourceUrl,
+                            _remoteThumbnail: urlPreviewData.thumbnail || null,
+                        };
+
+                        tracks.push(track);
+                        persistState();
+
+                        setProgress(100, 'Добавлено!');
+                        showToast('Трек добавлен: ' + finalTitle);
+
+                        // Reset and go to library
+                        resetPreview();
+                        setTimeout(() => {
+                            goToView('library');
+                            progress.classList.remove('visible');
+                        }, 600);
+
+                    } catch (err) {
+                        console.error(err);
+                        showError('Ошибка добавления: ' + (err.message || 'неизвестная'));
+                    } finally {
+                        addBtn.disabled = false;
+                    }
+                });
+            }
+
+            function readMetadataFromUrl(url) {
+                return new Promise((resolve) => {
+                    const tempAudio = new Audio();
+                    tempAudio.preload = 'metadata';
+                    tempAudio.src = url;
+                    const finish = () => {
+                        const duration = (isFinite(tempAudio.duration) && tempAudio.duration > 0) ? tempAudio.duration : 0;
+                        tempAudio.src = '';
+                        resolve({ duration });
+                    };
+                    tempAudio.addEventListener('loadedmetadata', finish, { once: true });
+                    tempAudio.addEventListener('error', finish, { once: true });
+                    setTimeout(() => {
+                        if (!tempAudio.duration) resolve({ duration: 0 });
+                    }, 2500);
+                });
+            }
+
+            // ========== PLAYBACK ==========
+            async function playTrack(index, autoPlay = true) {
+                if (index < 0 || index >= tracks.length) return;
+                const track = tracks[index];
+                const audioUrl = await getAudioUrlForTrack(track);
+                if (!audioUrl) { showToast('Аудиофайл не найден'); return; }
+
+                if (activeTrackIndex === index) {
+                    if (autoPlay) {
+                        if (isPlaying) { audioEl.pause(); isPlaying = false; }
+                        else {
+                            audioEl.play().then(() => {
+                                isPlaying = true;
+                                updatePlayPauseIcon();
+                                updateTrackCardVisuals();
+                                if (track.videoId || track._remoteVideoUrl) {
+                                    hardSyncVideo();
+                                    if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                                        drawerVideo.play().catch(() => {});
+                                    }
+                                }
+                            }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
+                        }
+                    }
+                    updateTrackCardVisuals();
+                    updatePlayerInfo();
+                    return;
+                }
+
+                activeTrackIndex = index;
+                isPlaying = false;
+                audioEl.src = audioUrl;
+                audioEl.load();
+
+                nowTitle.textContent = track.title;
+                nowArtist.textContent = track.artist;
+                totalTimeEl.textContent = formatTime(track.duration || 0);
+                currentTimeEl.textContent = '0:00';
+                timelineFill.style.width = '0%';
+
+                const videoUrl = await getVideoUrlForTrack(track);
+                if (videoUrl) { videoEl.src = videoUrl; videoEl.load(); videoEl.muted = true; }
+                else { videoEl.removeAttribute('src'); videoEl.load(); }
+
+                if (currentDetailIndex === index) refreshDrawer(index);
+
+                if (autoPlay) {
+                    audioEl.play().then(() => {
+                        isPlaying = true;
+                        updatePlayPauseIcon();
+                        updateTrackCardVisuals();
+                        if (videoUrl) {
+                            videoEl.currentTime = 0;
+                            hardSyncVideo();
+                            if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                                try { drawerVideo.currentTime = 0; } catch (e) {}
+                                drawerVideo.play().catch(() => {});
+                            }
+                        }
+                    }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
+                } else {
+                    updatePlayPauseIcon();
+                    updateTrackCardVisuals();
+                }
+                updatePlayerInfo();
+            }
+
+            function playNext() {
+                if (tracks.length === 0) return;
+                playTrack((activeTrackIndex + 1) % tracks.length, true);
+            }
+
+            function playPrev() {
+                if (tracks.length === 0) return;
+                playTrack((activeTrackIndex - 1 + tracks.length) % tracks.length, true);
+            }
+
+            async function hardSyncVideo() {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId && !t._remoteVideoUrl) return;
+                const url = await getVideoUrlForTrack(t);
+                if (!url) return;
+                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
+                videoEl.muted = true;
+                try {
+                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.05) videoEl.currentTime = audioEl.currentTime;
+                } catch (e) {}
+            }
+
+            async function syncVideoSeek() {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId && !t._remoteVideoUrl) return;
+                const url = await getVideoUrlForTrack(t);
+                if (!url) return;
+                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
+                try { videoEl.currentTime = audioEl.currentTime || 0; } catch (e) {}
+                if (isPlaying) videoEl.play().catch(() => {});
+                else videoEl.pause();
+            }
+
+            audioEl.addEventListener('timeupdate', () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if ((t.videoId || t._remoteVideoUrl) && videoEl.src) {
+                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.15) {
+                        try { videoEl.currentTime = audioEl.currentTime; } catch (e) {}
+                    }
+                }
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src && (t.videoId || t._remoteVideoUrl)) {
+                    if (Math.abs(drawerVideo.currentTime - audioEl.currentTime) > 0.2) {
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                    }
+                }
+                const dur = audioEl.duration || t.duration || 0;
+                currentTimeEl.textContent = formatTime(audioEl.currentTime);
+                if (dur) timelineFill.style.width = Math.min(100, (audioEl.currentTime / dur) * 100) + '%';
+                updateMiniTimelines();
+            });
+
+            audioEl.addEventListener('loadedmetadata', () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (isFinite(audioEl.duration) && audioEl.duration > 0) {
+                    t.duration = audioEl.duration;
+                    totalTimeEl.textContent = formatTime(audioEl.duration);
+                    persistState();
+                }
+            });
+
+            audioEl.addEventListener('play', () => {
+                isPlaying = true;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
+                if (activeTrackIndex >= 0) {
+                    const t = tracks[activeTrackIndex];
+                    if (t.videoId || t._remoteVideoUrl) {
+                        hardSyncVideo();
+                        if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                            try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                            drawerVideo.play().catch(() => {});
+                        }
+                    }
+                }
+            });
+
+            audioEl.addEventListener('pause', () => {
+                isPlaying = false;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
+                videoEl.pause();
+                if (drawerVideo.style.display !== 'none') drawerVideo.pause();
+            });
+
+            audioEl.addEventListener('seeking', syncVideoSeek);
+            audioEl.addEventListener('seeked', syncVideoSeek);
+
+            audioEl.addEventListener('ended', () => {
+                isPlaying = false;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
+                videoEl.pause();
+                if (tracks.length > 0) playNext();
+            });
+
+            playPauseBtn.addEventListener('click', () => {
+                if (activeTrackIndex < 0) {
+                    if (tracks.length > 0) playTrack(0, true);
+                    return;
+                }
+                playTrack(activeTrackIndex, true);
+            });
+            prevBtn.addEventListener('click', () => playPrev());
+            nextBtn.addEventListener('click', () => playNext());
+
+            playerInfo.addEventListener('click', () => {
+                if (activeTrackIndex >= 0) {
+                    openDrawer(activeTrackIndex);
+                } else {
+                    showToast('Ничего не играет');
+                }
+            });
+
+            function handleTimelineSeek(clientX) {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                const dur = audioEl.duration || t.duration || 0;
+                if (!dur) return;
+                const rect = timelineTrack.getBoundingClientRect();
+                const x = clientX - rect.left;
+                const percent = Math.max(0, Math.min(1, x / rect.width));
+                const newTime = percent * dur;
+                if (audioEl.src) audioEl.currentTime = newTime;
+                if ((t.videoId || t._remoteVideoUrl) && videoEl.src) { try { videoEl.currentTime = newTime; } catch (e) {} }
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                    try { drawerVideo.currentTime = newTime; } catch (e) {}
+                }
+                currentTimeEl.textContent = formatTime(newTime);
+                timelineFill.style.width = (percent * 100) + '%';
+                updateMiniTimelines();
+            }
+
+            timelineTrack.addEventListener('click', (e) => handleTimelineSeek(e.clientX));
+
+            let isTimelineDragging = false;
+            timelineTrack.addEventListener('touchstart', (e) => {
+                isTimelineDragging = true;
+                if (e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
+            }, { passive: true });
+            timelineTrack.addEventListener('touchmove', (e) => {
+                if (isTimelineDragging && e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
+            }, { passive: true });
+            timelineTrack.addEventListener('touchend', () => { isTimelineDragging = false; });
+
+            videoToggleBtn.addEventListener('click', async () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId && !t._remoteVideoUrl) { showToast('У этого трека нет клипа'); return; }
+
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                    drawerVideo.pause();
+                    drawerVideo.style.display = 'none';
+                    drawerVideo.removeAttribute('src');
+                    drawerVideo.load();
+                    videoToggleBtn.classList.remove('active');
+                    updatePlayerInfo();
+                    return;
+                }
+                if (currentDetailIndex !== activeTrackIndex) openDrawer(activeTrackIndex);
+                else await refreshDrawer(activeTrackIndex);
+                setTimeout(async () => {
+                    const url = await getVideoUrlForTrack(t);
+                    if (url) {
+                        drawerVideo.src = url;
+                        drawerVideo.style.display = 'block';
+                        drawerVideo.muted = true;
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                        if (isPlaying) drawerVideo.play().catch(() => {});
+                        else drawerVideo.pause();
+                        videoToggleBtn.classList.add('active');
+                        updatePlayerInfo();
+                    }
+                }, 120);
+            });
 
             // ========== FILE SYSTEM ACCESS API — SCAN FOLDER ==========
             async function pickMusicFolder() {
@@ -2422,14 +3340,11 @@
                 for await (const entry of dirHandle.values()) {
                     if (entry.kind === 'file') {
                         const name = entry.name;
-                        const lower = name.toLowerCase();
-                        if (/\.(mp3|m4a|aac|ogg|wav|flac|opus|wma|webm|oga|weba)$/i.test(lower)) {
+                        if (/\.(mp3|m4a|aac|ogg|wav|flac|opus|wma|webm|oga|weba)$/i.test(name)) {
                             try {
                                 const file = await entry.getFile();
-                                // Attach relative path info
                                 file._relativePath = prefix + name;
                                 pickerFiles.push(file);
-                                // Update UI count live
                                 if (pickerFiles.length % 5 === 0) {
                                     musicPickerTitle.textContent = `Сканирование... найдено ${pickerFiles.length}`;
                                 }
@@ -2457,7 +3372,6 @@
                 }
 
                 let html = '';
-                // Show folder info
                 if (musicFolderHandle) {
                     html += `<div class="folder-handle-info">
                         <span class="material-icons">folder</span>
@@ -2502,7 +3416,6 @@
                         togglePreview(idx);
                         return;
                     }
-
                     const addBtn = e.target.closest('[data-add-file-index]');
                     if (addBtn) {
                         e.stopPropagation();
@@ -2510,7 +3423,6 @@
                         addPickerFileToLibrary(idx);
                         return;
                     }
-
                     const fileInfo = e.target.closest('[data-file-select-index]');
                     if (fileInfo) {
                         const idx = parseInt(fileInfo.dataset.fileSelectIndex, 10);
@@ -2526,7 +3438,6 @@
                     return;
                 }
                 stopPreview();
-
                 const file = pickerFiles[index];
                 if (!file) return;
 
@@ -2543,9 +3454,7 @@
                     }
                 });
 
-                pickerPreviewAudio.addEventListener('ended', () => {
-                    stopPreview();
-                });
+                pickerPreviewAudio.addEventListener('ended', () => stopPreview());
 
                 pickerPreviewAudio.play().then(() => {
                     updatePickerPreviewButtons();
@@ -2594,7 +3503,6 @@
                     showToast(`Файл слишком большой (макс. ${MAX_AUDIO_SIZE_MB} МБ)`);
                     return;
                 }
-
                 const isDuplicate = tracks.some(t => t._originalName === file.name && t._originalSize === file.size);
                 if (isDuplicate) {
                     showToast('Этот файл уже добавлен');
@@ -2607,15 +3515,15 @@
 
                 const url = URL.createObjectURL(file);
                 objectUrls['a_' + audioId] = url;
-                const meta = await readMetadata(file, url);
+                const meta = await readMetadataFromUrl(url);
 
                 tracks.push({
                     id: uid('t'),
-                    title: meta.title,
-                    artist: meta.artist,
-                    album: meta.album,
+                    title: file.name.replace(/\.[^.]+$/, ''),
+                    artist: 'Неизвестный исполнитель',
+                    album: '—',
                     duration: meta.duration || 0,
-                    format: meta.format || '—',
+                    format: (file.type.split('/')[1] || '—').toUpperCase(),
                     mime: file.type || 'audio/mpeg',
                     audioId: audioId,
                     videoId: null,
@@ -2630,7 +3538,6 @@
                 persistState();
                 showToast('Добавлено: ' + (file._relativePath || file.name));
 
-                // Update the button visually
                 const addBtn = musicPickerBody.querySelector(`[data-add-file-index="${index}"]`);
                 if (addBtn) {
                     addBtn.classList.add('added');
@@ -2642,7 +3549,6 @@
                 if (currentView === 'library') renderLibrary();
                 else goToView('library');
                 updateStorageInfo();
-
                 if (pickerPreviewIndex === index) stopPreview();
             }
 
@@ -2659,29 +3565,22 @@
             });
 
             musicPickerScanBtn.addEventListener('click', () => {
-                if (musicFolderHandle) {
-                    scanFolderAndShowList();
-                } else {
-                    pickMusicFolder();
-                }
+                if (musicFolderHandle) scanFolderAndShowList();
+                else pickMusicFolder();
             });
 
-            // ========== SCAN BUTTON ==========
             scanFolderBtn.addEventListener('click', () => {
                 if (!hasFSAccess) {
                     showToast('Автосканирование не поддерживается. Выберите файлы вручную.');
                     fileInput.click();
                     return;
                 }
-                if (musicFolderHandle) {
-                    scanFolderAndShowList();
-                } else {
-                    pickMusicFolder();
-                }
+                if (musicFolderHandle) scanFolderAndShowList();
+                else pickMusicFolder();
             });
 
             forgetFolderBtn.addEventListener('click', async () => {
-                if (confirm('Забыть выбранную папку? При следующем сканировании нужно будет снова выбрать папку.')) {
+                if (confirm('Забыть выбранную папку?')) {
                     await removeFolderHandle();
                     musicFolderHandle = null;
                     updateFolderInfo();
@@ -2689,40 +3588,30 @@
                 }
             });
 
-            // ========== UPLOAD BUTTON (manual) ==========
-            uploadBtn.addEventListener('click', () => {
-                fileInput.click();
-            });
+            uploadBtn.addEventListener('click', () => fileInput.click());
 
             fileInput.addEventListener('change', async (e) => {
                 const files = Array.from(e.target.files || []);
                 if (files.length === 0) return;
-
                 let added = 0, failed = 0;
                 for (const file of files) {
                     if (!file.type.startsWith('audio/') && !/\.(mp3|m4a|aac|ogg|wav|flac|opus|wma|webm|oga)$/i.test(file.name)) {
-                        showToast('Пропущен: ' + file.name);
-                        failed++;
-                        continue;
+                        failed++; continue;
                     }
-                    if (file.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) {
-                        showToast(`Файл слишком большой: ${file.name}`);
-                        failed++;
-                        continue;
-                    }
+                    if (file.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) { failed++; continue; }
                     const audioId = uid('a');
                     const saved = await saveAudioBlob(audioId, file);
                     if (!saved) { failed++; continue; }
                     const url = URL.createObjectURL(file);
                     objectUrls['a_' + audioId] = url;
-                    const meta = await readMetadata(file, url);
+                    const meta = await readMetadataFromUrl(url);
                     tracks.push({
                         id: uid('t'),
-                        title: meta.title,
-                        artist: meta.artist,
-                        album: meta.album,
+                        title: file.name.replace(/\.[^.]+$/, ''),
+                        artist: 'Неизвестный исполнитель',
+                        album: '—',
                         duration: meta.duration || 0,
-                        format: meta.format || '—',
+                        format: (file.type.split('/')[1] || '—').toUpperCase(),
                         mime: file.type || 'audio/mpeg',
                         audioId: audioId,
                         videoId: null,
@@ -2735,7 +3624,6 @@
                     });
                     added++;
                 }
-
                 fileInput.value = '';
                 persistState();
                 showToast(`Добавлено: ${added}${failed ? ', ошибок: ' + failed : ''}`);
@@ -2744,316 +3632,11 @@
                 updateStorageInfo();
             });
 
-            function readMetadata(file, url) {
-                return new Promise((resolve) => {
-                    const fallback = {
-                        title: file.name.replace(/\.[^.]+$/, ''),
-                        artist: 'Неизвестный исполнитель',
-                        album: '—',
-                        duration: 0,
-                        format: (file.type.split('/')[1] || '—').toUpperCase(),
-                    };
-
-                    const tempAudio = new Audio();
-                    tempAudio.preload = 'metadata';
-                    tempAudio.src = url;
-
-                    const done = (meta) => {
-                        if (!meta.duration || meta.duration <= 0) {
-                            const finish = () => {
-                                if (isFinite(tempAudio.duration) && tempAudio.duration > 0) meta.duration = tempAudio.duration;
-                                tempAudio.src = '';
-                                resolve(meta);
-                            };
-                            tempAudio.addEventListener('loadedmetadata', finish, { once: true });
-                            tempAudio.addEventListener('error', () => { tempAudio.src = ''; resolve(meta); }, { once: true });
-                            setTimeout(() => { if (!meta.duration) resolve(meta); }, 2000);
-                        } else resolve(meta);
-                    };
-
-                    if (window.jsmediatags) {
-                        try {
-                            window.jsmediatags.read(file, {
-                                onSuccess: (tag) => {
-                                    const tags = tag.tags || {};
-                                    done({
-                                        title: tags.title || fallback.title,
-                                        artist: tags.artist || fallback.artist,
-                                        album: tags.album || fallback.album,
-                                        duration: 0,
-                                        format: (tags.format || '').includes('MP3') ? 'MP3' : fallback.format,
-                                    });
-                                },
-                                onError: () => done(fallback),
-                            });
-                        } catch (err) { done(fallback); }
-                    } else {
-                        tempAudio.addEventListener('loadedmetadata', () => {
-                            if (isFinite(tempAudio.duration)) fallback.duration = tempAudio.duration;
-                        }, { once: true });
-                        done(fallback);
-                    }
-                });
-            }
-
-            (function loadJsmediatags() {
-                const script = document.createElement('script');
-                script.src = 'https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js';
-                script.async = true;
-                script.onerror = () => console.warn('jsmediatags failed to load');
-                document.head.appendChild(script);
-            })();
-
-            // ========== PLAYBACK ==========
-            async function playTrack(index, autoPlay = true) {
-                if (index < 0 || index >= tracks.length) return;
-                const track = tracks[index];
-                const audioUrl = await getAudioUrlForTrack(track);
-                if (!audioUrl) { showToast('Аудиофайл не найден'); return; }
-
-                if (activeTrackIndex === index) {
-                    if (autoPlay) {
-                        if (isPlaying) { audioEl.pause(); isPlaying = false; }
-                        else {
-                            audioEl.play().then(() => {
-                                isPlaying = true;
-                                updatePlayPauseIcon();
-                                updateTrackCardVisuals();
-                                if (track.videoId) {
-                                    hardSyncVideo();
-                                    if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
-                                        drawerVideo.play().catch(() => {});
-                                    }
-                                }
-                            }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
-                        }
-                    }
-                    updateTrackCardVisuals();
-                    updatePlayerInfo();
-                    return;
-                }
-
-                activeTrackIndex = index;
-                isPlaying = false;
-                audioEl.src = audioUrl;
-                audioEl.load();
-
-                nowTitle.textContent = track.title;
-                nowArtist.textContent = track.artist;
-                totalTimeEl.textContent = formatTime(track.duration || 0);
-                currentTimeEl.textContent = '0:00';
-                timelineFill.style.width = '0%';
-
-                const videoUrl = await getVideoUrlForTrack(track);
-                if (videoUrl) { videoEl.src = videoUrl; videoEl.load(); videoEl.muted = true; }
-                else { videoEl.removeAttribute('src'); videoEl.load(); }
-
-                if (currentDetailIndex === index) refreshDrawer(index);
-
-                if (autoPlay) {
-                    audioEl.play().then(() => {
-                        isPlaying = true;
-                        updatePlayPauseIcon();
-                        updateTrackCardVisuals();
-                        if (videoUrl) {
-                            videoEl.currentTime = 0;
-                            hardSyncVideo();
-                            if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                                try { drawerVideo.currentTime = 0; } catch (e) {}
-                                drawerVideo.play().catch(() => {});
-                            }
-                        }
-                    }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
-                } else {
-                    updatePlayPauseIcon();
-                    updateTrackCardVisuals();
-                }
-                updatePlayerInfo();
-            }
-
-            function playNext() {
-                if (tracks.length === 0) return;
-                playTrack((activeTrackIndex + 1) % tracks.length, true);
-            }
-
-            function playPrev() {
-                if (tracks.length === 0) return;
-                playTrack((activeTrackIndex - 1 + tracks.length) % tracks.length, true);
-            }
-
-            async function hardSyncVideo() {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (!t.videoId) return;
-                const url = await getVideoUrlForTrack(t);
-                if (!url) return;
-                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
-                videoEl.muted = true;
-                try {
-                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.05) videoEl.currentTime = audioEl.currentTime;
-                } catch (e) {}
-            }
-
-            async function syncVideoSeek() {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (!t.videoId) return;
-                const url = await getVideoUrlForTrack(t);
-                if (!url) return;
-                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
-                try { videoEl.currentTime = audioEl.currentTime || 0; } catch (e) {}
-                if (isPlaying) videoEl.play().catch(() => {});
-                else videoEl.pause();
-            }
-
-            audioEl.addEventListener('timeupdate', () => {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (t.videoId && videoEl.src) {
-                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.15) {
-                        try { videoEl.currentTime = audioEl.currentTime; } catch (e) {}
-                    }
-                }
-                if (drawerVideo.style.display !== 'none' && drawerVideo.src && t.videoId) {
-                    if (Math.abs(drawerVideo.currentTime - audioEl.currentTime) > 0.2) {
-                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
-                    }
-                }
-                const dur = audioEl.duration || t.duration || 0;
-                currentTimeEl.textContent = formatTime(audioEl.currentTime);
-                if (dur) timelineFill.style.width = Math.min(100, (audioEl.currentTime / dur) * 100) + '%';
-                updateMiniTimelines();
-            });
-
-            audioEl.addEventListener('loadedmetadata', () => {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (isFinite(audioEl.duration) && audioEl.duration > 0) {
-                    t.duration = audioEl.duration;
-                    totalTimeEl.textContent = formatTime(audioEl.duration);
-                    persistState();
-                }
-            });
-
-            audioEl.addEventListener('play', () => {
-                isPlaying = true;
-                updatePlayPauseIcon();
-                updateTrackCardVisuals();
-                if (activeTrackIndex >= 0 && tracks[activeTrackIndex].videoId) {
-                    hardSyncVideo();
-                    if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
-                        drawerVideo.play().catch(() => {});
-                    }
-                }
-            });
-
-            audioEl.addEventListener('pause', () => {
-                isPlaying = false;
-                updatePlayPauseIcon();
-                updateTrackCardVisuals();
-                videoEl.pause();
-                if (drawerVideo.style.display !== 'none') drawerVideo.pause();
-            });
-
-            audioEl.addEventListener('seeking', syncVideoSeek);
-            audioEl.addEventListener('seeked', syncVideoSeek);
-
-            audioEl.addEventListener('ended', () => {
-                isPlaying = false;
-                updatePlayPauseIcon();
-                updateTrackCardVisuals();
-                videoEl.pause();
-                if (tracks.length > 0) playNext();
-            });
-
-            playPauseBtn.addEventListener('click', () => {
-                if (activeTrackIndex < 0) {
-                    if (tracks.length > 0) playTrack(0, true);
-                    return;
-                }
-                playTrack(activeTrackIndex, true);
-            });
-            prevBtn.addEventListener('click', () => playPrev());
-            nextBtn.addEventListener('click', () => playNext());
-
-            playerInfo.addEventListener('click', () => {
-                if (activeTrackIndex >= 0) {
-                    openDrawer(activeTrackIndex);
-                } else {
-                    showToast('Ничего не играет');
-                }
-            });
-
-            function handleTimelineSeek(clientX) {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                const dur = audioEl.duration || t.duration || 0;
-                if (!dur) return;
-                const rect = timelineTrack.getBoundingClientRect();
-                const x = clientX - rect.left;
-                const percent = Math.max(0, Math.min(1, x / rect.width));
-                const newTime = percent * dur;
-                if (audioEl.src) audioEl.currentTime = newTime;
-                if (t.videoId && videoEl.src) { try { videoEl.currentTime = newTime; } catch (e) {} }
-                if (drawerVideo.style.display !== 'none' && drawerVideo.src && t.videoId) {
-                    try { drawerVideo.currentTime = newTime; } catch (e) {}
-                }
-                currentTimeEl.textContent = formatTime(newTime);
-                timelineFill.style.width = (percent * 100) + '%';
-                updateMiniTimelines();
-            }
-
-            timelineTrack.addEventListener('click', (e) => handleTimelineSeek(e.clientX));
-
-            let isTimelineDragging = false;
-            timelineTrack.addEventListener('touchstart', (e) => {
-                isTimelineDragging = true;
-                if (e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
-            }, { passive: true });
-            timelineTrack.addEventListener('touchmove', (e) => {
-                if (isTimelineDragging && e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
-            }, { passive: true });
-            timelineTrack.addEventListener('touchend', () => { isTimelineDragging = false; });
-
-            videoToggleBtn.addEventListener('click', async () => {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (!t.videoId) { showToast('У этого трека нет клипа'); return; }
-
-                if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                    drawerVideo.pause();
-                    drawerVideo.style.display = 'none';
-                    drawerVideo.removeAttribute('src');
-                    drawerVideo.load();
-                    videoToggleBtn.classList.remove('active');
-                    updatePlayerInfo();
-                    return;
-                }
-                if (currentDetailIndex !== activeTrackIndex) openDrawer(activeTrackIndex);
-                else await refreshDrawer(activeTrackIndex);
-                setTimeout(async () => {
-                    const url = await getVideoUrlForTrack(t);
-                    if (url) {
-                        drawerVideo.src = url;
-                        drawerVideo.style.display = 'block';
-                        drawerVideo.muted = true;
-                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
-                        if (isPlaying) drawerVideo.play().catch(() => {});
-                        else drawerVideo.pause();
-                        videoToggleBtn.classList.add('active');
-                        updatePlayerInfo();
-                    }
-                }, 120);
-            });
-
             // ========== MOBILE DROPDOWN ==========
             function buildDropdownContent(trackIndex) {
                 const track = tracks[trackIndex];
                 if (!track) return '';
                 let html = `<div class="mobile-dropdown-title">${track.title}</div>`;
-
                 if (playlists.length > 0) {
                     html += `<div class="dropdown-header">Добавить в плейлист</div>`;
                     playlists.forEach(p => {
@@ -3065,17 +3648,10 @@
                             </button>
                         `;
                     });
-                } else {
-                    html += `<div style="padding:8px 14px; font-size:0.75rem; color:var(--text-secondary);">Нет плейлистов</div>`;
                 }
-
                 html += `<div style="border-top:1px solid var(--border-light); margin:6px 0;"></div>`;
-                html += `<button class="dropdown-item" data-details-index="${trackIndex}">
-                    <span class="material-icons">info</span> Подробнее
-                </button>`;
-                html += `<button class="dropdown-item" data-cover-index="${trackIndex}">
-                    <span class="material-icons">image</span> Загрузить обложку
-                </button>`;
+                html += `<button class="dropdown-item" data-details-index="${trackIndex}"><span class="material-icons">info</span> Подробнее</button>`;
+                html += `<button class="dropdown-item" data-cover-index="${trackIndex}"><span class="material-icons">image</span> Загрузить обложку</button>`;
                 return html;
             }
 
@@ -3098,45 +3674,33 @@
                 const item = e.target.closest('.dropdown-item');
                 if (!item) return;
                 e.stopPropagation();
-
                 if (item.hasAttribute('data-add-playlist')) {
                     const p = item.getAttribute('data-add-playlist');
                     const trackIndex = parseInt(item.dataset.trackIndex, 10);
                     const track = tracks[trackIndex];
                     const already = (playlistTrackMap[p] || []).includes(track.id);
-                    if (already) {
-                        removeTrackFromPlaylist(track.id, p);
-                        showToast('Удалено из «' + p + '»');
-                    } else {
-                        addTrackToPlaylist(track.id, p);
-                        showToast('Добавлено в «' + p + '»');
-                    }
+                    if (already) { removeTrackFromPlaylist(track.id, p); showToast('Удалено из «' + p + '»'); }
+                    else { addTrackToPlaylist(track.id, p); showToast('Добавлено в «' + p + '»'); }
                     mobileDropdownContent.innerHTML = buildDropdownContent(trackIndex);
                     if (currentView === 'library') renderLibrary();
                     if (currentView === 'playlists') renderPlaylists();
                 } else if (item.hasAttribute('data-details-index')) {
-                    const idx = parseInt(item.dataset.detailsIndex, 10);
                     closeMobileDropdown();
-                    openDrawer(idx);
+                    openDrawer(parseInt(item.dataset.detailsIndex, 10));
                 } else if (item.hasAttribute('data-cover-index')) {
-                    const idx = parseInt(item.dataset.coverIndex, 10);
                     closeMobileDropdown();
-                    triggerCoverUpload(idx);
+                    triggerCoverUpload(parseInt(item.dataset.coverIndex, 10));
                 }
             });
 
-            // ========== DESKTOP DROPDOWN ==========
             function closeAllDesktopDropdowns() {
                 document.querySelectorAll('.track-dropdown.open').forEach(d => d.classList.remove('open'));
             }
 
             document.addEventListener('click', (e) => {
-                if (!e.target.closest('.track-dropdown') && !e.target.closest('.track-menu-btn')) {
-                    closeAllDesktopDropdowns();
-                }
+                if (!e.target.closest('.track-dropdown') && !e.target.closest('.track-menu-btn')) closeAllDesktopDropdowns();
             });
 
-            // ========== COVER UPLOAD ==========
             function triggerCoverUpload(trackIndex) {
                 pendingCoverTrackIndex = trackIndex;
                 coverFileInputGlobal.value = '';
@@ -3157,22 +3721,19 @@
                     coverFileInputGlobal.value = '';
                     return;
                 }
-
                 const t = tracks[idx];
                 const coverId = uid('c');
                 const result = await saveCoverBlob(coverId, file);
                 if (!result.ok) {
-                    showToast(result.reason === 'too_large' ? 'Обложка слишком большая' : 'Не удалось сохранить обложку');
+                    showToast('Не удалось сохранить обложку');
                     coverFileInputGlobal.value = '';
                     return;
                 }
                 if (t.coverId) await removeCoverBlob(t.coverId);
                 t.coverId = coverId;
                 t.coverMime = file.type;
-
                 const url = URL.createObjectURL(file);
                 objectUrls['c_' + coverId] = url;
-
                 persistState();
                 showToast('Обложка установлена');
                 if (currentView === 'library') renderLibrary();
@@ -3194,16 +3755,16 @@
                 if (tracks.length === 0) {
                     dynamicContent.innerHTML = `<div style="text-align:center; padding:60px 20px; color:var(--text-secondary); background:var(--bg-secondary); border-radius:var(--radius-card); border:1px dashed var(--border-light);">
                         <span class="material-icons" style="font-size:48px; display:block; margin-bottom:12px;">music_off</span>
-                        Нет треков. Нажмите «Сканировать» чтобы выбрать папку с музыкой или «Вручную» для выбора файлов.
+                        Нет треков. Нажмите «Сканировать» чтобы выбрать папку с музыкой, «Вручную» для выбора файлов или «По ссылке» для импорта из видео.
                     </div>`;
                     return;
                 }
 
                 const coverUrls = {};
                 for (let i = 0; i < tracks.length; i++) {
-                    if (tracks[i].coverId) {
+                    if (tracks[i].coverId || tracks[i]._remoteThumbnail) {
                         const url = await getCoverUrlForTrack(tracks[i]);
-                        if (url) coverUrls[tracks[i].coverId] = url;
+                        if (url) coverUrls[tracks[i].id] = url;
                     }
                 }
 
@@ -3211,7 +3772,7 @@
                 tracks.forEach((track, index) => {
                     const isCurrent = (index === activeTrackIndex);
                     const isPlayingTrack = (index === activeTrackIndex && isPlaying);
-                    const coverUrl = track.coverId ? coverUrls[track.coverId] : null;
+                    const coverUrl = coverUrls[track.id] || null;
 
                     let dropdownItems = `<div class="dropdown-header">Добавить в плейлист</div>`;
                     playlists.forEach(p => {
@@ -3223,24 +3784,15 @@
                             </button>
                         `;
                     });
-                    if (playlists.length === 0) {
-                        dropdownItems += `<div style="padding:8px 14px; font-size:0.7rem; color:var(--text-secondary);">Нет плейлистов</div>`;
-                    }
                     dropdownItems += `<div style="border-top:1px solid var(--border-light); margin:4px 0;"></div>`;
-                    dropdownItems += `
-                        <button class="dropdown-item" data-details-index="${index}">
-                            <span class="material-icons">info</span> Подробнее
-                        </button>
-                    `;
+                    dropdownItems += `<button class="dropdown-item" data-details-index="${index}"><span class="material-icons">info</span> Подробнее</button>`;
 
                     html += `
                         <div class="track-card ${isCurrent ? 'current' : ''} ${isPlayingTrack ? 'playing' : ''}" data-index="${index}">
                             <div class="track-cover ${coverUrl ? 'has-custom' : ''}" data-play-index="${index}">
-                                ${coverUrl ? `<img class="cover-img" src="${coverUrl}" alt="">` : ''}
+                                ${coverUrl ? `<img class="cover-img" src="${coverUrl}" alt="" onerror="this.style.display='none'">` : ''}
                                 <span class="material-icons cover-icon">album</span>
-                                <div class="cover-play" title="${isPlayingTrack ? 'Пауза' : 'Воспроизвести'}">
-                                    <span class="material-icons play-icon"></span>
-                                </div>
+                                <div class="cover-play"><span class="material-icons play-icon"></span></div>
                                 <button class="cover-upload-btn" data-cover-upload-index="${index}" title="Загрузить обложку">
                                     <span class="material-icons">photo_camera</span>
                                 </button>
@@ -3248,16 +3800,15 @@
                             <button class="track-menu-btn" data-menu-index="${index}" title="Опции">
                                 <span class="material-icons">more_vert</span>
                             </button>
-                            <div class="track-dropdown" id="dropdown-${index}">
-                                ${dropdownItems}
-                            </div>
+                            <div class="track-dropdown" id="dropdown-${index}">${dropdownItems}</div>
                             <div class="track-meta">
                                 <span class="track-title" data-detail-index="${index}">${track.title}</span>
                                 <span class="track-artist">${track.artist || 'Неизвестный исполнитель'}</span>
                             </div>
                             <div class="track-footer">
                                 <span class="track-badge">${formatTime(track.duration || 0)}</span>
-                                ${track.videoId ? '<span class="video-badge"><span class="material-icons">videocam</span> клип</span>' : ''}
+                                ${(track.videoId || track._remoteVideoUrl) ? '<span class="video-badge"><span class="material-icons">videocam</span> клип</span>' : ''}
+                                ${track._sourceUrl ? '<span class="track-badge" style="color:var(--accent);">из ссылки</span>' : ''}
                             </div>
                             <div class="mini-timeline"><div class="mini-timeline-fill"></div></div>
                         </div>
@@ -3277,8 +3828,7 @@
                 document.querySelectorAll('.cover-upload-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        const idx = parseInt(btn.dataset.coverUploadIndex, 10);
-                        triggerCoverUpload(idx);
+                        triggerCoverUpload(parseInt(btn.dataset.coverUploadIndex, 10));
                     });
                 });
 
@@ -3294,11 +3844,8 @@
                         e.stopPropagation();
                         const idx = parseInt(btn.dataset.menuIndex, 10);
                         if (isMobile()) {
-                            if (mobileDropdownOverlay.classList.contains('open') && mobileMenuTrackIndex === idx) {
-                                closeMobileDropdown();
-                            } else {
-                                openMobileDropdown(idx);
-                            }
+                            if (mobileDropdownOverlay.classList.contains('open') && mobileMenuTrackIndex === idx) closeMobileDropdown();
+                            else openMobileDropdown(idx);
                         } else {
                             const dropdown = document.getElementById('dropdown-' + idx);
                             const isOpen = dropdown.classList.contains('open');
@@ -3313,26 +3860,19 @@
                         const item = e.target.closest('.dropdown-item');
                         if (!item) return;
                         e.stopPropagation();
-
                         if (item.hasAttribute('data-add-playlist')) {
                             const p = item.getAttribute('data-add-playlist');
                             const trackIndex = parseInt(item.dataset.trackIndex, 10);
                             const track = tracks[trackIndex];
                             const already = (playlistTrackMap[p] || []).includes(track.id);
-                            if (already) {
-                                removeTrackFromPlaylist(track.id, p);
-                                showToast('Удалено из «' + p + '»');
-                            } else {
-                                addTrackToPlaylist(track.id, p);
-                                showToast('Добавлено в «' + p + '»');
-                            }
+                            if (already) { removeTrackFromPlaylist(track.id, p); showToast('Удалено из «' + p + '»'); }
+                            else { addTrackToPlaylist(track.id, p); showToast('Добавлено в «' + p + '»'); }
                             closeAllDesktopDropdowns();
                             if (currentView === 'library') renderLibrary();
                             if (currentView === 'playlists') renderPlaylists();
                         } else if (item.hasAttribute('data-details-index')) {
-                            const idx = parseInt(item.dataset.detailsIndex, 10);
                             closeAllDesktopDropdowns();
-                            openDrawer(idx);
+                            openDrawer(parseInt(item.dataset.detailsIndex, 10));
                         }
                     });
                 });
@@ -3357,7 +3897,6 @@
                         </div>
                         <div class="playlist-chips" id="playlistChips">
                 `;
-
                 playlists.forEach((name) => {
                     const isExpanded = expandedPlaylist === name;
                     html += `
@@ -3367,7 +3906,6 @@
                         </div>
                     `;
                 });
-
                 html += `</div>`;
 
                 if (expandedPlaylist) {
@@ -3390,7 +3928,6 @@
                     }
                     html += `</div>`;
                 }
-
                 html += `</div>`;
                 dynamicContent.innerHTML = html;
 
@@ -3403,40 +3940,24 @@
                 });
 
                 document.querySelectorAll('.playlist-track-row').forEach(row => {
-                    row.addEventListener('click', () => {
-                        playTrack(parseInt(row.dataset.trackIdx, 10), true);
-                    });
+                    row.addEventListener('click', () => playTrack(parseInt(row.dataset.trackIdx, 10), true));
                 });
 
                 const createBtn = document.getElementById('createPlaylistBtn');
                 const nameInput = document.getElementById('playlistNameInput');
-
                 const createPlaylist = () => {
                     if (!nameInput) return;
                     const newName = nameInput.value.trim();
-                    if (newName === '') {
-                        nameInput.style.borderColor = '#ff4d4d';
-                        setTimeout(() => { if (nameInput) nameInput.style.borderColor = ''; }, 1000);
-                        showToast('Введите название');
-                        return;
-                    }
-                    if (playlists.includes(newName)) {
-                        nameInput.style.borderColor = '#ffaa33';
-                        setTimeout(() => { if (nameInput) nameInput.style.borderColor = ''; }, 1000);
-                        showToast('Такой плейлист уже есть');
-                        return;
-                    }
+                    if (newName === '') { nameInput.style.borderColor = '#ff4d4d'; setTimeout(() => { if (nameInput) nameInput.style.borderColor = ''; }, 1000); showToast('Введите название'); return; }
+                    if (playlists.includes(newName)) { nameInput.style.borderColor = '#ffaa33'; setTimeout(() => { if (nameInput) nameInput.style.borderColor = ''; }, 1000); showToast('Такой плейлист уже есть'); return; }
                     playlists.push(newName);
                     playlistTrackMap[newName] = [];
                     persistState();
                     showToast('Плейлист создан');
                     renderPlaylists();
                 };
-
                 createBtn.addEventListener('click', createPlaylist);
-                nameInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') { e.preventDefault(); createPlaylist(); }
-                });
+                nameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); createPlaylist(); } });
                 nameInput.focus();
             }
 
@@ -3449,23 +3970,22 @@
                 detailAlbum.textContent = t.album || '—';
                 detailDuration.textContent = formatTime(t.duration || 0);
                 detailFormat.textContent = t.format || '—';
-
                 const inLists = getPlaylistsForTrack(t.id);
                 detailPlaylists.textContent = inLists.length ? inLists.join(', ') : 'Не добавлен ни в один';
 
-                if (t.coverId) {
-                    const url = await getCoverUrlForTrack(t);
-                    if (url) {
-                        drawerCoverImg.src = url;
-                        drawerCoverImg.style.display = 'block';
-                        drawerCover.querySelector('.material-icons').style.display = 'none';
-                    }
+                const coverUrl = await getCoverUrlForTrack(t);
+                if (coverUrl) {
+                    drawerCoverImg.src = coverUrl;
+                    drawerCoverImg.style.display = 'block';
+                    drawerCoverImg.onerror = () => { drawerCoverImg.style.display = 'none'; drawerCover.querySelector('.material-icons').style.display = ''; };
+                    drawerCover.querySelector('.material-icons').style.display = 'none';
                 } else {
                     drawerCoverImg.style.display = 'none';
                     drawerCover.querySelector('.material-icons').style.display = '';
                 }
 
-                if (t.videoId) {
+                const hasVideo = t.videoId || t._remoteVideoUrl;
+                if (hasVideo) {
                     const url = await getVideoUrlForTrack(t);
                     if (url) {
                         drawerVideo.style.display = 'block';
@@ -3478,16 +3998,17 @@
                         detailVideoContainer.innerHTML = `
                             <div class="video-status">
                                 <span class="material-icons">videocam</span>
-                                Клип загружен
+                                ${t._remoteVideoUrl ? 'Клип из ссылки' : 'Клип загружен'}
                                 <button class="remove-video-btn" id="removeVideoBtn">Удалить</button>
                             </div>
                         `;
                         const removeBtn = document.getElementById('removeVideoBtn');
                         if (removeBtn) {
                             removeBtn.addEventListener('click', async () => {
-                                await removeVideoBlob(t.videoId);
+                                if (t.videoId) await removeVideoBlob(t.videoId);
                                 t.videoId = null;
                                 t.videoMime = null;
+                                t._remoteVideoUrl = null;
                                 videoEl.removeAttribute('src');
                                 videoEl.load();
                                 drawerVideo.removeAttribute('src');
@@ -3502,6 +4023,7 @@
                         }
                     } else {
                         t.videoId = null;
+                        t._remoteVideoUrl = null;
                         persistState();
                         refreshDrawer(index);
                     }
@@ -3536,7 +4058,6 @@
             drawerClose.addEventListener('click', closeDrawer);
             drawerOverlay.addEventListener('click', closeDrawer);
 
-            // ========== EDIT METADATA ==========
             detailsDrawer.addEventListener('click', (e) => {
                 const editBtn = e.target.closest('.edit-btn');
                 if (!editBtn) return;
@@ -3546,7 +4067,6 @@
                 if (!field || currentDetailIndex < 0) return;
                 const t = tracks[currentDetailIndex];
                 const currentVal = t[field] || '';
-
                 const fieldEl = field === 'title' ? detailTitle : field === 'artist' ? detailArtist : detailAlbum;
 
                 fieldEl.innerHTML = `
@@ -3559,7 +4079,6 @@
                 const input = fieldEl.querySelector('.edit-input');
                 input.focus();
                 input.select();
-
                 const save = () => {
                     const newVal = input.value.trim();
                     if (newVal) t[field] = newVal;
@@ -3571,7 +4090,6 @@
                     showToast('Сохранено');
                 };
                 const cancel = () => refreshDrawer(currentDetailIndex);
-
                 fieldEl.querySelector('.save-btn').addEventListener('click', save);
                 fieldEl.querySelector('.cancel-btn').addEventListener('click', cancel);
                 input.addEventListener('keypress', (ev) => {
@@ -3600,13 +4118,14 @@
                 showToast('Сохранение клипа...');
                 const result = await saveVideoBlob(videoId, file);
                 if (!result.ok) {
-                    showToast(result.reason === 'too_large' ? 'Клип слишком большой' : 'Не удалось сохранить');
+                    showToast('Не удалось сохранить клип');
                     videoFileInput.value = '';
                     return;
                 }
                 if (t.videoId) await removeVideoBlob(t.videoId);
                 t.videoId = videoId;
                 t.videoMime = file.type;
+                t._remoteVideoUrl = null;
                 const url = URL.createObjectURL(file);
                 objectUrls['v_' + videoId] = url;
                 videoEl.src = url;
@@ -3625,8 +4144,10 @@
             function updateNavButtons(view) {
                 libraryBtn.classList.toggle('active', view === 'library');
                 playlistsBtn.classList.toggle('active', view === 'playlists');
+                linkImportBtn.classList.toggle('active', view === 'link');
                 if (mobileLibraryBtn) mobileLibraryBtn.classList.toggle('active', view === 'library');
                 if (mobilePlaylistsBtn) mobilePlaylistsBtn.classList.toggle('active', view === 'playlists');
+                if (mobileLinkBtn) mobileLinkBtn.classList.toggle('active', view === 'link');
                 if (mobileSettingsBtn) mobileSettingsBtn.classList.remove('active');
             }
 
@@ -3638,8 +4159,10 @@
                 headerActions.style.display = 'none';
                 libraryBtn.classList.remove('active');
                 playlistsBtn.classList.remove('active');
+                linkImportBtn.classList.remove('active');
                 if (mobileLibraryBtn) mobileLibraryBtn.classList.remove('active');
                 if (mobilePlaylistsBtn) mobilePlaylistsBtn.classList.remove('active');
+                if (mobileLinkBtn) mobileLinkBtn.classList.remove('active');
                 if (mobileSettingsBtn) mobileSettingsBtn.classList.add('active');
                 updateStorageInfo();
                 updateFolderInfo();
@@ -3655,14 +4178,18 @@
                 if (view === 'library') {
                     updateNavButtons('library');
                     renderLibrary();
-                } else {
+                } else if (view === 'playlists') {
                     updateNavButtons('playlists');
                     renderPlaylists();
+                } else if (view === 'link') {
+                    updateNavButtons('link');
+                    renderUrlImport();
                 }
             }
 
             libraryBtn.addEventListener('click', () => goToView('library'));
             playlistsBtn.addEventListener('click', () => goToView('playlists'));
+            linkImportBtn.addEventListener('click', () => goToView('link'));
             settingsBtn.addEventListener('click', () => {
                 if (settingsVisible) goToView(currentView);
                 else showSettings();
@@ -3670,6 +4197,7 @@
 
             if (mobileLibraryBtn) mobileLibraryBtn.addEventListener('click', () => goToView('library'));
             if (mobilePlaylistsBtn) mobilePlaylistsBtn.addEventListener('click', () => goToView('playlists'));
+            if (mobileLinkBtn) mobileLinkBtn.addEventListener('click', () => goToView('link'));
             if (mobileSettingsBtn) mobileSettingsBtn.addEventListener('click', () => {
                 if (settingsVisible) goToView(currentView);
                 else showSettings();
@@ -3759,43 +4287,27 @@
             // ========== INIT ==========
             (async function init() {
                 document.documentElement.style.setProperty('--accent-soft', '#2a5a9e');
-
                 const overlay = document.createElement('div');
                 overlay.className = 'loading-overlay';
                 overlay.innerHTML = `<div class="spinner"></div><span>Загрузка MzMusic...</span>`;
                 document.body.appendChild(overlay);
 
                 try { await openDB(); } catch (e) { console.warn('IDB init failed', e); }
-
-                // Try to restore folder handle
                 try {
                     const handle = await loadFolderHandle();
-                    if (handle) {
-                        musicFolderHandle = handle;
-                        // Check permission (silently)
-                        if (handle.queryPermission) {
-                            const perm = await handle.queryPermission({ mode: 'read' });
-                            if (perm !== 'granted') {
-                                // Keep handle but note permission will be asked on next scan
-                                console.log('Folder handle restored; permission will be requested on scan');
-                            }
-                        }
-                    }
-                } catch (e) { console.warn('Folder handle restore failed', e); }
+                    if (handle) musicFolderHandle = handle;
+                } catch (e) {}
 
                 const loaded = await loadState();
                 if (loaded) {
                     for (const t of tracks) {
                         if (t.audioId) await getAudioUrlForTrack(t);
                         if (t.videoId) await getVideoUrlForTrack(t);
-                        if (t.coverId) await getCoverUrlForTrack(t);
+                        if (t.coverId || t._remoteThumbnail) await getCoverUrlForTrack(t);
                     }
                 }
 
-                // Show scan button as primary if FSAccess supported
-                if (hasFSAccess) {
-                    scanFolderBtn.classList.add('primary-scan');
-                }
+                if (hasFSAccess) scanFolderBtn.classList.add('primary-scan');
 
                 goToView('library');
                 updatePlayPauseIcon();
