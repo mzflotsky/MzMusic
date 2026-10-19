@@ -795,6 +795,16 @@
 
         .drawer-overlay.open { opacity: 1; pointer-events: auto; }
 
+        /*
+           FIX: Details drawer z-index raised to 95 (above player bar z-index 55,
+           above mobile nav z-index 60, above toast z-index 100? — toast is 100, but toast is
+           pointer-events:none and appears briefly. Drawer should be above player and nav.
+           We set drawer z-index to 95 so it's above player (55) and nav (60),
+           but below toast (100) which is fine since toast doesn't block interaction.
+           Also added extra bottom padding so the last button (video upload) is not
+           hidden behind the fixed player bar on mobile. Additionally, since the drawer
+           now overlaps the player bar, the button is guaranteed to be reachable.
+        */
         .details-drawer {
             position: fixed;
             top: 0;
@@ -808,7 +818,7 @@
             box-shadow: -12px 0 30px rgba(0, 0, 0, 0.4);
             transform: translateX(100%);
             transition: transform 0.3s ease;
-            z-index: 50;
+            z-index: 95;
             display: flex;
             flex-direction: column;
             padding: 28px;
@@ -963,11 +973,6 @@
         .drawer-field .field-value .save-btn:hover { background: var(--accent-soft); }
         .drawer-field .field-value .cancel-btn:hover { background: var(--bg-primary); }
 
-        /* Fixed the video upload button visibility — ensure it's always above the player bar.
-           The drawer now has extra bottom padding, but since the player bar is fixed on mobile,
-           the drawer content must account for it. We solve it by ensuring the drawer is a full
-           overlay on mobile with enough bottom padding, AND the upload button is inside a field
-           that scrolls. The key fix: give the drawer more bottom padding and use z-index properly. */
         .upload-video-btn {
             background: var(--bg-elevated);
             border: 1px dashed var(--border-light);
@@ -983,6 +988,8 @@
             gap: 8px;
             transition: var(--transition);
             width: 100%;
+            position: relative;
+            z-index: 1;
         }
 
         .upload-video-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--bg-primary); }
@@ -1031,7 +1038,7 @@
             box-shadow: var(--shadow);
             opacity: 0;
             transition: all 0.3s ease;
-            z-index: 100;
+            z-index: 200;
             font-size: 0.85rem;
             pointer-events: none;
             display: flex;
@@ -1071,7 +1078,7 @@
 
         .mobile-nav { display: none; }
 
-        /* Mobile dropdown overlay (options menu above player) */
+        /* Mobile dropdown overlay */
         .mobile-dropdown-overlay {
             position: fixed;
             inset: 0;
@@ -1353,10 +1360,8 @@
             }
             .cover-upload-btn .material-icons { font-size: 14px; }
 
-            /* Hide attached dropdown on mobile — replaced by bottom overlay */
             .track-dropdown { display: none !important; }
 
-            /* Player bar fixed above bottom nav */
             .player-bar {
                 position: fixed;
                 bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
@@ -1396,11 +1401,12 @@
             .timeline-fill::after { opacity: 1; width: 16px; height: 16px; right: -8px; }
 
             /* 
-               FIX: Drawer on mobile is a full-screen overlay. 
-               We add enough bottom padding so the last fields (including video upload button)
-               are not hidden behind the fixed player bar + mobile nav.
-               Player bar height ≈ 90px, mobile nav = 60px, so total ≈ 150px.
-               We add 170px bottom padding to be safe, plus safe-area.
+               MOBILE DRAWER FIX:
+               The drawer is a full-screen overlay with z-index 95 — above the player bar (55)
+               and above the mobile nav (60). This means the entire drawer, including the
+               video upload button at the bottom, renders on top of everything.
+               We add generous bottom padding so even the last element is comfortably scrollable
+               and never visually obscured by the player bar's shadow.
             */
             .details-drawer {
                 width: 100%;
@@ -1409,14 +1415,14 @@
                 transform: translateY(100%);
                 padding: 20px;
                 padding-top: calc(20px + var(--safe-top));
-                padding-bottom: calc(170px + var(--safe-bottom));
+                padding-bottom: calc(200px + var(--safe-bottom));
                 top: 0;
                 right: 0;
                 left: 0;
                 height: 100vh;
                 height: 100dvh;
                 border-radius: 0;
-                z-index: 70; /* above player (55) and nav (60) */
+                z-index: 95;
             }
 
             .details-drawer.open { transform: translateY(0); }
@@ -1482,7 +1488,7 @@
             }
             .player-timeline { grid-area: timeline; }
             .main { padding-bottom: calc(var(--mobile-nav-height) + 70px + var(--safe-bottom)); }
-            .details-drawer { padding: 16px; gap: 14px; padding-bottom: calc(100px + var(--safe-bottom)); }
+            .details-drawer { padding: 16px; gap: 14px; padding-bottom: calc(120px + var(--safe-bottom)); }
             .drawer-cover { max-width: 140px; }
             .toast { bottom: calc(var(--mobile-nav-height) + 75px + var(--safe-bottom)); }
         }
@@ -1623,7 +1629,7 @@
         </button>
     </nav>
 
-    <!-- MOBILE DROPDOWN OVERLAY (options menu above player) -->
+    <!-- MOBILE DROPDOWN OVERLAY -->
     <div class="mobile-dropdown-overlay" id="mobileDropdownOverlay">
         <div class="mobile-dropdown" id="mobileDropdown">
             <div class="dropdown-handle"></div>
@@ -1715,12 +1721,10 @@
     <audio id="audioEl"></audio>
     <video id="videoEl" muted playsinline preload="metadata" style="position:fixed; width:0; height:0; opacity:0; pointer-events:none;"></video>
 
-    <!-- Global cover upload input -->
     <input type="file" id="coverFileInputGlobal" accept="image/*" hidden>
 
     <script>
         (function() {
-            // ---------- CONSTANTS ----------
             const LS_KEY = 'mzmusic_data_v2';
             const MAX_VIDEO_SIZE_MB = 200;
             const MAX_AUDIO_SIZE_MB = 100;
@@ -1728,7 +1732,6 @@
             const DB_NAME = 'MzMusicDB';
             const DB_VERSION = 3;
 
-            // ---------- STATE ----------
             let tracks = [];
             let playlists = ['Мой плейлист', 'Избранное'];
             let playlistTrackMap = {};
@@ -1743,7 +1746,6 @@
             let mobileMenuTrackIndex = -1;
             let pendingCoverTrackIndex = -1;
 
-            // ---------- DOM ----------
             const libraryBtn = document.getElementById('libraryBtn');
             const playlistsBtn = document.getElementById('playlistsBtn');
             const settingsBtn = document.getElementById('settingsBtn');
@@ -1806,7 +1808,7 @@
 
             const isMobile = () => window.matchMedia('(max-width: 800px)').matches;
 
-            // ---------- INDEXED DB ----------
+            // ========== INDEXED DB ==========
             function openDB() {
                 return new Promise((resolve, reject) => {
                     if (db) return resolve(db);
@@ -1930,7 +1932,7 @@
                 return url;
             }
 
-            // ---------- STORAGE INFO ----------
+            // ========== STORAGE INFO ==========
             async function updateStorageInfo() {
                 try {
                     let audioCount = 0, videoCount = 0, coverCount = 0;
@@ -1968,7 +1970,7 @@
                 } catch (e) { storageUsedEl.textContent = '—'; }
             }
 
-            // ---------- PERSISTENCE ----------
+            // ========== PERSISTENCE ==========
             function serializeData() {
                 return {
                     tracks: tracks.map(t => ({
@@ -2040,7 +2042,7 @@
                 showToast('Данные очищены');
             }
 
-            // ---------- HELPERS ----------
+            // ========== HELPERS ==========
             function formatTime(sec) {
                 if (!isFinite(sec) || sec < 0) return '0:00';
                 const m = Math.floor(sec / 60);
@@ -2145,7 +2147,7 @@
                 return false;
             }
 
-            // ---------- MOBILE DROPDOWN ----------
+            // ========== MOBILE DROPDOWN ==========
             function buildDropdownContent(trackIndex) {
                 const track = tracks[trackIndex];
                 if (!track) return '';
@@ -2222,7 +2224,7 @@
                 }
             });
 
-            // ---------- DESKTOP DROPDOWN ----------
+            // ========== DESKTOP DROPDOWN ==========
             function closeAllDesktopDropdowns() {
                 document.querySelectorAll('.track-dropdown.open').forEach(d => d.classList.remove('open'));
             }
@@ -2233,7 +2235,7 @@
                 }
             });
 
-            // ---------- COVER UPLOAD ----------
+            // ========== COVER UPLOAD ==========
             function triggerCoverUpload(trackIndex) {
                 pendingCoverTrackIndex = trackIndex;
                 coverFileInputGlobal.value = '';
@@ -2280,7 +2282,7 @@
                 pendingCoverTrackIndex = -1;
             });
 
-            // ---------- MUSIC PICKER ----------
+            // ========== MUSIC PICKER ==========
             function openMusicPicker() {
                 if (!isMobile()) {
                     fileInput.click();
@@ -2321,7 +2323,7 @@
                 if (e.target === musicPickerOverlay) closeMusicPicker();
             });
 
-            // ---------- PLAYBACK ----------
+            // ========== PLAYBACK ==========
             async function playTrack(index, autoPlay = true) {
                 if (index < 0 || index >= tracks.length) return;
                 const track = tracks[index];
@@ -2551,7 +2553,7 @@
                 }, 120);
             });
 
-            // ---------- RENDER LIBRARY ----------
+            // ========== RENDER LIBRARY ==========
             async function renderLibrary() {
                 pageTitle.textContent = 'Библиотека';
                 settingsPanel.classList.remove('visible');
@@ -2633,17 +2635,14 @@
                 html += `</div>`;
                 dynamicContent.innerHTML = html;
 
-                // Cover play
                 document.querySelectorAll('.track-cover').forEach(cover => {
                     cover.addEventListener('click', (e) => {
-                        // Don't play if clicking the cover upload button
                         if (e.target.closest('.cover-upload-btn')) return;
                         e.stopPropagation();
                         playTrack(parseInt(cover.dataset.playIndex, 10), true);
                     });
                 });
 
-                // Cover upload button
                 document.querySelectorAll('.cover-upload-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -2652,7 +2651,6 @@
                     });
                 });
 
-                // Title → drawer
                 document.querySelectorAll('.track-title').forEach(titleEl => {
                     titleEl.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -2660,7 +2658,6 @@
                     });
                 });
 
-                // 3-dot menu
                 document.querySelectorAll('.track-menu-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -2680,7 +2677,6 @@
                     });
                 });
 
-                // Desktop dropdown items
                 document.querySelectorAll('.track-dropdown').forEach(dropdown => {
                     dropdown.addEventListener('click', (e) => {
                         const item = e.target.closest('.dropdown-item');
@@ -2713,7 +2709,7 @@
                 updateMiniTimelines();
             }
 
-            // ---------- RENDER PLAYLISTS ----------
+            // ========== RENDER PLAYLISTS ==========
             function renderPlaylists() {
                 pageTitle.textContent = 'Плейлисты';
                 settingsPanel.classList.remove('visible');
@@ -2813,7 +2809,7 @@
                 nameInput.focus();
             }
 
-            // ---------- DRAWER ----------
+            // ========== DRAWER ==========
             async function refreshDrawer(index) {
                 if (index < 0 || index >= tracks.length) return;
                 const t = tracks[index];
@@ -2909,7 +2905,7 @@
             drawerClose.addEventListener('click', closeDrawer);
             drawerOverlay.addEventListener('click', closeDrawer);
 
-            // ---------- EDIT METADATA ----------
+            // ========== EDIT METADATA ==========
             detailsDrawer.addEventListener('click', (e) => {
                 const editBtn = e.target.closest('.edit-btn');
                 if (!editBtn) return;
@@ -2994,7 +2990,7 @@
                 updateStorageInfo();
             });
 
-            // ---------- UPLOAD MUSIC ----------
+            // ========== UPLOAD MUSIC ==========
             uploadBtn.addEventListener('click', () => {
                 if (isMobile()) {
                     openMusicPicker();
@@ -3106,7 +3102,7 @@
                 document.head.appendChild(script);
             })();
 
-            // ---------- NAVIGATION ----------
+            // ========== NAVIGATION ==========
             function updateNavButtons(view) {
                 libraryBtn.classList.toggle('active', view === 'library');
                 playlistsBtn.classList.toggle('active', view === 'playlists');
@@ -3163,7 +3159,7 @@
                 if (confirm('Удалить все сохранённые треки, клипы и плейлисты?')) clearAllStorage();
             });
 
-            // ---------- THEME ----------
+            // ========== THEME ==========
             const accentColorPicker = document.getElementById('accentColorPicker');
             const bgColorPicker = document.getElementById('bgColorPicker');
             const darkThemeBtn = document.getElementById('darkThemeBtn');
@@ -3240,7 +3236,7 @@
                 }
             });
 
-            // ---------- INIT ----------
+            // ========== INIT ==========
             (async function init() {
                 document.documentElement.style.setProperty('--accent-soft', '#2a5a9e');
 
