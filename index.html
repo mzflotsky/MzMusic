@@ -45,6 +45,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* ========== SIDEBAR ========== */
         .sidebar {
             width: 86px;
             background: var(--bg-secondary);
@@ -66,7 +67,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 32px;
             width: 100%;
         }
 
@@ -79,7 +80,6 @@
             line-height: 1.1;
             padding: 0 4px;
             user-select: none;
-            margin-bottom: 4px;
         }
 
         .brand span { color: var(--text-primary); }
@@ -149,6 +149,7 @@
         .settings-btn:hover { background: transparent; color: var(--accent); transform: rotate(30deg); }
         .settings-btn .material-icons { font-size: 26px; }
 
+        /* ========== MAIN ========== */
         .main {
             flex: 1;
             height: 100vh;
@@ -211,9 +212,70 @@
         }
 
         .upload-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: white; }
-        .upload-btn.primary-scan { background: var(--accent-soft); border-color: var(--accent); color: white; }
-        .upload-btn.primary-scan:hover { background: var(--accent); }
 
+        /* View switcher dropdown */
+        .view-switcher {
+            position: relative;
+        }
+
+        .view-switcher-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 10px 16px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+
+        .view-switcher-btn:hover { border-color: var(--accent); }
+        .view-switcher-btn .material-icons { font-size: 18px; }
+
+        .view-switcher-menu {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            min-width: 180px;
+            padding: 6px;
+            z-index: 200;
+            display: none;
+        }
+
+        .view-switcher-menu.open { display: block; }
+
+        .view-switcher-item {
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font-mono);
+        }
+
+        .view-switcher-item:hover { background: var(--bg-primary); }
+        .view-switcher-item .material-icons { font-size: 18px; color: var(--accent); }
+        .view-switcher-item.active { background: var(--accent-soft); color: white; }
+        .view-switcher-item.active .material-icons { color: white; }
+
+        /* ========== GRID VIEW (default) ========== */
         .track-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -236,6 +298,7 @@
         .track-card:hover { background: var(--bg-elevated); border-color: var(--accent-soft); transform: translateY(-2px); }
         .track-card.current { border-color: var(--accent); background: var(--bg-elevated); }
 
+        /* Uniform cover: fixed aspect ratio and object-fit:cover for custom images */
         .track-cover {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -414,10 +477,188 @@
         .track-menu-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
         .track-menu-btn .material-icons { font-size: 18px; }
 
+        /* ========== LIST VIEW ========== */
+        .track-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Each row: rounded square with cover; inside: play indicator; right: title & timeline; far right: 3 dots */
+        .track-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 10px 14px 10px 10px;
+            background: var(--bg-secondary);
+            border-radius: 18px;
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .track-row:hover {
+            background: var(--bg-elevated);
+            border-color: var(--accent-soft);
+        }
+
+        .track-row.current {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+        }
+
+        /* Rounded square cover with play indicator inside */
+        .row-cover {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent-soft), var(--bg-elevated));
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .row-cover .row-cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+
+        .row-cover .row-cover-icon {
+            font-size: 24px;
+            opacity: 0.4;
+            color: var(--text-secondary);
+        }
+
+        .row-cover.has-custom .row-cover-icon { display: none; }
+
+        /* Play indicator overlay: hidden by default, shown on hover or when current */
+        .row-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 15, 18, 0.5);
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .track-row:hover .row-play,
+        .track-row.current .row-play { opacity: 1; }
+
+        .row-play .material-icons {
+            font-size: 24px;
+            color: white;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+        }
+
+        .track-row.current .row-play .material-icons::before { content: 'play_arrow'; }
+        .track-row.current.playing .row-play .material-icons::before { content: 'pause'; }
+
+        /* Middle: title & artist stacked; timeline below */
+        .row-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .row-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: color 0.15s;
+        }
+
+        .row-info:hover .row-title { color: var(--accent); }
+
+        .row-artist {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .row-timeline {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--bg-primary);
+            overflow: hidden;
+            margin-top: 2px;
+        }
+
+        .row-timeline-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width 0.15s linear;
+        }
+
+        .track-row:not(.current) .row-timeline-fill { width: 0%; }
+
+        /* Duration on far right before menu */
+        .row-duration {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            min-width: 36px;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .row-video-dot {
+            display: inline-flex;
+            align-items: center;
+            color: var(--accent);
+        }
+
+        .row-video-dot .material-icons { font-size: 14px; }
+
+        /* Menu button for list view */
+        .row-menu-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .row-menu-btn:hover { background: var(--bg-primary); border-color: var(--border-light); color: var(--text-primary); }
+        .row-menu-btn .material-icons { font-size: 18px; }
+
+        /* Dropdown menus (shared) */
         .track-dropdown {
             position: absolute;
-            top: 58px;
-            right: 22px;
+            top: calc(100% + 6px);
+            right: 0;
             background: var(--bg-elevated);
             border: 1px solid var(--border-light);
             border-radius: 12px;
@@ -430,6 +671,10 @@
         }
 
         .track-dropdown.open { display: block; }
+
+        /* For grid cards, position relative to card */
+        .track-card .track-dropdown { top: 58px; right: 22px; }
+        .track-row .track-dropdown { top: calc(100% + 6px); right: 14px; }
 
         .dropdown-item {
             padding: 10px 14px;
@@ -460,6 +705,7 @@
             letter-spacing: 1px;
         }
 
+        /* ========== SETTINGS ========== */
         .settings-panel {
             display: none;
             flex-direction: column;
@@ -557,6 +803,7 @@
 
         .clear-storage-btn:hover { background: rgba(255,107,107,0.1); }
 
+        /* ========== PLAYLISTS ========== */
         .playlist-section { display: flex; flex-direction: column; gap: 20px; }
 
         .custom-input-row {
@@ -623,11 +870,12 @@
         .playlist-chip .material-icons { font-size: 18px; color: var(--accent); }
         .playlist-chip.expanded { border-color: var(--accent); background: var(--bg-secondary); }
 
+        /* Playlist tracks container: reuse list view style */
         .playlist-tracks {
             display: none;
             flex-direction: column;
             gap: 8px;
-            padding: 16px;
+            padding: 8px;
             background: var(--bg-secondary);
             border-radius: var(--radius-card);
             border: 1px solid var(--border-light);
@@ -635,290 +883,7 @@
 
         .playlist-tracks.visible { display: flex; }
 
-        .playlist-track-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            border-radius: 10px;
-            background: var(--bg-elevated);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .playlist-track-row:hover { background: var(--bg-primary); }
-        .playlist-track-row .material-icons { font-size: 18px; color: var(--accent); }
-        .playlist-track-row .pl-title { font-size: 0.85rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .playlist-track-row .pl-artist {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            margin-left: auto;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 40%;
-        }
-
-        /* ========== URL IMPORT PANEL ========== */
-        .url-import-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            background: var(--bg-secondary);
-            padding: 26px;
-            border-radius: var(--radius-card);
-            border: 1px solid var(--border-light);
-            max-width: 720px;
-        }
-
-        .url-import-panel h2 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            letter-spacing: -0.3px;
-        }
-
-        .url-import-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .url-input-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-light);
-            border-radius: 40px;
-            padding: 4px 4px 4px 20px;
-            transition: border-color 0.2s;
-        }
-
-        .url-input-row:focus-within { border-color: var(--accent); }
-
-        .url-input-row input {
-            background: transparent;
-            border: none;
-            color: var(--text-primary);
-            font-family: var(--font-mono);
-            font-size: 0.9rem;
-            padding: 14px 4px;
-            outline: none;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .url-input-row input::placeholder { color: var(--text-secondary); opacity: 0.6; }
-
-        .url-fetch-btn {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 12px 22px;
-            border-radius: 40px;
-            font-family: var(--font-mono);
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-            flex-shrink: 0;
-            font-size: 0.85rem;
-        }
-
-        .url-fetch-btn:hover { background: var(--accent-soft); }
-        .url-fetch-btn:disabled { opacity: 0.5; cursor: wait; }
-
-        .url-preview-card {
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-card);
-            padding: 18px;
-        }
-
-        .url-preview-card.visible { display: flex; }
-
-        .url-preview-top {
-            display: flex;
-            gap: 16px;
-            align-items: flex-start;
-        }
-
-        .url-preview-thumb {
-            width: 160px;
-            height: 90px;
-            border-radius: 10px;
-            object-fit: cover;
-            background: var(--bg-primary);
-            flex-shrink: 0;
-            border: 1px solid var(--border-light);
-        }
-
-        .url-preview-info {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1;
-            min-width: 0;
-        }
-
-        .url-preview-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            word-break: break-word;
-            line-height: 1.35;
-        }
-
-        .url-preview-field {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .url-preview-field input {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-light);
-            color: var(--text-primary);
-            font-family: var(--font-mono);
-            font-size: 0.78rem;
-            padding: 6px 10px;
-            border-radius: 8px;
-            flex: 1;
-            min-width: 0;
-            outline: none;
-        }
-
-        .url-preview-field input:focus { border-color: var(--accent); }
-
-        .url-preview-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .url-add-btn {
-            background: var(--accent);
-            border: none;
-            color: white;
-            padding: 12px 22px;
-            border-radius: 40px;
-            font-family: var(--font-mono);
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .url-add-btn:hover { background: var(--accent-soft); }
-        .url-add-btn:disabled { opacity: 0.6; cursor: wait; }
-
-        .url-cancel-btn {
-            background: transparent;
-            border: 1px solid var(--border-light);
-            color: var(--text-secondary);
-            padding: 12px 20px;
-            border-radius: 40px;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .url-cancel-btn:hover { color: var(--text-primary); }
-
-        .url-progress {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            padding: 20px;
-            background: var(--bg-elevated);
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-        }
-
-        .url-progress.visible { display: flex; }
-
-        .url-progress-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.85rem;
-            color: var(--text-primary);
-        }
-
-        .url-progress-header .spinner-small {
-            width: 18px;
-            height: 18px;
-            border: 2px solid var(--border-light);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            flex-shrink: 0;
-        }
-
-        .url-progress-bar {
-            height: 6px;
-            border-radius: 3px;
-            background: var(--bg-primary);
-            overflow: hidden;
-        }
-
-        .url-progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--accent);
-            border-radius: 3px;
-            transition: width 0.3s ease;
-        }
-
-        .url-progress-log {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            max-height: 120px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-            line-height: 1.5;
-        }
-
-        .url-error-box {
-            display: none;
-            padding: 14px;
-            background: rgba(255,107,107,0.08);
-            border: 1px solid rgba(255,107,107,0.3);
-            border-radius: 12px;
-            color: #ff8a8a;
-            font-size: 0.8rem;
-            line-height: 1.5;
-        }
-
-        .url-error-box.visible { display: block; }
-
-        .url-info-note {
-            font-size: 0.7rem;
-            color: var(--text-secondary);
-            background: var(--bg-elevated);
-            padding: 10px 14px;
-            border-radius: 10px;
-            border-left: 3px solid var(--accent);
-            line-height: 1.5;
-        }
-
-        .url-info-note b { color: var(--text-primary); }
-
+        /* ========== PLAYER BAR ========== */
         .player-bar {
             flex-shrink: 0;
             background: var(--bg-secondary);
@@ -1044,6 +1009,7 @@
         .video-toggle-btn:hover { color: var(--text-primary); border-color: var(--accent); }
         .video-toggle-btn.active { background: var(--accent-soft); border-color: var(--accent); color: white; }
 
+        /* ========== DRAWER ========== */
         .drawer-overlay {
             position: fixed;
             inset: 0;
@@ -1275,6 +1241,7 @@
 
         .hidden { display: none !important; }
 
+        /* ========== TOAST ========== */
         .toast {
             position: fixed;
             bottom: calc(100px + var(--safe-bottom));
@@ -1328,6 +1295,7 @@
 
         .mobile-nav { display: none; }
 
+        /* Mobile dropdown overlay (for 3-dot menu on mobile) */
         .mobile-dropdown-overlay {
             position: fixed;
             inset: 0;
@@ -1387,6 +1355,7 @@
 
         .mobile-dropdown .dropdown-item.pl { padding-left: 32px; font-size: 0.85rem; }
 
+        /* Music picker bottom sheet */
         .music-picker-overlay {
             position: fixed;
             inset: 0;
@@ -1676,6 +1645,7 @@
             animation: spin 0.8s linear infinite;
         }
 
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 1100px) {
             .track-grid { grid-template-columns: repeat(3, 1fr); }
         }
@@ -1840,9 +1810,6 @@
             .create-playlist-btn { padding: 12px 16px; font-size: 0.82rem; }
 
             .playlist-chip { padding: 8px 14px; font-size: 0.8rem; }
-            .playlist-track-row { padding: 8px 10px; }
-            .playlist-track-row .pl-title { font-size: 0.78rem; }
-            .playlist-track-row .pl-artist { font-size: 0.63rem; }
 
             .toast {
                 bottom: calc(var(--mobile-nav-height) + 118px + 12px + var(--safe-bottom));
@@ -1852,19 +1819,22 @@
 
             .drawer-close { width: 44px; height: 44px; }
 
-            input, .custom-input-row input, .drawer-field .field-value input, .url-input-row input { font-size: 16px; }
+            input, .custom-input-row input, .drawer-field .field-value input { font-size: 16px; }
             .track-title, .track-artist, .drawer-field .field-value { -webkit-user-select: none; user-select: none; }
 
             .mobile-dropdown { max-height: 70vh; }
 
-            /* URL import panel on mobile */
-            .url-import-panel { padding: 18px; gap: 16px; }
-            .url-input-row { padding: 4px 4px 4px 16px; gap: 6px; }
-            .url-input-row input { padding: 12px 2px; }
-            .url-fetch-btn { padding: 10px 16px; font-size: 0.78rem; }
-            .url-preview-top { flex-direction: column; }
-            .url-preview-thumb { width: 100%; height: 160px; }
-            .url-add-btn, .url-cancel-btn { flex: 1; justify-content: center; }
+            /* List view mobile adjustments */
+            .row-cover { width: 48px; height: 48px; border-radius: 12px; }
+            .row-play .material-icons { font-size: 20px; }
+            .row-title { font-size: 0.82rem; }
+            .row-artist { font-size: 0.65rem; }
+            .track-row { padding: 8px 10px 8px 8px; gap: 10px; border-radius: 14px; }
+            .row-duration { font-size: 0.65rem; min-width: 30px; }
+            .row-menu-btn { width: 30px; height: 30px; }
+
+            .view-switcher-btn { padding: 8px 12px; font-size: 0.75rem; }
+            .view-switcher-menu { right: 0; left: auto; }
         }
 
         @media (max-width: 420px) {
@@ -1917,9 +1887,6 @@
             <button class="nav-btn" id="playlistsBtn" title="Плейлисты">
                 <span class="material-icons">queue_music</span>
             </button>
-            <button class="nav-btn" id="linkImportBtn" title="Добавить по ссылке">
-                <span class="material-icons">link</span>
-            </button>
         </div>
         <div class="sidebar-bottom">
             <div class="social-links">
@@ -1944,6 +1911,21 @@
             <div class="page-header">
                 <h1 class="page-title" id="pageTitle">Библиотека</h1>
                 <div class="header-actions" id="headerActions">
+                    <div class="view-switcher" id="viewSwitcher">
+                        <button class="view-switcher-btn" id="viewSwitcherBtn">
+                            <span class="material-icons" id="viewSwitcherIcon">grid_view</span>
+                            <span id="viewSwitcherLabel">Плитка</span>
+                            <span class="material-icons" style="font-size:16px;">expand_more</span>
+                        </button>
+                        <div class="view-switcher-menu" id="viewSwitcherMenu">
+                            <button class="view-switcher-item active" data-view="grid">
+                                <span class="material-icons">grid_view</span> Плитка
+                            </button>
+                            <button class="view-switcher-item" data-view="list">
+                                <span class="material-icons">view_list</span> Список
+                            </button>
+                        </div>
+                    </div>
                     <button class="upload-btn" id="scanFolderBtn" title="Сканировать папку с музыкой">
                         <span class="material-icons">folder_open</span> Сканировать
                     </button>
@@ -2037,10 +2019,6 @@
         <button class="mobile-nav-btn" id="mobilePlaylistsBtn">
             <span class="material-icons">queue_music</span>
             <span class="nav-label">Плейлисты</span>
-        </button>
-        <button class="mobile-nav-btn" id="mobileLinkBtn">
-            <span class="material-icons">link</span>
-            <span class="nav-label">По ссылке</span>
         </button>
         <button class="mobile-nav-btn" id="mobileSettingsBtn">
             <span class="material-icons">settings</span>
@@ -2144,12 +2122,13 @@
 
     <script>
         (function() {
-            const LS_KEY = 'mzmusic_data_v4';
+            const LS_KEY = 'mzmusic_data_v5';
+            const LS_VIEW_KEY = 'mzmusic_view_mode';
             const MAX_VIDEO_SIZE_MB = 200;
             const MAX_AUDIO_SIZE_MB = 100;
             const MAX_COVER_SIZE_MB = 5;
             const DB_NAME = 'MzMusicDB';
-            const DB_VERSION = 5; // bumped for URL import cache
+            const DB_VERSION = 5;
 
             let tracks = [];
             let playlists = ['Мой плейлист', 'Избранное'];
@@ -2164,6 +2143,7 @@
             let db = null;
             let mobileMenuTrackIndex = -1;
             let pendingCoverTrackIndex = -1;
+            let viewMode = localStorage.getItem(LS_VIEW_KEY) || 'grid'; // 'grid' | 'list'
 
             let musicFolderHandle = null;
             let isScanning = false;
@@ -2172,16 +2152,11 @@
             let pickerPreviewIndex = -1;
             let pickerPreviewUrl = null;
 
-            // URL import state
-            let urlPreviewData = null; // { title, artist, thumbnail, videoId, sourceUrl, audioUrl, videoUrl }
-
             const libraryBtn = document.getElementById('libraryBtn');
             const playlistsBtn = document.getElementById('playlistsBtn');
-            const linkImportBtn = document.getElementById('linkImportBtn');
             const settingsBtn = document.getElementById('settingsBtn');
             const mobileLibraryBtn = document.getElementById('mobileLibraryBtn');
             const mobilePlaylistsBtn = document.getElementById('mobilePlaylistsBtn');
-            const mobileLinkBtn = document.getElementById('mobileLinkBtn');
             const mobileSettingsBtn = document.getElementById('mobileSettingsBtn');
 
             const pageTitle = document.getElementById('pageTitle');
@@ -2196,6 +2171,11 @@
             const storageBarFill = document.getElementById('storageBarFill');
             const folderInfo = document.getElementById('folderInfo');
             const forgetFolderBtn = document.getElementById('forgetFolderBtn');
+
+            const viewSwitcherBtn = document.getElementById('viewSwitcherBtn');
+            const viewSwitcherMenu = document.getElementById('viewSwitcherMenu');
+            const viewSwitcherIcon = document.getElementById('viewSwitcherIcon');
+            const viewSwitcherLabel = document.getElementById('viewSwitcherLabel');
 
             const audioEl = document.getElementById('audioEl');
             const videoEl = document.getElementById('videoEl');
@@ -2245,6 +2225,46 @@
 
             const isMobile = () => window.matchMedia('(max-width: 800px)').matches;
             const hasFSAccess = 'showDirectoryPicker' in window;
+
+            // ========== VIEW MODE ==========
+            function applyViewMode(mode) {
+                viewMode = mode;
+                localStorage.setItem(LS_VIEW_KEY, mode);
+                if (mode === 'list') {
+                    viewSwitcherIcon.textContent = 'view_list';
+                    viewSwitcherLabel.textContent = 'Список';
+                } else {
+                    viewSwitcherIcon.textContent = 'grid_view';
+                    viewSwitcherLabel.textContent = 'Плитка';
+                }
+                // update active state in menu
+                document.querySelectorAll('.view-switcher-item').forEach(item => {
+                    item.classList.toggle('active', item.dataset.view === mode);
+                });
+                // Re-render current view
+                if (currentView === 'library' && !settingsVisible) renderLibrary();
+                else if (currentView === 'playlists' && !settingsVisible) renderPlaylists();
+            }
+
+            viewSwitcherBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                viewSwitcherMenu.classList.toggle('open');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#viewSwitcher')) viewSwitcherMenu.classList.remove('open');
+            });
+
+            document.querySelectorAll('.view-switcher-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const mode = item.dataset.view;
+                    viewSwitcherMenu.classList.remove('open');
+                    applyViewMode(mode);
+                });
+            });
+
+            // Apply saved view on load
+            applyViewMode(viewMode);
 
             // ========== INDEXED DB ==========
             function openDB() {
@@ -2349,11 +2369,7 @@
             }
 
             async function getAudioUrlForTrack(track) {
-                if (!track.audioId) {
-                    // URL-imported tracks store remote audio URL
-                    if (track._remoteAudioUrl) return track._remoteAudioUrl;
-                    return null;
-                }
+                if (!track.audioId) return null;
                 const key = 'a_' + track.audioId;
                 if (objectUrls[key]) return objectUrls[key];
                 const blob = await loadAudioBlob(track.audioId);
@@ -2364,10 +2380,7 @@
             }
 
             async function getVideoUrlForTrack(track) {
-                if (!track.videoId) {
-                    if (track._remoteVideoUrl) return track._remoteVideoUrl;
-                    return null;
-                }
+                if (!track.videoId) return null;
                 const key = 'v_' + track.videoId;
                 if (objectUrls[key]) return objectUrls[key];
                 const blob = await loadVideoBlob(track.videoId);
@@ -2378,10 +2391,7 @@
             }
 
             async function getCoverUrlForTrack(track) {
-                if (!track.coverId) {
-                    if (track._remoteThumbnail) return track._remoteThumbnail;
-                    return null;
-                }
+                if (!track.coverId) return null;
                 const key = 'c_' + track.coverId;
                 if (objectUrls[key]) return objectUrls[key];
                 const blob = await loadCoverBlob(track.coverId);
@@ -2450,14 +2460,10 @@
                         coverId: t.coverId, coverMime: t.coverMime,
                         _originalName: t._originalName, _originalSize: t._originalSize,
                         _lastModified: t._lastModified,
-                        _remoteAudioUrl: t._remoteAudioUrl,
-                        _remoteVideoUrl: t._remoteVideoUrl,
-                        _remoteThumbnail: t._remoteThumbnail,
-                        _sourceUrl: t._sourceUrl,
                     })),
                     playlists: playlists,
                     playlistTrackMap: playlistTrackMap,
-                    version: 4
+                    version: 5
                 };
             }
 
@@ -2466,7 +2472,7 @@
             }
 
             async function loadState() {
-                const raw = localStorage.getItem(LS_KEY) || localStorage.getItem('mzmusic_data_v3') || localStorage.getItem('mzmusic_data_v2') || localStorage.getItem('mzmusic_data_v1');
+                const raw = localStorage.getItem(LS_KEY) || localStorage.getItem('mzmusic_data_v4') || localStorage.getItem('mzmusic_data_v3') || localStorage.getItem('mzmusic_data_v2') || localStorage.getItem('mzmusic_data_v1');
                 if (!raw) return false;
                 try {
                     const data = JSON.parse(raw);
@@ -2487,10 +2493,6 @@
                         _originalName: t._originalName || null,
                         _originalSize: t._originalSize || null,
                         _lastModified: t._lastModified || null,
-                        _remoteAudioUrl: t._remoteAudioUrl || null,
-                        _remoteVideoUrl: t._remoteVideoUrl || null,
-                        _remoteThumbnail: t._remoteThumbnail || null,
-                        _sourceUrl: t._sourceUrl || null,
                     }));
                     playlists = Array.isArray(data.playlists) && data.playlists.length ? data.playlists : ['Мой плейлист', 'Избранное'];
                     playlistTrackMap = data.playlistTrackMap || {};
@@ -2551,26 +2553,40 @@
             }
 
             function updateTrackCardVisuals() {
+                // Grid cards
                 document.querySelectorAll('.track-card').forEach((card) => {
                     const idx = parseInt(card.dataset.index, 10);
                     const isCurrent = (idx === activeTrackIndex);
                     card.classList.toggle('current', isCurrent);
                     card.classList.toggle('playing', isCurrent && isPlaying);
                 });
+                // List rows
+                document.querySelectorAll('.track-row').forEach((row) => {
+                    const idx = parseInt(row.dataset.index, 10);
+                    const isCurrent = (idx === activeTrackIndex);
+                    row.classList.toggle('current', isCurrent);
+                    row.classList.toggle('playing', isCurrent && isPlaying);
+                });
                 updateMiniTimelines();
             }
 
             function updateMiniTimelines() {
+                const dur = audioEl.duration || (activeTrackIndex >= 0 ? tracks[activeTrackIndex]?.duration : 0) || 0;
+                const percent = dur ? Math.min(100, (audioEl.currentTime / dur) * 100) : 0;
+
+                // Grid cards mini-timeline
                 document.querySelectorAll('.track-card').forEach(card => {
                     const idx = parseInt(card.dataset.index, 10);
                     const fill = card.querySelector('.mini-timeline-fill');
                     if (!fill) return;
-                    if (idx === activeTrackIndex) {
-                        const t = tracks[idx];
-                        const dur = audioEl.duration || t.duration || 0;
-                        const percent = dur ? Math.min(100, (audioEl.currentTime / dur) * 100) : 0;
-                        fill.style.width = percent + '%';
-                    } else fill.style.width = '0%';
+                    fill.style.width = (idx === activeTrackIndex) ? percent + '%' : '0%';
+                });
+                // List rows timeline
+                document.querySelectorAll('.track-row').forEach(row => {
+                    const idx = parseInt(row.dataset.index, 10);
+                    const fill = row.querySelector('.row-timeline-fill');
+                    if (!fill) return;
+                    fill.style.width = (idx === activeTrackIndex) ? percent + '%' : '0%';
                 });
             }
 
@@ -2592,7 +2608,7 @@
                 if (audioEl.duration && isFinite(audioEl.duration)) {
                     timelineFill.style.width = Math.min(100, (audioEl.currentTime / audioEl.duration) * 100) + '%';
                 }
-                if (t.videoId || t._remoteVideoUrl) {
+                if (t.videoId) {
                     videoToggleBtn.style.opacity = '1';
                     const isShown = drawerVideo.style.display !== 'none' && drawerVideo.src;
                     videoToggleBtn.classList.toggle('active', !!isShown);
@@ -2632,1005 +2648,6 @@
                 }
                 return false;
             }
-
-            // ========== URL IMPORT ==========
-            function renderUrlImport() {
-                pageTitle.textContent = 'Добавить по ссылке';
-                settingsPanel.classList.remove('visible');
-                settingsVisible = false;
-                headerActions.style.display = 'none';
-
-                dynamicContent.innerHTML = `
-                    <div class="url-import-panel">
-                        <h2>Импорт из ссылки</h2>
-                        <div class="url-import-desc">
-                            Вставьте ссылку на YouTube-видео или другой видеохостинг. Мы автоматически
-                            извлечём аудио, метаданные (название, исполнитель, обложка) и клип.
-                        </div>
-                        <div class="url-input-row">
-                            <span class="material-icons" style="color:var(--text-secondary); font-size:20px;">link</span>
-                            <input type="url" id="urlInput" placeholder="https://www.youtube.com/watch?v=... или https://youtu.be/..." autocomplete="off">
-                            <button class="url-fetch-btn" id="urlFetchBtn">
-                                <span class="material-icons" style="font-size:16px;">search</span> Получить
-                            </button>
-                        </div>
-                        <div class="url-error-box" id="urlErrorBox"></div>
-                        <div class="url-progress" id="urlProgress">
-                            <div class="url-progress-header">
-                                <div class="spinner-small"></div>
-                                <span id="urlProgressLabel">Обработка...</span>
-                            </div>
-                            <div class="url-progress-bar"><div class="url-progress-fill" id="urlProgressFill"></div></div>
-                            <div class="url-progress-log" id="urlProgressLog"></div>
-                        </div>
-                        <div class="url-preview-card" id="urlPreviewCard">
-                            <div class="url-preview-top">
-                                <img class="url-preview-thumb" id="urlPreviewThumb" alt="" src="">
-                                <div class="url-preview-info">
-                                    <div class="url-preview-title" id="urlPreviewTitle">—</div>
-                                    <div class="url-preview-field">
-                                        <span style="min-width:70px;">Название</span>
-                                        <input type="text" id="urlPreviewTitleInput" placeholder="Название">
-                                    </div>
-                                    <div class="url-preview-field">
-                                        <span style="min-width:70px;">Исполнитель</span>
-                                        <input type="text" id="urlPreviewArtistInput" placeholder="Исполнитель">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="url-preview-actions">
-                                <button class="url-add-btn" id="urlAddBtn">
-                                    <span class="material-icons" style="font-size:16px;">add</span> Добавить в библиотеку
-                                </button>
-                                <button class="url-cancel-btn" id="urlCancelBtn">Отмена</button>
-                            </div>
-                        </div>
-                        <div class="url-info-note">
-                            <b>Примечание:</b> для работы импорта используется публичный API (Cobalt). 
-                            Аудио и клип загружаются напрямую с CDN видео-хостинга. 
-                            Если сервис недоступен, попробуйте другой хостинг или загрузите файл вручную.
-                        </div>
-                    </div>
-                `;
-
-                const urlInput = document.getElementById('urlInput');
-                const fetchBtn = document.getElementById('urlFetchBtn');
-                const errorBox = document.getElementById('urlErrorBox');
-                const progress = document.getElementById('urlProgress');
-                const progressLabel = document.getElementById('urlProgressLabel');
-                const progressFill = document.getElementById('urlProgressFill');
-                const progressLog = document.getElementById('urlProgressLog');
-                const previewCard = document.getElementById('urlPreviewCard');
-                const previewThumb = document.getElementById('urlPreviewThumb');
-                const previewTitle = document.getElementById('urlPreviewTitle');
-                const previewTitleInput = document.getElementById('urlPreviewTitleInput');
-                const previewArtistInput = document.getElementById('urlPreviewArtistInput');
-                const addBtn = document.getElementById('urlAddBtn');
-                const cancelBtn = document.getElementById('urlCancelBtn');
-
-                function showError(msg) {
-                    errorBox.textContent = msg;
-                    errorBox.classList.add('visible');
-                    progress.classList.remove('visible');
-                }
-                function clearError() {
-                    errorBox.classList.remove('visible');
-                }
-                function log(msg) {
-                    progressLog.textContent += msg + '\n';
-                    progressLog.scrollTop = progressLog.scrollHeight;
-                }
-                function setProgress(pct, label) {
-                    progressFill.style.width = pct + '%';
-                    if (label) progressLabel.textContent = label;
-                }
-                function resetPreview() {
-                    urlPreviewData = null;
-                    previewCard.classList.remove('visible');
-                    previewThumb.src = '';
-                    previewTitle.textContent = '—';
-                    previewTitleInput.value = '';
-                    previewArtistInput.value = '';
-                }
-
-                cancelBtn.addEventListener('click', () => {
-                    resetPreview();
-                    progress.classList.remove('visible');
-                });
-
-                fetchBtn.addEventListener('click', async () => {
-                    const url = urlInput.value.trim();
-                    clearError();
-                    resetPreview();
-
-                    if (!url) {
-                        showError('Введите ссылку');
-                        return;
-                    }
-                    if (!/^https?:\/\//i.test(url)) {
-                        showError('Ссылка должна начинаться с http:// или https://');
-                        return;
-                    }
-
-                    fetchBtn.disabled = true;
-                    progress.classList.add('visible');
-                    progressLog.textContent = '';
-                    setProgress(5, 'Получаем информацию о видео...');
-
-                    try {
-                        // Step 1: fetch metadata + stream URLs via Cobalt API
-                        log('Запрос к Cobalt API...');
-                        const res = await fetch('https://api.cobalt.tools/api/json', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                url: url,
-                                vQuality: '720',
-                                isAudioOnly: false,
-                                disableMetadata: false,
-                                filenamePattern: 'classic'
-                            })
-                        });
-
-                        if (!res.ok) {
-                            throw new Error('Cobalt API вернул ошибку ' + res.status);
-                        }
-
-                        const data = await res.json();
-                        log('Ответ получен.');
-
-                        if (data.status === 'error' || data.error) {
-                            throw new Error(data.error?.code || data.text || 'Не удалось обработать ссылку');
-                        }
-
-                        // Cobalt may return picker (multiple streams) or single stream
-                        let streamUrl = null;
-                        let audioUrl = null;
-
-                        if (data.status === 'picker' && Array.isArray(data.picker)) {
-                            // pick highest quality video
-                            const videoPick = data.picker.find(p => p.type === 'video') || data.picker[0];
-                            if (videoPick) {
-                                streamUrl = videoPick.url;
-                            }
-                        } else if (data.url) {
-                            streamUrl = data.url;
-                        } else if (data.tunnel) {
-                            streamUrl = data.tunnel;
-                        }
-
-                        if (!streamUrl) {
-                            throw new Error('Не удалось получить ссылку на медиа');
-                        }
-
-                        setProgress(40, 'Загружаем метаданные...');
-
-                        // Step 2: fetch video page metadata via noembed (title, author, thumbnail)
-                        // noembed.com provides oembed for YouTube and many others
-                        let title = 'Без названия';
-                        let author = 'Неизвестный исполнитель';
-                        let thumbnail = '';
-
-                        try {
-                            log('Запрос метаданных (noembed)...');
-                            const oembedRes = await fetch('https://noembed.com/embed?url=' + encodeURIComponent(url));
-                            if (oembedRes.ok) {
-                                const oembed = await oembedRes.json();
-                                if (oembed.title) title = oembed.title;
-                                if (oembed.author_name) author = oembed.author_name;
-                                if (oembed.thumbnail_url) thumbnail = oembed.thumbnail_url;
-                                log('Метаданные получены: ' + title);
-                            } else {
-                                log('noembed не ответил, используем имя по умолчанию');
-                            }
-                        } catch (e) {
-                            log('Ошибка noembed: ' + e.message);
-                        }
-
-                        // For YouTube, thumbnail can be derived from video ID
-                        if (!thumbnail) {
-                            const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-                            if (ytMatch) {
-                                thumbnail = 'https://i.ytimg.com/vi/' + ytMatch[1] + '/hqdefault.jpg';
-                            }
-                        }
-
-                        setProgress(70, 'Готово. Проверьте данные.');
-
-                        urlPreviewData = {
-                            title: title,
-                            artist: author,
-                            thumbnail: thumbnail,
-                            streamUrl: streamUrl,       // silent video stream URL (or combined)
-                            sourceUrl: url
-                        };
-
-                        previewThumb.src = thumbnail || '';
-                        previewTitle.textContent = title;
-                        previewTitleInput.value = title;
-                        previewArtistInput.value = author;
-                        previewCard.classList.add('visible');
-                        setProgress(100, 'Готово');
-                        setTimeout(() => progress.classList.remove('visible'), 800);
-
-                    } catch (err) {
-                        console.error(err);
-                        showError('Ошибка: ' + (err.message || 'не удалось получить медиа. Попробуйте другую ссылку.'));
-                    } finally {
-                        fetchBtn.disabled = false;
-                    }
-                });
-
-                addBtn.addEventListener('click', async () => {
-                    if (!urlPreviewData) {
-                        showError('Сначала получите данные');
-                        return;
-                    }
-                    addBtn.disabled = true;
-                    const finalTitle = previewTitleInput.value.trim() || urlPreviewData.title || 'Без названия';
-                    const finalArtist = previewArtistInput.value.trim() || urlPreviewData.artist || 'Неизвестный исполнитель';
-
-                    try {
-                        progress.classList.add('visible');
-                        progressLog.textContent = '';
-                        setProgress(10, 'Загружаем аудио...');
-
-                        // Since Cobalt may return combined video+audio, we try to extract audio by
-                        // downloading the stream as a blob and treating it as audio. 
-                        // If the stream is video-only, audio might not be present — in that case we
-                        // still use the video file as the "audio" source (browsers can play audio from mp4).
-                        log('Скачиваем медиа-поток...');
-                        const res = await fetch(urlPreviewData.streamUrl, { mode: 'cors' });
-                        if (!res.ok) throw new Error('Не удалось скачать медиа');
-                        const blob = await res.blob();
-                        log('Скачано ' + (blob.size / (1024*1024)).toFixed(1) + ' МБ');
-
-                        if (blob.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) {
-                            throw new Error(`Файл слишком большой (макс. ${MAX_AUDIO_SIZE_MB} МБ)`);
-                        }
-
-                        setProgress(45, 'Сохраняем аудио...');
-                        const audioId = uid('a');
-                        const audioSaved = await saveAudioBlob(audioId, blob);
-                        if (!audioSaved) throw new Error('Не удалось сохранить аудио');
-                        const audioObjectUrl = URL.createObjectURL(blob);
-                        objectUrls['a_' + audioId] = audioObjectUrl;
-
-                        setProgress(65, 'Читаем длительность...');
-                        const meta = await readMetadataFromUrl(audioObjectUrl);
-
-                        // Try to also save the video clip (same blob if stream is combined,
-                        // or we save the same blob again if separate video URL not available)
-                        let videoId = null;
-                        setProgress(80, 'Сохраняем клип...');
-                        try {
-                            const videoSaved = await saveVideoBlob(uid('v'), blob);
-                            // Only save if under limit
-                            if (videoSaved.ok) {
-                                videoId = audioId + '_v'; // marker
-                                // Actually save with proper id:
-                                // We need a proper video id
-                            }
-                        } catch (e) {}
-
-                        // Simpler: save the same blob as video if under video limit
-                        let finalVideoId = null;
-                        if (blob.size <= MAX_VIDEO_SIZE_MB * 1024 * 1024) {
-                            const vid = uid('v');
-                            const vSave = await saveVideoBlob(vid, blob);
-                            if (vSave.ok) {
-                                finalVideoId = vid;
-                                const vObjectUrl = URL.createObjectURL(blob);
-                                objectUrls['v_' + vid] = vObjectUrl;
-                            }
-                        }
-
-                        setProgress(90, 'Сохраняем метаданные...');
-
-                        // Save cover/thumbnail if present
-                        let coverId = null;
-                        if (urlPreviewData.thumbnail) {
-                            try {
-                                const thumbRes = await fetch(urlPreviewData.thumbnail, { mode: 'cors' });
-                                if (thumbRes.ok) {
-                                    const thumbBlob = await thumbRes.blob();
-                                    if (thumbBlob.size <= MAX_COVER_SIZE_MB * 1024 * 1024) {
-                                        coverId = uid('c');
-                                        const cSave = await saveCoverBlob(coverId, thumbBlob);
-                                        if (cSave.ok) {
-                                            const cObjUrl = URL.createObjectURL(thumbBlob);
-                                            objectUrls['c_' + coverId] = cObjUrl;
-                                        } else {
-                                            coverId = null;
-                                        }
-                                    }
-                                }
-                            } catch (e) {
-                                console.warn('Thumbnail download failed:', e);
-                            }
-                        }
-
-                        const track = {
-                            id: uid('t'),
-                            title: finalTitle,
-                            artist: finalArtist,
-                            album: '—',
-                            duration: meta.duration || 0,
-                            format: (blob.type.split('/')[1] || 'MP4').toUpperCase(),
-                            mime: blob.type || 'audio/mp4',
-                            audioId: audioId,
-                            videoId: finalVideoId,
-                            videoMime: blob.type || 'video/mp4',
-                            coverId: coverId,
-                            coverMime: 'image/jpeg',
-                            _sourceUrl: urlPreviewData.sourceUrl,
-                            _remoteThumbnail: urlPreviewData.thumbnail || null,
-                        };
-
-                        tracks.push(track);
-                        persistState();
-
-                        setProgress(100, 'Добавлено!');
-                        showToast('Трек добавлен: ' + finalTitle);
-
-                        // Reset and go to library
-                        resetPreview();
-                        setTimeout(() => {
-                            goToView('library');
-                            progress.classList.remove('visible');
-                        }, 600);
-
-                    } catch (err) {
-                        console.error(err);
-                        showError('Ошибка добавления: ' + (err.message || 'неизвестная'));
-                    } finally {
-                        addBtn.disabled = false;
-                    }
-                });
-            }
-
-            function readMetadataFromUrl(url) {
-                return new Promise((resolve) => {
-                    const tempAudio = new Audio();
-                    tempAudio.preload = 'metadata';
-                    tempAudio.src = url;
-                    const finish = () => {
-                        const duration = (isFinite(tempAudio.duration) && tempAudio.duration > 0) ? tempAudio.duration : 0;
-                        tempAudio.src = '';
-                        resolve({ duration });
-                    };
-                    tempAudio.addEventListener('loadedmetadata', finish, { once: true });
-                    tempAudio.addEventListener('error', finish, { once: true });
-                    setTimeout(() => {
-                        if (!tempAudio.duration) resolve({ duration: 0 });
-                    }, 2500);
-                });
-            }
-
-            // ========== PLAYBACK ==========
-            async function playTrack(index, autoPlay = true) {
-                if (index < 0 || index >= tracks.length) return;
-                const track = tracks[index];
-                const audioUrl = await getAudioUrlForTrack(track);
-                if (!audioUrl) { showToast('Аудиофайл не найден'); return; }
-
-                if (activeTrackIndex === index) {
-                    if (autoPlay) {
-                        if (isPlaying) { audioEl.pause(); isPlaying = false; }
-                        else {
-                            audioEl.play().then(() => {
-                                isPlaying = true;
-                                updatePlayPauseIcon();
-                                updateTrackCardVisuals();
-                                if (track.videoId || track._remoteVideoUrl) {
-                                    hardSyncVideo();
-                                    if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
-                                        drawerVideo.play().catch(() => {});
-                                    }
-                                }
-                            }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
-                        }
-                    }
-                    updateTrackCardVisuals();
-                    updatePlayerInfo();
-                    return;
-                }
-
-                activeTrackIndex = index;
-                isPlaying = false;
-                audioEl.src = audioUrl;
-                audioEl.load();
-
-                nowTitle.textContent = track.title;
-                nowArtist.textContent = track.artist;
-                totalTimeEl.textContent = formatTime(track.duration || 0);
-                currentTimeEl.textContent = '0:00';
-                timelineFill.style.width = '0%';
-
-                const videoUrl = await getVideoUrlForTrack(track);
-                if (videoUrl) { videoEl.src = videoUrl; videoEl.load(); videoEl.muted = true; }
-                else { videoEl.removeAttribute('src'); videoEl.load(); }
-
-                if (currentDetailIndex === index) refreshDrawer(index);
-
-                if (autoPlay) {
-                    audioEl.play().then(() => {
-                        isPlaying = true;
-                        updatePlayPauseIcon();
-                        updateTrackCardVisuals();
-                        if (videoUrl) {
-                            videoEl.currentTime = 0;
-                            hardSyncVideo();
-                            if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                                try { drawerVideo.currentTime = 0; } catch (e) {}
-                                drawerVideo.play().catch(() => {});
-                            }
-                        }
-                    }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
-                } else {
-                    updatePlayPauseIcon();
-                    updateTrackCardVisuals();
-                }
-                updatePlayerInfo();
-            }
-
-            function playNext() {
-                if (tracks.length === 0) return;
-                playTrack((activeTrackIndex + 1) % tracks.length, true);
-            }
-
-            function playPrev() {
-                if (tracks.length === 0) return;
-                playTrack((activeTrackIndex - 1 + tracks.length) % tracks.length, true);
-            }
-
-            async function hardSyncVideo() {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (!t.videoId && !t._remoteVideoUrl) return;
-                const url = await getVideoUrlForTrack(t);
-                if (!url) return;
-                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
-                videoEl.muted = true;
-                try {
-                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.05) videoEl.currentTime = audioEl.currentTime;
-                } catch (e) {}
-            }
-
-            async function syncVideoSeek() {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (!t.videoId && !t._remoteVideoUrl) return;
-                const url = await getVideoUrlForTrack(t);
-                if (!url) return;
-                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
-                try { videoEl.currentTime = audioEl.currentTime || 0; } catch (e) {}
-                if (isPlaying) videoEl.play().catch(() => {});
-                else videoEl.pause();
-            }
-
-            audioEl.addEventListener('timeupdate', () => {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if ((t.videoId || t._remoteVideoUrl) && videoEl.src) {
-                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.15) {
-                        try { videoEl.currentTime = audioEl.currentTime; } catch (e) {}
-                    }
-                }
-                if (drawerVideo.style.display !== 'none' && drawerVideo.src && (t.videoId || t._remoteVideoUrl)) {
-                    if (Math.abs(drawerVideo.currentTime - audioEl.currentTime) > 0.2) {
-                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
-                    }
-                }
-                const dur = audioEl.duration || t.duration || 0;
-                currentTimeEl.textContent = formatTime(audioEl.currentTime);
-                if (dur) timelineFill.style.width = Math.min(100, (audioEl.currentTime / dur) * 100) + '%';
-                updateMiniTimelines();
-            });
-
-            audioEl.addEventListener('loadedmetadata', () => {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (isFinite(audioEl.duration) && audioEl.duration > 0) {
-                    t.duration = audioEl.duration;
-                    totalTimeEl.textContent = formatTime(audioEl.duration);
-                    persistState();
-                }
-            });
-
-            audioEl.addEventListener('play', () => {
-                isPlaying = true;
-                updatePlayPauseIcon();
-                updateTrackCardVisuals();
-                if (activeTrackIndex >= 0) {
-                    const t = tracks[activeTrackIndex];
-                    if (t.videoId || t._remoteVideoUrl) {
-                        hardSyncVideo();
-                        if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                            try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
-                            drawerVideo.play().catch(() => {});
-                        }
-                    }
-                }
-            });
-
-            audioEl.addEventListener('pause', () => {
-                isPlaying = false;
-                updatePlayPauseIcon();
-                updateTrackCardVisuals();
-                videoEl.pause();
-                if (drawerVideo.style.display !== 'none') drawerVideo.pause();
-            });
-
-            audioEl.addEventListener('seeking', syncVideoSeek);
-            audioEl.addEventListener('seeked', syncVideoSeek);
-
-            audioEl.addEventListener('ended', () => {
-                isPlaying = false;
-                updatePlayPauseIcon();
-                updateTrackCardVisuals();
-                videoEl.pause();
-                if (tracks.length > 0) playNext();
-            });
-
-            playPauseBtn.addEventListener('click', () => {
-                if (activeTrackIndex < 0) {
-                    if (tracks.length > 0) playTrack(0, true);
-                    return;
-                }
-                playTrack(activeTrackIndex, true);
-            });
-            prevBtn.addEventListener('click', () => playPrev());
-            nextBtn.addEventListener('click', () => playNext());
-
-            playerInfo.addEventListener('click', () => {
-                if (activeTrackIndex >= 0) {
-                    openDrawer(activeTrackIndex);
-                } else {
-                    showToast('Ничего не играет');
-                }
-            });
-
-            function handleTimelineSeek(clientX) {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                const dur = audioEl.duration || t.duration || 0;
-                if (!dur) return;
-                const rect = timelineTrack.getBoundingClientRect();
-                const x = clientX - rect.left;
-                const percent = Math.max(0, Math.min(1, x / rect.width));
-                const newTime = percent * dur;
-                if (audioEl.src) audioEl.currentTime = newTime;
-                if ((t.videoId || t._remoteVideoUrl) && videoEl.src) { try { videoEl.currentTime = newTime; } catch (e) {} }
-                if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                    try { drawerVideo.currentTime = newTime; } catch (e) {}
-                }
-                currentTimeEl.textContent = formatTime(newTime);
-                timelineFill.style.width = (percent * 100) + '%';
-                updateMiniTimelines();
-            }
-
-            timelineTrack.addEventListener('click', (e) => handleTimelineSeek(e.clientX));
-
-            let isTimelineDragging = false;
-            timelineTrack.addEventListener('touchstart', (e) => {
-                isTimelineDragging = true;
-                if (e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
-            }, { passive: true });
-            timelineTrack.addEventListener('touchmove', (e) => {
-                if (isTimelineDragging && e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
-            }, { passive: true });
-            timelineTrack.addEventListener('touchend', () => { isTimelineDragging = false; });
-
-            videoToggleBtn.addEventListener('click', async () => {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (!t.videoId && !t._remoteVideoUrl) { showToast('У этого трека нет клипа'); return; }
-
-                if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
-                    drawerVideo.pause();
-                    drawerVideo.style.display = 'none';
-                    drawerVideo.removeAttribute('src');
-                    drawerVideo.load();
-                    videoToggleBtn.classList.remove('active');
-                    updatePlayerInfo();
-                    return;
-                }
-                if (currentDetailIndex !== activeTrackIndex) openDrawer(activeTrackIndex);
-                else await refreshDrawer(activeTrackIndex);
-                setTimeout(async () => {
-                    const url = await getVideoUrlForTrack(t);
-                    if (url) {
-                        drawerVideo.src = url;
-                        drawerVideo.style.display = 'block';
-                        drawerVideo.muted = true;
-                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
-                        if (isPlaying) drawerVideo.play().catch(() => {});
-                        else drawerVideo.pause();
-                        videoToggleBtn.classList.add('active');
-                        updatePlayerInfo();
-                    }
-                }, 120);
-            });
-
-            // ========== FILE SYSTEM ACCESS API — SCAN FOLDER ==========
-            async function pickMusicFolder() {
-                if (!hasFSAccess) {
-                    showToast('Ваш браузер не поддерживает автосканирование. Выберите файлы вручную.');
-                    fileInput.click();
-                    return;
-                }
-                try {
-                    const handle = await window.showDirectoryPicker({ mode: 'read' });
-                    if (handle) {
-                        musicFolderHandle = handle;
-                        await saveFolderHandle(handle);
-                        updateFolderInfo();
-                        showToast('Папка выбрана: ' + handle.name);
-                        await scanFolderAndShowList();
-                    }
-                } catch (e) {
-                    if (e.name !== 'AbortError') {
-                        console.warn('Directory picker error:', e);
-                        showToast('Не удалось открыть папку');
-                    }
-                }
-            }
-
-            async function ensureFolderPermission(handle) {
-                if (!handle || !handle.queryPermission) return false;
-                const opts = { mode: 'read' };
-                let perm = await handle.queryPermission(opts);
-                if (perm === 'granted') return true;
-                if (perm === 'prompt') {
-                    perm = await handle.requestPermission(opts);
-                    return perm === 'granted';
-                }
-                return false;
-            }
-
-            async function scanFolderAndShowList() {
-                if (!musicFolderHandle) {
-                    await pickMusicFolder();
-                    return;
-                }
-                const granted = await ensureFolderPermission(musicFolderHandle);
-                if (!granted) {
-                    showToast('Нет доступа к папке');
-                    return;
-                }
-                if (isScanning) return;
-                isScanning = true;
-
-                musicPickerOverlay.classList.add('open');
-                musicPickerTitle.textContent = 'Сканирование...';
-                musicPickerBody.innerHTML = `<div class="picker-scanning">
-                    <div class="scan-spinner"></div>
-                    <span>Сканируем папку «${musicFolderHandle.name}»...</span>
-                </div>`;
-
-                try {
-                    pickerFiles = [];
-                    await scanDirectoryRecursive(musicFolderHandle, '');
-                    isScanning = false;
-                    musicPickerTitle.textContent = `Найдено файлов: ${pickerFiles.length}`;
-                    if (pickerFiles.length === 0) {
-                        musicPickerBody.innerHTML = `<div class="music-picker-empty">
-                            <span class="material-icons">music_off</span>
-                            В папке не найдено аудиофайлов. Попробуйте другую папку.
-                        </div>`;
-                    } else {
-                        renderPickerFiles();
-                    }
-                } catch (e) {
-                    isScanning = false;
-                    console.error('Scan error:', e);
-                    musicPickerBody.innerHTML = `<div class="music-picker-empty">
-                        <span class="material-icons">error</span>
-                        Ошибка сканирования: ${e.message || 'неизвестная'}
-                    </div>`;
-                }
-            }
-
-            async function scanDirectoryRecursive(dirHandle, prefix) {
-                for await (const entry of dirHandle.values()) {
-                    if (entry.kind === 'file') {
-                        const name = entry.name;
-                        if (/\.(mp3|m4a|aac|ogg|wav|flac|opus|wma|webm|oga|weba)$/i.test(name)) {
-                            try {
-                                const file = await entry.getFile();
-                                file._relativePath = prefix + name;
-                                pickerFiles.push(file);
-                                if (pickerFiles.length % 5 === 0) {
-                                    musicPickerTitle.textContent = `Сканирование... найдено ${pickerFiles.length}`;
-                                }
-                            } catch (e) {
-                                console.warn('Could not read file:', name, e);
-                            }
-                        }
-                    } else if (entry.kind === 'directory') {
-                        try {
-                            await scanDirectoryRecursive(entry, prefix + entry.name + '/');
-                        } catch (e) {
-                            console.warn('Could not read subdir:', entry.name, e);
-                        }
-                    }
-                }
-            }
-
-            function renderPickerFiles() {
-                if (pickerFiles.length === 0) {
-                    musicPickerBody.innerHTML = `<div class="music-picker-empty">
-                        <span class="material-icons">music_off</span>
-                        Файлы не найдены
-                    </div>`;
-                    return;
-                }
-
-                let html = '';
-                if (musicFolderHandle) {
-                    html += `<div class="folder-handle-info">
-                        <span class="material-icons">folder</span>
-                        Папка: <span class="folder-name">${musicFolderHandle.name}</span> · ${pickerFiles.length} файлов
-                    </div>`;
-                }
-
-                pickerFiles.forEach((file, i) => {
-                    const name = file._relativePath || file.name;
-                    const size = file.size < 1024 * 1024
-                        ? (file.size / 1024).toFixed(0) + ' KB'
-                        : (file.size / (1024 * 1024)).toFixed(1) + ' MB';
-                    const isPlaying = pickerPreviewIndex === i;
-                    const isAdded = tracks.some(t => t._originalName === file.name && t._originalSize === file.size);
-
-                    html += `
-                        <div class="picker-file-row" data-picker-index="${i}">
-                            <button class="picker-play-indicator ${isPlaying ? 'playing' : ''}" data-preview-index="${i}" title="Прослушать">
-                                <span class="material-icons indicator-icon">${isPlaying ? 'pause' : 'play_arrow'}</span>
-                            </button>
-                            <div class="picker-file-info" data-file-select-index="${i}">
-                                <span class="picker-file-name">${name}</span>
-                                <span class="picker-file-meta">${size} · ${isAdded ? 'уже добавлен' : 'нажмите для выбора'}</span>
-                                <div class="picker-file-preview-bar" id="picker-bar-${i}">
-                                    <div class="picker-file-preview-fill" id="picker-fill-${i}" style="width:0%"></div>
-                                </div>
-                            </div>
-                            <button class="picker-file-add-btn ${isAdded ? 'added' : ''}" data-add-file-index="${i}" title="${isAdded ? 'Уже добавлен' : 'Добавить'}">
-                                <span class="material-icons">${isAdded ? 'check' : 'add'}</span>
-                            </button>
-                        </div>
-                    `;
-                });
-
-                musicPickerBody.innerHTML = html;
-
-                musicPickerBody.onclick = (e) => {
-                    const previewBtn = e.target.closest('[data-preview-index]');
-                    if (previewBtn) {
-                        e.stopPropagation();
-                        const idx = parseInt(previewBtn.dataset.previewIndex, 10);
-                        togglePreview(idx);
-                        return;
-                    }
-                    const addBtn = e.target.closest('[data-add-file-index]');
-                    if (addBtn) {
-                        e.stopPropagation();
-                        const idx = parseInt(addBtn.dataset.addFileIndex, 10);
-                        addPickerFileToLibrary(idx);
-                        return;
-                    }
-                    const fileInfo = e.target.closest('[data-file-select-index]');
-                    if (fileInfo) {
-                        const idx = parseInt(fileInfo.dataset.fileSelectIndex, 10);
-                        togglePreview(idx);
-                        return;
-                    }
-                };
-            }
-
-            function togglePreview(index) {
-                if (pickerPreviewIndex === index) {
-                    stopPreview();
-                    return;
-                }
-                stopPreview();
-                const file = pickerFiles[index];
-                if (!file) return;
-
-                pickerPreviewUrl = URL.createObjectURL(file);
-                pickerPreviewAudio = new Audio(pickerPreviewUrl);
-                pickerPreviewAudio.preload = 'metadata';
-                pickerPreviewIndex = index;
-
-                pickerPreviewAudio.addEventListener('timeupdate', () => {
-                    if (pickerPreviewIndex !== index) return;
-                    const bar = document.getElementById('picker-fill-' + index);
-                    if (bar && pickerPreviewAudio.duration) {
-                        bar.style.width = Math.min(100, (pickerPreviewAudio.currentTime / pickerPreviewAudio.duration) * 100) + '%';
-                    }
-                });
-
-                pickerPreviewAudio.addEventListener('ended', () => stopPreview());
-
-                pickerPreviewAudio.play().then(() => {
-                    updatePickerPreviewButtons();
-                }).catch(() => {
-                    showToast('Не удалось воспроизвести');
-                    stopPreview();
-                });
-            }
-
-            function stopPreview() {
-                if (pickerPreviewAudio) {
-                    try { pickerPreviewAudio.pause(); } catch (e) {}
-                    pickerPreviewAudio = null;
-                }
-                if (pickerPreviewUrl) {
-                    try { URL.revokeObjectURL(pickerPreviewUrl); } catch (e) {}
-                    pickerPreviewUrl = null;
-                }
-                pickerPreviewIndex = -1;
-                updatePickerPreviewButtons();
-                pickerFiles.forEach((_, i) => {
-                    const fill = document.getElementById('picker-fill-' + i);
-                    if (fill) fill.style.width = '0%';
-                });
-            }
-
-            function updatePickerPreviewButtons() {
-                document.querySelectorAll('.picker-play-indicator').forEach(btn => {
-                    const idx = parseInt(btn.dataset.previewIndex, 10);
-                    if (idx === pickerPreviewIndex) {
-                        btn.classList.add('playing');
-                        const icon = btn.querySelector('.indicator-icon');
-                        if (icon) icon.textContent = 'pause';
-                    } else {
-                        btn.classList.remove('playing');
-                        const icon = btn.querySelector('.indicator-icon');
-                        if (icon) icon.textContent = 'play_arrow';
-                    }
-                });
-            }
-
-            async function addPickerFileToLibrary(index) {
-                const file = pickerFiles[index];
-                if (!file) return;
-                if (file.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) {
-                    showToast(`Файл слишком большой (макс. ${MAX_AUDIO_SIZE_MB} МБ)`);
-                    return;
-                }
-                const isDuplicate = tracks.some(t => t._originalName === file.name && t._originalSize === file.size);
-                if (isDuplicate) {
-                    showToast('Этот файл уже добавлен');
-                    return;
-                }
-
-                const audioId = uid('a');
-                const saved = await saveAudioBlob(audioId, file);
-                if (!saved) { showToast('Не удалось сохранить'); return; }
-
-                const url = URL.createObjectURL(file);
-                objectUrls['a_' + audioId] = url;
-                const meta = await readMetadataFromUrl(url);
-
-                tracks.push({
-                    id: uid('t'),
-                    title: file.name.replace(/\.[^.]+$/, ''),
-                    artist: 'Неизвестный исполнитель',
-                    album: '—',
-                    duration: meta.duration || 0,
-                    format: (file.type.split('/')[1] || '—').toUpperCase(),
-                    mime: file.type || 'audio/mpeg',
-                    audioId: audioId,
-                    videoId: null,
-                    videoMime: null,
-                    coverId: null,
-                    coverMime: null,
-                    _originalName: file.name,
-                    _originalSize: file.size,
-                    _lastModified: file.lastModified,
-                });
-
-                persistState();
-                showToast('Добавлено: ' + (file._relativePath || file.name));
-
-                const addBtn = musicPickerBody.querySelector(`[data-add-file-index="${index}"]`);
-                if (addBtn) {
-                    addBtn.classList.add('added');
-                    addBtn.innerHTML = '<span class="material-icons">check</span>';
-                }
-                const metaEl = musicPickerBody.querySelector(`[data-file-select-index="${index}"] .picker-file-meta`);
-                if (metaEl) metaEl.textContent = metaEl.textContent.split(' · ')[0] + ' · уже добавлен';
-
-                if (currentView === 'library') renderLibrary();
-                else goToView('library');
-                updateStorageInfo();
-                if (pickerPreviewIndex === index) stopPreview();
-            }
-
-            function closeMusicPicker() {
-                stopPreview();
-                pickerFiles = [];
-                musicPickerOverlay.classList.remove('open');
-                musicPickerBody.onclick = null;
-            }
-
-            musicPickerClose.addEventListener('click', closeMusicPicker);
-            musicPickerOverlay.addEventListener('click', (e) => {
-                if (e.target === musicPickerOverlay) closeMusicPicker();
-            });
-
-            musicPickerScanBtn.addEventListener('click', () => {
-                if (musicFolderHandle) scanFolderAndShowList();
-                else pickMusicFolder();
-            });
-
-            scanFolderBtn.addEventListener('click', () => {
-                if (!hasFSAccess) {
-                    showToast('Автосканирование не поддерживается. Выберите файлы вручную.');
-                    fileInput.click();
-                    return;
-                }
-                if (musicFolderHandle) scanFolderAndShowList();
-                else pickMusicFolder();
-            });
-
-            forgetFolderBtn.addEventListener('click', async () => {
-                if (confirm('Забыть выбранную папку?')) {
-                    await removeFolderHandle();
-                    musicFolderHandle = null;
-                    updateFolderInfo();
-                    showToast('Папка забыта');
-                }
-            });
-
-            uploadBtn.addEventListener('click', () => fileInput.click());
-
-            fileInput.addEventListener('change', async (e) => {
-                const files = Array.from(e.target.files || []);
-                if (files.length === 0) return;
-                let added = 0, failed = 0;
-                for (const file of files) {
-                    if (!file.type.startsWith('audio/') && !/\.(mp3|m4a|aac|ogg|wav|flac|opus|wma|webm|oga)$/i.test(file.name)) {
-                        failed++; continue;
-                    }
-                    if (file.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) { failed++; continue; }
-                    const audioId = uid('a');
-                    const saved = await saveAudioBlob(audioId, file);
-                    if (!saved) { failed++; continue; }
-                    const url = URL.createObjectURL(file);
-                    objectUrls['a_' + audioId] = url;
-                    const meta = await readMetadataFromUrl(url);
-                    tracks.push({
-                        id: uid('t'),
-                        title: file.name.replace(/\.[^.]+$/, ''),
-                        artist: 'Неизвестный исполнитель',
-                        album: '—',
-                        duration: meta.duration || 0,
-                        format: (file.type.split('/')[1] || '—').toUpperCase(),
-                        mime: file.type || 'audio/mpeg',
-                        audioId: audioId,
-                        videoId: null,
-                        videoMime: null,
-                        coverId: null,
-                        coverMime: null,
-                        _originalName: file.name,
-                        _originalSize: file.size,
-                        _lastModified: file.lastModified,
-                    });
-                    added++;
-                }
-                fileInput.value = '';
-                persistState();
-                showToast(`Добавлено: ${added}${failed ? ', ошибок: ' + failed : ''}`);
-                if (currentView === 'library') renderLibrary();
-                else goToView('library');
-                updateStorageInfo();
-            });
 
             // ========== MOBILE DROPDOWN ==========
             function buildDropdownContent(trackIndex) {
@@ -3698,7 +2715,7 @@
             }
 
             document.addEventListener('click', (e) => {
-                if (!e.target.closest('.track-dropdown') && !e.target.closest('.track-menu-btn')) closeAllDesktopDropdowns();
+                if (!e.target.closest('.track-dropdown') && !e.target.closest('.track-menu-btn') && !e.target.closest('.row-menu-btn')) closeAllDesktopDropdowns();
             });
 
             function triggerCoverUpload(trackIndex) {
@@ -3744,102 +2761,28 @@
                 pendingCoverTrackIndex = -1;
             });
 
-            // ========== RENDER LIBRARY ==========
-            async function renderLibrary() {
-                pageTitle.textContent = 'Библиотека';
-                settingsPanel.classList.remove('visible');
-                settingsVisible = false;
-                headerActions.style.display = 'flex';
-                closeAllDesktopDropdowns();
-
-                if (tracks.length === 0) {
-                    dynamicContent.innerHTML = `<div style="text-align:center; padding:60px 20px; color:var(--text-secondary); background:var(--bg-secondary); border-radius:var(--radius-card); border:1px dashed var(--border-light);">
-                        <span class="material-icons" style="font-size:48px; display:block; margin-bottom:12px;">music_off</span>
-                        Нет треков. Нажмите «Сканировать» чтобы выбрать папку с музыкой, «Вручную» для выбора файлов или «По ссылке» для импорта из видео.
-                    </div>`;
-                    return;
-                }
-
-                const coverUrls = {};
-                for (let i = 0; i < tracks.length; i++) {
-                    if (tracks[i].coverId || tracks[i]._remoteThumbnail) {
-                        const url = await getCoverUrlForTrack(tracks[i]);
-                        if (url) coverUrls[tracks[i].id] = url;
-                    }
-                }
-
-                let html = `<div class="track-grid">`;
-                tracks.forEach((track, index) => {
-                    const isCurrent = (index === activeTrackIndex);
-                    const isPlayingTrack = (index === activeTrackIndex && isPlaying);
-                    const coverUrl = coverUrls[track.id] || null;
-
-                    let dropdownItems = `<div class="dropdown-header">Добавить в плейлист</div>`;
-                    playlists.forEach(p => {
-                        const already = (playlistTrackMap[p] || []).includes(track.id);
-                        dropdownItems += `
-                            <button class="dropdown-item pl" data-add-playlist="${p.replace(/"/g, '&quot;')}" data-track-index="${index}">
-                                <span class="material-icons">${already ? 'check' : 'playlist_add'}</span>
-                                ${p}
-                            </button>
-                        `;
-                    });
-                    dropdownItems += `<div style="border-top:1px solid var(--border-light); margin:4px 0;"></div>`;
-                    dropdownItems += `<button class="dropdown-item" data-details-index="${index}"><span class="material-icons">info</span> Подробнее</button>`;
-
-                    html += `
-                        <div class="track-card ${isCurrent ? 'current' : ''} ${isPlayingTrack ? 'playing' : ''}" data-index="${index}">
-                            <div class="track-cover ${coverUrl ? 'has-custom' : ''}" data-play-index="${index}">
-                                ${coverUrl ? `<img class="cover-img" src="${coverUrl}" alt="" onerror="this.style.display='none'">` : ''}
-                                <span class="material-icons cover-icon">album</span>
-                                <div class="cover-play"><span class="material-icons play-icon"></span></div>
-                                <button class="cover-upload-btn" data-cover-upload-index="${index}" title="Загрузить обложку">
-                                    <span class="material-icons">photo_camera</span>
-                                </button>
-                            </div>
-                            <button class="track-menu-btn" data-menu-index="${index}" title="Опции">
-                                <span class="material-icons">more_vert</span>
-                            </button>
-                            <div class="track-dropdown" id="dropdown-${index}">${dropdownItems}</div>
-                            <div class="track-meta">
-                                <span class="track-title" data-detail-index="${index}">${track.title}</span>
-                                <span class="track-artist">${track.artist || 'Неизвестный исполнитель'}</span>
-                            </div>
-                            <div class="track-footer">
-                                <span class="track-badge">${formatTime(track.duration || 0)}</span>
-                                ${(track.videoId || track._remoteVideoUrl) ? '<span class="video-badge"><span class="material-icons">videocam</span> клип</span>' : ''}
-                                ${track._sourceUrl ? '<span class="track-badge" style="color:var(--accent);">из ссылки</span>' : ''}
-                            </div>
-                            <div class="mini-timeline"><div class="mini-timeline-fill"></div></div>
-                        </div>
+            // ========== RENDER HELPERS ==========
+            async function buildTrackDropdownItems(track, index) {
+                let items = `<div class="dropdown-header">Добавить в плейлист</div>`;
+                playlists.forEach(p => {
+                    const already = (playlistTrackMap[p] || []).includes(track.id);
+                    items += `
+                        <button class="dropdown-item pl" data-add-playlist="${p.replace(/"/g, '&quot;')}" data-track-index="${index}">
+                            <span class="material-icons">${already ? 'check' : 'playlist_add'}</span>
+                            ${p}
+                        </button>
                     `;
                 });
-                html += `</div>`;
-                dynamicContent.innerHTML = html;
+                if (playlists.length === 0) {
+                    items += `<div style="padding:8px 14px; font-size:0.7rem; color:var(--text-secondary);">Нет плейлистов</div>`;
+                }
+                items += `<div style="border-top:1px solid var(--border-light); margin:4px 0;"></div>`;
+                items += `<button class="dropdown-item" data-details-index="${index}"><span class="material-icons">info</span> Подробнее</button>`;
+                return items;
+            }
 
-                document.querySelectorAll('.track-cover').forEach(cover => {
-                    cover.addEventListener('click', (e) => {
-                        if (e.target.closest('.cover-upload-btn')) return;
-                        e.stopPropagation();
-                        playTrack(parseInt(cover.dataset.playIndex, 10), true);
-                    });
-                });
-
-                document.querySelectorAll('.cover-upload-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        triggerCoverUpload(parseInt(btn.dataset.coverUploadIndex, 10));
-                    });
-                });
-
-                document.querySelectorAll('.track-title').forEach(titleEl => {
-                    titleEl.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        openDrawer(parseInt(titleEl.dataset.detailIndex, 10));
-                    });
-                });
-
-                document.querySelectorAll('.track-menu-btn').forEach(btn => {
+            function attachTrackMenuHandlers(container) {
+                container.querySelectorAll('.track-menu-btn, .row-menu-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const idx = parseInt(btn.dataset.menuIndex, 10);
@@ -3848,14 +2791,17 @@
                             else openMobileDropdown(idx);
                         } else {
                             const dropdown = document.getElementById('dropdown-' + idx);
+                            if (!dropdown) return;
                             const isOpen = dropdown.classList.contains('open');
                             closeAllDesktopDropdowns();
                             if (!isOpen) dropdown.classList.add('open');
                         }
                     });
                 });
+            }
 
-                document.querySelectorAll('.track-dropdown').forEach(dropdown => {
+            function attachDropdownHandlers(container) {
+                container.querySelectorAll('.track-dropdown').forEach(dropdown => {
                     dropdown.addEventListener('click', (e) => {
                         const item = e.target.closest('.dropdown-item');
                         if (!item) return;
@@ -3876,16 +2822,175 @@
                         }
                     });
                 });
+            }
+
+            // ========== RENDER LIBRARY ==========
+            async function renderLibrary() {
+                pageTitle.textContent = 'Библиотека';
+                settingsPanel.classList.remove('visible');
+                settingsVisible = false;
+                headerActions.style.display = 'flex';
+                closeAllDesktopDropdowns();
+
+                if (tracks.length === 0) {
+                    dynamicContent.innerHTML = `<div style="text-align:center; padding:60px 20px; color:var(--text-secondary); background:var(--bg-secondary); border-radius:var(--radius-card); border:1px dashed var(--border-light);">
+                        <span class="material-icons" style="font-size:48px; display:block; margin-bottom:12px;">music_off</span>
+                        Нет треков. Нажмите «Сканировать» чтобы выбрать папку с музыкой или «Вручную» для выбора файлов.
+                    </div>`;
+                    return;
+                }
+
+                // Pre-load cover URLs
+                const coverUrls = {};
+                for (let i = 0; i < tracks.length; i++) {
+                    if (tracks[i].coverId) {
+                        const url = await getCoverUrlForTrack(tracks[i]);
+                        if (url) coverUrls[tracks[i].id] = url;
+                    }
+                }
+
+                if (viewMode === 'list') {
+                    // ========== LIST VIEW ==========
+                    let html = `<div class="track-list">`;
+                    for (let index = 0; index < tracks.length; index++) {
+                        const track = tracks[index];
+                        const isCurrent = (index === activeTrackIndex);
+                        const isPlayingTrack = (index === activeTrackIndex && isPlaying);
+                        const coverUrl = coverUrls[track.id] || null;
+                        const dropdownItems = await buildTrackDropdownItems(track, index);
+
+                        html += `
+                            <div class="track-row ${isCurrent ? 'current' : ''} ${isPlayingTrack ? 'playing' : ''}" data-index="${index}">
+                                <div class="row-cover ${coverUrl ? 'has-custom' : ''}" data-play-index="${index}">
+                                    ${coverUrl ? `<img class="row-cover-img" src="${coverUrl}" alt="">` : ''}
+                                    <span class="material-icons row-cover-icon">album</span>
+                                    <div class="row-play"><span class="material-icons">play_arrow</span></div>
+                                </div>
+                                <div class="row-info" data-detail-index="${index}">
+                                    <span class="row-title">${track.title}</span>
+                                    <span class="row-artist">${track.artist || 'Неизвестный исполнитель'}</span>
+                                    <div class="row-timeline"><div class="row-timeline-fill"></div></div>
+                                </div>
+                                <div class="row-duration">
+                                    ${track.videoId ? '<span class="row-video-dot"><span class="material-icons">videocam</span></span>' : ''}
+                                    <span>${formatTime(track.duration || 0)}</span>
+                                </div>
+                                <button class="row-menu-btn" data-menu-index="${index}" title="Опции">
+                                    <span class="material-icons">more_vert</span>
+                                </button>
+                                <div class="track-dropdown" id="dropdown-${index}">${dropdownItems}</div>
+                            </div>
+                        `;
+                    }
+                    html += `</div>`;
+                    dynamicContent.innerHTML = html;
+
+                    // Handlers
+                    document.querySelectorAll('.track-row').forEach(row => {
+                        const playIdx = parseInt(row.dataset.index, 10);
+
+                        // cover click
+                        const cover = row.querySelector('.row-cover');
+                        if (cover) cover.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            playTrack(playIdx, true);
+                        });
+
+                        // info click → drawer
+                        const info = row.querySelector('.row-info');
+                        if (info) info.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openDrawer(parseInt(info.dataset.detailIndex, 10));
+                        });
+                    });
+
+                    attachTrackMenuHandlers(dynamicContent);
+                    attachDropdownHandlers(dynamicContent);
+
+                } else {
+                    // ========== GRID VIEW ==========
+                    let html = `<div class="track-grid">`;
+                    for (let index = 0; index < tracks.length; index++) {
+                        const track = tracks[index];
+                        const isCurrent = (index === activeTrackIndex);
+                        const isPlayingTrack = (index === activeTrackIndex && isPlaying);
+                        const coverUrl = coverUrls[track.id] || null;
+                        const dropdownItems = await buildTrackDropdownItems(track, index);
+
+                        html += `
+                            <div class="track-card ${isCurrent ? 'current' : ''} ${isPlayingTrack ? 'playing' : ''}" data-index="${index}">
+                                <div class="track-cover ${coverUrl ? 'has-custom' : ''}" data-play-index="${index}">
+                                    ${coverUrl ? `<img class="cover-img" src="${coverUrl}" alt="">` : ''}
+                                    <span class="material-icons cover-icon">album</span>
+                                    <div class="cover-play"><span class="material-icons play-icon"></span></div>
+                                    <button class="cover-upload-btn" data-cover-upload-index="${index}" title="Загрузить обложку">
+                                        <span class="material-icons">photo_camera</span>
+                                    </button>
+                                </div>
+                                <button class="track-menu-btn" data-menu-index="${index}" title="Опции">
+                                    <span class="material-icons">more_vert</span>
+                                </button>
+                                <div class="track-dropdown" id="dropdown-${index}">${dropdownItems}</div>
+                                <div class="track-meta">
+                                    <span class="track-title" data-detail-index="${index}">${track.title}</span>
+                                    <span class="track-artist">${track.artist || 'Неизвестный исполнитель'}</span>
+                                </div>
+                                <div class="track-footer">
+                                    <span class="track-badge">${formatTime(track.duration || 0)}</span>
+                                    ${track.videoId ? '<span class="video-badge"><span class="material-icons">videocam</span> клип</span>' : ''}
+                                </div>
+                                <div class="mini-timeline"><div class="mini-timeline-fill"></div></div>
+                            </div>
+                        `;
+                    }
+                    html += `</div>`;
+                    dynamicContent.innerHTML = html;
+
+                    document.querySelectorAll('.track-cover').forEach(cover => {
+                        cover.addEventListener('click', (e) => {
+                            if (e.target.closest('.cover-upload-btn')) return;
+                            e.stopPropagation();
+                            playTrack(parseInt(cover.dataset.playIndex, 10), true);
+                        });
+                    });
+
+                    document.querySelectorAll('.cover-upload-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            triggerCoverUpload(parseInt(btn.dataset.coverUploadIndex, 10));
+                        });
+                    });
+
+                    document.querySelectorAll('.track-title').forEach(titleEl => {
+                        titleEl.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            openDrawer(parseInt(titleEl.dataset.detailIndex, 10));
+                        });
+                    });
+
+                    attachTrackMenuHandlers(dynamicContent);
+                    attachDropdownHandlers(dynamicContent);
+                }
 
                 updateMiniTimelines();
             }
 
             // ========== RENDER PLAYLISTS ==========
-            function renderPlaylists() {
+            async function renderPlaylists() {
                 pageTitle.textContent = 'Плейлисты';
                 settingsPanel.classList.remove('visible');
                 settingsVisible = false;
-                headerActions.style.display = 'none';
+                headerActions.style.display = 'flex';
+                closeAllDesktopDropdowns();
+
+                // Pre-load cover URLs for all tracks (needed for list view)
+                const coverUrls = {};
+                for (let i = 0; i < tracks.length; i++) {
+                    if (tracks[i].coverId) {
+                        const url = await getCoverUrlForTrack(tracks[i]);
+                        if (url) coverUrls[tracks[i].id] = url;
+                    }
+                }
 
                 let html = `
                     <div class="playlist-section">
@@ -3911,26 +3016,94 @@
                 if (expandedPlaylist) {
                     const ids = playlistTrackMap[expandedPlaylist] || [];
                     const plTracks = ids.map(id => getTrackById(id)).filter(Boolean);
-                    html += `<div class="playlist-tracks visible">`;
-                    if (plTracks.length === 0) {
-                        html += `<div style="color:var(--text-secondary); font-size:0.85rem; padding:8px;">В плейлисте пока нет треков</div>`;
-                    } else {
-                        plTracks.forEach((t) => {
+
+                    if (viewMode === 'list') {
+                        html += `<div class="playlist-tracks visible"><div class="track-list">`;
+                        for (let i = 0; i < plTracks.length; i++) {
+                            const t = plTracks[i];
                             const realIdx = tracks.indexOf(t);
+                            const isCurrent = (realIdx === activeTrackIndex);
+                            const isPlayingTrack = (realIdx === activeTrackIndex && isPlaying);
+                            const coverUrl = coverUrls[t.id] || null;
+                            const dropdownItems = await buildTrackDropdownItems(t, realIdx);
+
                             html += `
-                                <div class="playlist-track-row" data-track-idx="${realIdx}">
-                                    <span class="material-icons">audiotrack</span>
-                                    <span class="pl-title">${t.title}</span>
-                                    <span class="pl-artist">${t.artist}</span>
+                                <div class="track-row ${isCurrent ? 'current' : ''} ${isPlayingTrack ? 'playing' : ''}" data-index="${realIdx}">
+                                    <div class="row-cover ${coverUrl ? 'has-custom' : ''}" data-play-index="${realIdx}">
+                                        ${coverUrl ? `<img class="row-cover-img" src="${coverUrl}" alt="">` : ''}
+                                        <span class="material-icons row-cover-icon">album</span>
+                                        <div class="row-play"><span class="material-icons">play_arrow</span></div>
+                                    </div>
+                                    <div class="row-info" data-detail-index="${realIdx}">
+                                        <span class="row-title">${t.title}</span>
+                                        <span class="row-artist">${t.artist || 'Неизвестный исполнитель'}</span>
+                                        <div class="row-timeline"><div class="row-timeline-fill"></div></div>
+                                    </div>
+                                    <div class="row-duration">
+                                        ${t.videoId ? '<span class="row-video-dot"><span class="material-icons">videocam</span></span>' : ''}
+                                        <span>${formatTime(t.duration || 0)}</span>
+                                    </div>
+                                    <button class="row-menu-btn" data-menu-index="${realIdx}" title="Опции">
+                                        <span class="material-icons">more_vert</span>
+                                    </button>
+                                    <div class="track-dropdown" id="dropdown-${realIdx}">${dropdownItems}</div>
                                 </div>
                             `;
-                        });
+                        }
+                        html += `</div>`;
+                        if (plTracks.length === 0) {
+                            html = html.replace('<div class="track-list">', '<div style="color:var(--text-secondary); font-size:0.85rem; padding:8px;">В плейлисте пока нет треков</div><div class="track-list">');
+                        }
+                        html += `</div>`;
+                    } else {
+                        // Grid view for playlist
+                        html += `<div class="playlist-tracks visible"><div class="track-grid">`;
+                        for (let i = 0; i < plTracks.length; i++) {
+                            const t = plTracks[i];
+                            const realIdx = tracks.indexOf(t);
+                            const isCurrent = (realIdx === activeTrackIndex);
+                            const isPlayingTrack = (realIdx === activeTrackIndex && isPlaying);
+                            const coverUrl = coverUrls[t.id] || null;
+                            const dropdownItems = await buildTrackDropdownItems(t, realIdx);
+
+                            html += `
+                                <div class="track-card ${isCurrent ? 'current' : ''} ${isPlayingTrack ? 'playing' : ''}" data-index="${realIdx}">
+                                    <div class="track-cover ${coverUrl ? 'has-custom' : ''}" data-play-index="${realIdx}">
+                                        ${coverUrl ? `<img class="cover-img" src="${coverUrl}" alt="">` : ''}
+                                        <span class="material-icons cover-icon">album</span>
+                                        <div class="cover-play"><span class="material-icons play-icon"></span></div>
+                                        <button class="cover-upload-btn" data-cover-upload-index="${realIdx}" title="Загрузить обложку">
+                                            <span class="material-icons">photo_camera</span>
+                                        </button>
+                                    </div>
+                                    <button class="track-menu-btn" data-menu-index="${realIdx}" title="Опции">
+                                        <span class="material-icons">more_vert</span>
+                                    </button>
+                                    <div class="track-dropdown" id="dropdown-${realIdx}">${dropdownItems}</div>
+                                    <div class="track-meta">
+                                        <span class="track-title" data-detail-index="${realIdx}">${t.title}</span>
+                                        <span class="track-artist">${t.artist || 'Неизвестный исполнитель'}</span>
+                                    </div>
+                                    <div class="track-footer">
+                                        <span class="track-badge">${formatTime(t.duration || 0)}</span>
+                                        ${t.videoId ? '<span class="video-badge"><span class="material-icons">videocam</span> клип</span>' : ''}
+                                    </div>
+                                    <div class="mini-timeline"><div class="mini-timeline-fill"></div></div>
+                                </div>
+                            `;
+                        }
+                        html += `</div>`;
+                        if (plTracks.length === 0) {
+                            html = html.replace('<div class="track-grid">', '<div style="color:var(--text-secondary); font-size:0.85rem; padding:8px;">В плейлисте пока нет треков</div><div class="track-grid">');
+                        }
+                        html += `</div>`;
                     }
-                    html += `</div>`;
                 }
+
                 html += `</div>`;
                 dynamicContent.innerHTML = html;
 
+                // Playlist chip handlers
                 document.querySelectorAll('.playlist-chip').forEach(chip => {
                     chip.addEventListener('click', () => {
                         const name = chip.dataset.playlistName;
@@ -3939,10 +3112,44 @@
                     });
                 });
 
-                document.querySelectorAll('.playlist-track-row').forEach(row => {
-                    row.addEventListener('click', () => playTrack(parseInt(row.dataset.trackIdx, 10), true));
+                // Attach handlers for tracks inside expanded playlist
+                document.querySelectorAll('.track-cover').forEach(cover => {
+                    cover.addEventListener('click', (e) => {
+                        if (e.target.closest('.cover-upload-btn')) return;
+                        e.stopPropagation();
+                        playTrack(parseInt(cover.dataset.playIndex, 10), true);
+                    });
+                });
+                document.querySelectorAll('.cover-upload-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        triggerCoverUpload(parseInt(btn.dataset.coverUploadIndex, 10));
+                    });
+                });
+                document.querySelectorAll('.track-title').forEach(titleEl => {
+                    titleEl.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openDrawer(parseInt(titleEl.dataset.detailIndex, 10));
+                    });
+                });
+                document.querySelectorAll('.track-row').forEach(row => {
+                    const playIdx = parseInt(row.dataset.index, 10);
+                    const cover = row.querySelector('.row-cover');
+                    if (cover) cover.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        playTrack(playIdx, true);
+                    });
+                    const info = row.querySelector('.row-info');
+                    if (info) info.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openDrawer(parseInt(info.dataset.detailIndex, 10));
+                    });
                 });
 
+                attachTrackMenuHandlers(dynamicContent);
+                attachDropdownHandlers(dynamicContent);
+
+                // Create playlist
                 const createBtn = document.getElementById('createPlaylistBtn');
                 const nameInput = document.getElementById('playlistNameInput');
                 const createPlaylist = () => {
@@ -3959,6 +3166,574 @@
                 createBtn.addEventListener('click', createPlaylist);
                 nameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); createPlaylist(); } });
                 nameInput.focus();
+
+                updateMiniTimelines();
+            }
+
+            // ========== PLAYBACK ==========
+            async function playTrack(index, autoPlay = true) {
+                if (index < 0 || index >= tracks.length) return;
+                const track = tracks[index];
+                const audioUrl = await getAudioUrlForTrack(track);
+                if (!audioUrl) { showToast('Аудиофайл не найден'); return; }
+
+                if (activeTrackIndex === index) {
+                    if (autoPlay) {
+                        if (isPlaying) { audioEl.pause(); isPlaying = false; }
+                        else {
+                            audioEl.play().then(() => {
+                                isPlaying = true;
+                                updatePlayPauseIcon();
+                                updateTrackCardVisuals();
+                                if (track.videoId) {
+                                    hardSyncVideo();
+                                    if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                                        drawerVideo.play().catch(() => {});
+                                    }
+                                }
+                            }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
+                        }
+                    }
+                    updateTrackCardVisuals();
+                    updatePlayerInfo();
+                    return;
+                }
+
+                activeTrackIndex = index;
+                isPlaying = false;
+                audioEl.src = audioUrl;
+                audioEl.load();
+
+                nowTitle.textContent = track.title;
+                nowArtist.textContent = track.artist;
+                totalTimeEl.textContent = formatTime(track.duration || 0);
+                currentTimeEl.textContent = '0:00';
+                timelineFill.style.width = '0%';
+
+                const videoUrl = await getVideoUrlForTrack(track);
+                if (videoUrl) { videoEl.src = videoUrl; videoEl.load(); videoEl.muted = true; }
+                else { videoEl.removeAttribute('src'); videoEl.load(); }
+
+                if (currentDetailIndex === index) refreshDrawer(index);
+
+                if (autoPlay) {
+                    audioEl.play().then(() => {
+                        isPlaying = true;
+                        updatePlayPauseIcon();
+                        updateTrackCardVisuals();
+                        if (videoUrl) {
+                            videoEl.currentTime = 0;
+                            hardSyncVideo();
+                            if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                                try { drawerVideo.currentTime = 0; } catch (e) {}
+                                drawerVideo.play().catch(() => {});
+                            }
+                        }
+                    }).catch(() => { isPlaying = false; updatePlayPauseIcon(); updateTrackCardVisuals(); });
+                } else {
+                    updatePlayPauseIcon();
+                    updateTrackCardVisuals();
+                }
+                updatePlayerInfo();
+            }
+
+            function playNext() {
+                if (tracks.length === 0) return;
+                playTrack((activeTrackIndex + 1) % tracks.length, true);
+            }
+
+            function playPrev() {
+                if (tracks.length === 0) return;
+                playTrack((activeTrackIndex - 1 + tracks.length) % tracks.length, true);
+            }
+
+            async function hardSyncVideo() {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId) return;
+                const url = await getVideoUrlForTrack(t);
+                if (!url) return;
+                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
+                videoEl.muted = true;
+                try {
+                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.05) videoEl.currentTime = audioEl.currentTime;
+                } catch (e) {}
+            }
+
+            async function syncVideoSeek() {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId) return;
+                const url = await getVideoUrlForTrack(t);
+                if (!url) return;
+                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
+                try { videoEl.currentTime = audioEl.currentTime || 0; } catch (e) {}
+                if (isPlaying) videoEl.play().catch(() => {});
+                else videoEl.pause();
+            }
+
+            audioEl.addEventListener('timeupdate', () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (t.videoId && videoEl.src) {
+                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.15) {
+                        try { videoEl.currentTime = audioEl.currentTime; } catch (e) {}
+                    }
+                }
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src && t.videoId) {
+                    if (Math.abs(drawerVideo.currentTime - audioEl.currentTime) > 0.2) {
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                    }
+                }
+                const dur = audioEl.duration || t.duration || 0;
+                currentTimeEl.textContent = formatTime(audioEl.currentTime);
+                if (dur) timelineFill.style.width = Math.min(100, (audioEl.currentTime / dur) * 100) + '%';
+                updateMiniTimelines();
+            });
+
+            audioEl.addEventListener('loadedmetadata', () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (isFinite(audioEl.duration) && audioEl.duration > 0) {
+                    t.duration = audioEl.duration;
+                    totalTimeEl.textContent = formatTime(audioEl.duration);
+                    persistState();
+                }
+            });
+
+            audioEl.addEventListener('play', () => {
+                isPlaying = true;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
+                if (activeTrackIndex >= 0 && tracks[activeTrackIndex].videoId) {
+                    hardSyncVideo();
+                    if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                        drawerVideo.play().catch(() => {});
+                    }
+                }
+            });
+
+            audioEl.addEventListener('pause', () => {
+                isPlaying = false;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
+                videoEl.pause();
+                if (drawerVideo.style.display !== 'none') drawerVideo.pause();
+            });
+
+            audioEl.addEventListener('seeking', syncVideoSeek);
+            audioEl.addEventListener('seeked', syncVideoSeek);
+
+            audioEl.addEventListener('ended', () => {
+                isPlaying = false;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
+                videoEl.pause();
+                if (tracks.length > 0) playNext();
+            });
+
+            playPauseBtn.addEventListener('click', () => {
+                if (activeTrackIndex < 0) {
+                    if (tracks.length > 0) playTrack(0, true);
+                    return;
+                }
+                playTrack(activeTrackIndex, true);
+            });
+            prevBtn.addEventListener('click', () => playPrev());
+            nextBtn.addEventListener('click', () => playNext());
+
+            playerInfo.addEventListener('click', () => {
+                if (activeTrackIndex >= 0) openDrawer(activeTrackIndex);
+                else showToast('Ничего не играет');
+            });
+
+            function handleTimelineSeek(clientX) {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                const dur = audioEl.duration || t.duration || 0;
+                if (!dur) return;
+                const rect = timelineTrack.getBoundingClientRect();
+                const x = clientX - rect.left;
+                const percent = Math.max(0, Math.min(1, x / rect.width));
+                const newTime = percent * dur;
+                if (audioEl.src) audioEl.currentTime = newTime;
+                if (t.videoId && videoEl.src) { try { videoEl.currentTime = newTime; } catch (e) {} }
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src && t.videoId) {
+                    try { drawerVideo.currentTime = newTime; } catch (e) {}
+                }
+                currentTimeEl.textContent = formatTime(newTime);
+                timelineFill.style.width = (percent * 100) + '%';
+                updateMiniTimelines();
+            }
+
+            timelineTrack.addEventListener('click', (e) => handleTimelineSeek(e.clientX));
+
+            let isTimelineDragging = false;
+            timelineTrack.addEventListener('touchstart', (e) => {
+                isTimelineDragging = true;
+                if (e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
+            }, { passive: true });
+            timelineTrack.addEventListener('touchmove', (e) => {
+                if (isTimelineDragging && e.touches[0]) handleTimelineSeek(e.touches[0].clientX);
+            }, { passive: true });
+            timelineTrack.addEventListener('touchend', () => { isTimelineDragging = false; });
+
+            videoToggleBtn.addEventListener('click', async () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId) { showToast('У этого трека нет клипа'); return; }
+
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                    drawerVideo.pause();
+                    drawerVideo.style.display = 'none';
+                    drawerVideo.removeAttribute('src');
+                    drawerVideo.load();
+                    videoToggleBtn.classList.remove('active');
+                    updatePlayerInfo();
+                    return;
+                }
+                if (currentDetailIndex !== activeTrackIndex) openDrawer(activeTrackIndex);
+                else await refreshDrawer(activeTrackIndex);
+                setTimeout(async () => {
+                    const url = await getVideoUrlForTrack(t);
+                    if (url) {
+                        drawerVideo.src = url;
+                        drawerVideo.style.display = 'block';
+                        drawerVideo.muted = true;
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                        if (isPlaying) drawerVideo.play().catch(() => {});
+                        else drawerVideo.pause();
+                        videoToggleBtn.classList.add('active');
+                        updatePlayerInfo();
+                    }
+                }, 120);
+            });
+
+            // ========== FILE SYSTEM ACCESS API ==========
+            async function pickMusicFolder() {
+                if (!hasFSAccess) {
+                    showToast('Ваш браузер не поддерживает автосканирование. Выберите файлы вручную.');
+                    fileInput.click();
+                    return;
+                }
+                try {
+                    const handle = await window.showDirectoryPicker({ mode: 'read' });
+                    if (handle) {
+                        musicFolderHandle = handle;
+                        await saveFolderHandle(handle);
+                        updateFolderInfo();
+                        showToast('Папка выбрана: ' + handle.name);
+                        await scanFolderAndShowList();
+                    }
+                } catch (e) {
+                    if (e.name !== 'AbortError') {
+                        console.warn('Directory picker error:', e);
+                        showToast('Не удалось открыть папку');
+                    }
+                }
+            }
+
+            async function ensureFolderPermission(handle) {
+                if (!handle || !handle.queryPermission) return false;
+                const opts = { mode: 'read' };
+                let perm = await handle.queryPermission(opts);
+                if (perm === 'granted') return true;
+                if (perm === 'prompt') {
+                    perm = await handle.requestPermission(opts);
+                    return perm === 'granted';
+                }
+                return false;
+            }
+
+            async function scanFolderAndShowList() {
+                if (!musicFolderHandle) { await pickMusicFolder(); return; }
+                const granted = await ensureFolderPermission(musicFolderHandle);
+                if (!granted) { showToast('Нет доступа к папке'); return; }
+                if (isScanning) return;
+                isScanning = true;
+
+                musicPickerOverlay.classList.add('open');
+                musicPickerTitle.textContent = 'Сканирование...';
+                musicPickerBody.innerHTML = `<div class="picker-scanning">
+                    <div class="scan-spinner"></div>
+                    <span>Сканируем папку «${musicFolderHandle.name}»...</span>
+                </div>`;
+
+                try {
+                    pickerFiles = [];
+                    await scanDirectoryRecursive(musicFolderHandle, '');
+                    isScanning = false;
+                    musicPickerTitle.textContent = `Найдено файлов: ${pickerFiles.length}`;
+                    if (pickerFiles.length === 0) {
+                        musicPickerBody.innerHTML = `<div class="music-picker-empty">
+                            <span class="material-icons">music_off</span>
+                            В папке не найдено аудиофайлов.
+                        </div>`;
+                    } else {
+                        renderPickerFiles();
+                    }
+                } catch (e) {
+                    isScanning = false;
+                    console.error('Scan error:', e);
+                    musicPickerBody.innerHTML = `<div class="music-picker-empty">
+                        <span class="material-icons">error</span>
+                        Ошибка сканирования: ${e.message || 'неизвестная'}
+                    </div>`;
+                }
+            }
+
+            async function scanDirectoryRecursive(dirHandle, prefix) {
+                for await (const entry of dirHandle.values()) {
+                    if (entry.kind === 'file') {
+                        const name = entry.name;
+                        if (/\.(mp3|m4a|aac|ogg|wav|flac|opus|wma|webm|oga|weba)$/i.test(name)) {
+                            try {
+                                const file = await entry.getFile();
+                                file._relativePath = prefix + name;
+                                pickerFiles.push(file);
+                                if (pickerFiles.length % 5 === 0) {
+                                    musicPickerTitle.textContent = `Сканирование... найдено ${pickerFiles.length}`;
+                                }
+                            } catch (e) { console.warn('Could not read file:', name, e); }
+                        }
+                    } else if (entry.kind === 'directory') {
+                        try { await scanDirectoryRecursive(entry, prefix + entry.name + '/'); }
+                        catch (e) { console.warn('Could not read subdir:', entry.name, e); }
+                    }
+                }
+            }
+
+            function renderPickerFiles() {
+                if (pickerFiles.length === 0) {
+                    musicPickerBody.innerHTML = `<div class="music-picker-empty"><span class="material-icons">music_off</span>Файлы не найдены</div>`;
+                    return;
+                }
+                let html = '';
+                if (musicFolderHandle) {
+                    html += `<div class="folder-handle-info">
+                        <span class="material-icons">folder</span>
+                        Папка: <span class="folder-name">${musicFolderHandle.name}</span> · ${pickerFiles.length} файлов
+                    </div>`;
+                }
+                pickerFiles.forEach((file, i) => {
+                    const name = file._relativePath || file.name;
+                    const size = file.size < 1024 * 1024
+                        ? (file.size / 1024).toFixed(0) + ' KB'
+                        : (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+                    const isPlaying = pickerPreviewIndex === i;
+                    const isAdded = tracks.some(t => t._originalName === file.name && t._originalSize === file.size);
+                    html += `
+                        <div class="picker-file-row" data-picker-index="${i}">
+                            <button class="picker-play-indicator ${isPlaying ? 'playing' : ''}" data-preview-index="${i}" title="Прослушать">
+                                <span class="material-icons indicator-icon">${isPlaying ? 'pause' : 'play_arrow'}</span>
+                            </button>
+                            <div class="picker-file-info" data-file-select-index="${i}">
+                                <span class="picker-file-name">${name}</span>
+                                <span class="picker-file-meta">${size} · ${isAdded ? 'уже добавлен' : 'нажмите для выбора'}</span>
+                                <div class="picker-file-preview-bar" id="picker-bar-${i}">
+                                    <div class="picker-file-preview-fill" id="picker-fill-${i}" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <button class="picker-file-add-btn ${isAdded ? 'added' : ''}" data-add-file-index="${i}" title="${isAdded ? 'Уже добавлен' : 'Добавить'}">
+                                <span class="material-icons">${isAdded ? 'check' : 'add'}</span>
+                            </button>
+                        </div>
+                    `;
+                });
+                musicPickerBody.innerHTML = html;
+
+                musicPickerBody.onclick = (e) => {
+                    const previewBtn = e.target.closest('[data-preview-index]');
+                    if (previewBtn) { e.stopPropagation(); togglePreview(parseInt(previewBtn.dataset.previewIndex, 10)); return; }
+                    const addBtn = e.target.closest('[data-add-file-index]');
+                    if (addBtn) { e.stopPropagation(); addPickerFileToLibrary(parseInt(addBtn.dataset.addFileIndex, 10)); return; }
+                    const fileInfo = e.target.closest('[data-file-select-index]');
+                    if (fileInfo) { togglePreview(parseInt(fileInfo.dataset.fileSelectIndex, 10)); return; }
+                };
+            }
+
+            function togglePreview(index) {
+                if (pickerPreviewIndex === index) { stopPreview(); return; }
+                stopPreview();
+                const file = pickerFiles[index];
+                if (!file) return;
+                pickerPreviewUrl = URL.createObjectURL(file);
+                pickerPreviewAudio = new Audio(pickerPreviewUrl);
+                pickerPreviewAudio.preload = 'metadata';
+                pickerPreviewIndex = index;
+                pickerPreviewAudio.addEventListener('timeupdate', () => {
+                    if (pickerPreviewIndex !== index) return;
+                    const bar = document.getElementById('picker-fill-' + index);
+                    if (bar && pickerPreviewAudio.duration) {
+                        bar.style.width = Math.min(100, (pickerPreviewAudio.currentTime / pickerPreviewAudio.duration) * 100) + '%';
+                    }
+                });
+                pickerPreviewAudio.addEventListener('ended', () => stopPreview());
+                pickerPreviewAudio.play().then(() => updatePickerPreviewButtons())
+                    .catch(() => { showToast('Не удалось воспроизвести'); stopPreview(); });
+            }
+
+            function stopPreview() {
+                if (pickerPreviewAudio) { try { pickerPreviewAudio.pause(); } catch (e) {} pickerPreviewAudio = null; }
+                if (pickerPreviewUrl) { try { URL.revokeObjectURL(pickerPreviewUrl); } catch (e) {} pickerPreviewUrl = null; }
+                pickerPreviewIndex = -1;
+                updatePickerPreviewButtons();
+                pickerFiles.forEach((_, i) => {
+                    const fill = document.getElementById('picker-fill-' + i);
+                    if (fill) fill.style.width = '0%';
+                });
+            }
+
+            function updatePickerPreviewButtons() {
+                document.querySelectorAll('.picker-play-indicator').forEach(btn => {
+                    const idx = parseInt(btn.dataset.previewIndex, 10);
+                    if (idx === pickerPreviewIndex) {
+                        btn.classList.add('playing');
+                        const icon = btn.querySelector('.indicator-icon');
+                        if (icon) icon.textContent = 'pause';
+                    } else {
+                        btn.classList.remove('playing');
+                        const icon = btn.querySelector('.indicator-icon');
+                        if (icon) icon.textContent = 'play_arrow';
+                    }
+                });
+            }
+
+            async function addPickerFileToLibrary(index) {
+                const file = pickerFiles[index];
+                if (!file) return;
+                if (file.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) { showToast(`Файл слишком большой`); return; }
+                const isDuplicate = tracks.some(t => t._originalName === file.name && t._originalSize === file.size);
+                if (isDuplicate) { showToast('Этот файл уже добавлен'); return; }
+
+                const audioId = uid('a');
+                const saved = await saveAudioBlob(audioId, file);
+                if (!saved) { showToast('Не удалось сохранить'); return; }
+
+                const url = URL.createObjectURL(file);
+                objectUrls['a_' + audioId] = url;
+                const meta = await readMetadataFromUrl(url);
+
+                tracks.push({
+                    id: uid('t'),
+                    title: file.name.replace(/\.[^.]+$/, ''),
+                    artist: 'Неизвестный исполнитель',
+                    album: '—',
+                    duration: meta.duration || 0,
+                    format: (file.type.split('/')[1] || '—').toUpperCase(),
+                    mime: file.type || 'audio/mpeg',
+                    audioId: audioId,
+                    videoId: null,
+                    videoMime: null,
+                    coverId: null,
+                    coverMime: null,
+                    _originalName: file.name,
+                    _originalSize: file.size,
+                    _lastModified: file.lastModified,
+                });
+
+                persistState();
+                showToast('Добавлено: ' + (file._relativePath || file.name));
+
+                const addBtn = musicPickerBody.querySelector(`[data-add-file-index="${index}"]`);
+                if (addBtn) { addBtn.classList.add('added'); addBtn.innerHTML = '<span class="material-icons">check</span>'; }
+                const metaEl = musicPickerBody.querySelector(`[data-file-select-index="${index}"] .picker-file-meta`);
+                if (metaEl) metaEl.textContent = metaEl.textContent.split(' · ')[0] + ' · уже добавлен';
+
+                if (currentView === 'library') renderLibrary();
+                else goToView('library');
+                updateStorageInfo();
+                if (pickerPreviewIndex === index) stopPreview();
+            }
+
+            function closeMusicPicker() {
+                stopPreview();
+                pickerFiles = [];
+                musicPickerOverlay.classList.remove('open');
+                musicPickerBody.onclick = null;
+            }
+
+            musicPickerClose.addEventListener('click', closeMusicPicker);
+            musicPickerOverlay.addEventListener('click', (e) => { if (e.target === musicPickerOverlay) closeMusicPicker(); });
+            musicPickerScanBtn.addEventListener('click', () => { if (musicFolderHandle) scanFolderAndShowList(); else pickMusicFolder(); });
+
+            scanFolderBtn.addEventListener('click', () => {
+                if (!hasFSAccess) {
+                    showToast('Автосканирование не поддерживается. Выберите файлы вручную.');
+                    fileInput.click();
+                    return;
+                }
+                if (musicFolderHandle) scanFolderAndShowList();
+                else pickMusicFolder();
+            });
+
+            forgetFolderBtn.addEventListener('click', async () => {
+                if (confirm('Забыть выбранную папку?')) {
+                    await removeFolderHandle();
+                    musicFolderHandle = null;
+                    updateFolderInfo();
+                    showToast('Папка забыта');
+                }
+            });
+
+            uploadBtn.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = Array.from(e.target.files || []);
+                if (files.length === 0) return;
+                let added = 0, failed = 0;
+                for (const file of files) {
+                    if (!file.type.startsWith('audio/') && !/\.(mp3|m4a|aac|ogg|wav|flac|opus|wma|webm|oga)$/i.test(file.name)) { failed++; continue; }
+                    if (file.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) { failed++; continue; }
+                    const audioId = uid('a');
+                    const saved = await saveAudioBlob(audioId, file);
+                    if (!saved) { failed++; continue; }
+                    const url = URL.createObjectURL(file);
+                    objectUrls['a_' + audioId] = url;
+                    const meta = await readMetadataFromUrl(url);
+                    tracks.push({
+                        id: uid('t'),
+                        title: file.name.replace(/\.[^.]+$/, ''),
+                        artist: 'Неизвестный исполнитель',
+                        album: '—',
+                        duration: meta.duration || 0,
+                        format: (file.type.split('/')[1] || '—').toUpperCase(),
+                        mime: file.type || 'audio/mpeg',
+                        audioId: audioId,
+                        videoId: null,
+                        videoMime: null,
+                        coverId: null,
+                        coverMime: null,
+                        _originalName: file.name,
+                        _originalSize: file.size,
+                        _lastModified: file.lastModified,
+                    });
+                    added++;
+                }
+                fileInput.value = '';
+                persistState();
+                showToast(`Добавлено: ${added}${failed ? ', ошибок: ' + failed : ''}`);
+                if (currentView === 'library') renderLibrary();
+                else goToView('library');
+                updateStorageInfo();
+            });
+
+            function readMetadataFromUrl(url) {
+                return new Promise((resolve) => {
+                    const tempAudio = new Audio();
+                    tempAudio.preload = 'metadata';
+                    tempAudio.src = url;
+                    const finish = () => {
+                        const duration = (isFinite(tempAudio.duration) && tempAudio.duration > 0) ? tempAudio.duration : 0;
+                        tempAudio.src = '';
+                        resolve({ duration });
+                    };
+                    tempAudio.addEventListener('loadedmetadata', finish, { once: true });
+                    tempAudio.addEventListener('error', finish, { once: true });
+                    setTimeout(() => { if (!tempAudio.duration) resolve({ duration: 0 }); }, 2500);
+                });
             }
 
             // ========== DRAWER ==========
@@ -3973,19 +3748,19 @@
                 const inLists = getPlaylistsForTrack(t.id);
                 detailPlaylists.textContent = inLists.length ? inLists.join(', ') : 'Не добавлен ни в один';
 
-                const coverUrl = await getCoverUrlForTrack(t);
-                if (coverUrl) {
-                    drawerCoverImg.src = coverUrl;
-                    drawerCoverImg.style.display = 'block';
-                    drawerCoverImg.onerror = () => { drawerCoverImg.style.display = 'none'; drawerCover.querySelector('.material-icons').style.display = ''; };
-                    drawerCover.querySelector('.material-icons').style.display = 'none';
+                if (t.coverId) {
+                    const url = await getCoverUrlForTrack(t);
+                    if (url) {
+                        drawerCoverImg.src = url;
+                        drawerCoverImg.style.display = 'block';
+                        drawerCover.querySelector('.material-icons').style.display = 'none';
+                    }
                 } else {
                     drawerCoverImg.style.display = 'none';
                     drawerCover.querySelector('.material-icons').style.display = '';
                 }
 
-                const hasVideo = t.videoId || t._remoteVideoUrl;
-                if (hasVideo) {
+                if (t.videoId) {
                     const url = await getVideoUrlForTrack(t);
                     if (url) {
                         drawerVideo.style.display = 'block';
@@ -3994,21 +3769,19 @@
                         try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
                         if (isPlaying) drawerVideo.play().catch(() => {});
                         else drawerVideo.pause();
-
                         detailVideoContainer.innerHTML = `
                             <div class="video-status">
                                 <span class="material-icons">videocam</span>
-                                ${t._remoteVideoUrl ? 'Клип из ссылки' : 'Клип загружен'}
+                                Клип загружен
                                 <button class="remove-video-btn" id="removeVideoBtn">Удалить</button>
                             </div>
                         `;
                         const removeBtn = document.getElementById('removeVideoBtn');
                         if (removeBtn) {
                             removeBtn.addEventListener('click', async () => {
-                                if (t.videoId) await removeVideoBlob(t.videoId);
+                                await removeVideoBlob(t.videoId);
                                 t.videoId = null;
                                 t.videoMime = null;
-                                t._remoteVideoUrl = null;
                                 videoEl.removeAttribute('src');
                                 videoEl.load();
                                 drawerVideo.removeAttribute('src');
@@ -4023,7 +3796,6 @@
                         }
                     } else {
                         t.videoId = null;
-                        t._remoteVideoUrl = null;
                         persistState();
                         refreshDrawer(index);
                     }
@@ -4068,7 +3840,6 @@
                 const t = tracks[currentDetailIndex];
                 const currentVal = t[field] || '';
                 const fieldEl = field === 'title' ? detailTitle : field === 'artist' ? detailArtist : detailAlbum;
-
                 fieldEl.innerHTML = `
                     <input type="text" class="edit-input" value="${String(currentVal).replace(/"/g, '&quot;')}">
                     <div style="display:flex; gap:6px; margin-top:8px;">
@@ -4102,30 +3873,17 @@
 
             videoFileInput.addEventListener('change', async (e) => {
                 const file = e.target.files && e.target.files[0];
-                if (!file || !file.type.startsWith('video/')) {
-                    showToast('Выберите видео-файл');
-                    videoFileInput.value = '';
-                    return;
-                }
+                if (!file || !file.type.startsWith('video/')) { showToast('Выберите видео-файл'); videoFileInput.value = ''; return; }
                 if (currentDetailIndex < 0) return;
-                if (file.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) {
-                    showToast(`Клип слишком большой (макс. ${MAX_VIDEO_SIZE_MB} МБ)`);
-                    videoFileInput.value = '';
-                    return;
-                }
+                if (file.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) { showToast(`Клип слишком большой`); videoFileInput.value = ''; return; }
                 const t = tracks[currentDetailIndex];
                 const videoId = uid('v');
                 showToast('Сохранение клипа...');
                 const result = await saveVideoBlob(videoId, file);
-                if (!result.ok) {
-                    showToast('Не удалось сохранить клип');
-                    videoFileInput.value = '';
-                    return;
-                }
+                if (!result.ok) { showToast('Не удалось сохранить'); videoFileInput.value = ''; return; }
                 if (t.videoId) await removeVideoBlob(t.videoId);
                 t.videoId = videoId;
                 t.videoMime = file.type;
-                t._remoteVideoUrl = null;
                 const url = URL.createObjectURL(file);
                 objectUrls['v_' + videoId] = url;
                 videoEl.src = url;
@@ -4144,10 +3902,8 @@
             function updateNavButtons(view) {
                 libraryBtn.classList.toggle('active', view === 'library');
                 playlistsBtn.classList.toggle('active', view === 'playlists');
-                linkImportBtn.classList.toggle('active', view === 'link');
                 if (mobileLibraryBtn) mobileLibraryBtn.classList.toggle('active', view === 'library');
                 if (mobilePlaylistsBtn) mobilePlaylistsBtn.classList.toggle('active', view === 'playlists');
-                if (mobileLinkBtn) mobileLinkBtn.classList.toggle('active', view === 'link');
                 if (mobileSettingsBtn) mobileSettingsBtn.classList.remove('active');
             }
 
@@ -4159,10 +3915,8 @@
                 headerActions.style.display = 'none';
                 libraryBtn.classList.remove('active');
                 playlistsBtn.classList.remove('active');
-                linkImportBtn.classList.remove('active');
                 if (mobileLibraryBtn) mobileLibraryBtn.classList.remove('active');
                 if (mobilePlaylistsBtn) mobilePlaylistsBtn.classList.remove('active');
-                if (mobileLinkBtn) mobileLinkBtn.classList.remove('active');
                 if (mobileSettingsBtn) mobileSettingsBtn.classList.add('active');
                 updateStorageInfo();
                 updateFolderInfo();
@@ -4177,19 +3931,17 @@
                 closeMobileDropdown();
                 if (view === 'library') {
                     updateNavButtons('library');
+                    headerActions.style.display = 'flex';
                     renderLibrary();
-                } else if (view === 'playlists') {
+                } else {
                     updateNavButtons('playlists');
+                    headerActions.style.display = 'flex';
                     renderPlaylists();
-                } else if (view === 'link') {
-                    updateNavButtons('link');
-                    renderUrlImport();
                 }
             }
 
             libraryBtn.addEventListener('click', () => goToView('library'));
             playlistsBtn.addEventListener('click', () => goToView('playlists'));
-            linkImportBtn.addEventListener('click', () => goToView('link'));
             settingsBtn.addEventListener('click', () => {
                 if (settingsVisible) goToView(currentView);
                 else showSettings();
@@ -4197,7 +3949,6 @@
 
             if (mobileLibraryBtn) mobileLibraryBtn.addEventListener('click', () => goToView('library'));
             if (mobilePlaylistsBtn) mobilePlaylistsBtn.addEventListener('click', () => goToView('playlists'));
-            if (mobileLinkBtn) mobileLinkBtn.addEventListener('click', () => goToView('link'));
             if (mobileSettingsBtn) mobileSettingsBtn.addEventListener('click', () => {
                 if (settingsVisible) goToView(currentView);
                 else showSettings();
@@ -4303,7 +4054,7 @@
                     for (const t of tracks) {
                         if (t.audioId) await getAudioUrlForTrack(t);
                         if (t.videoId) await getVideoUrlForTrack(t);
-                        if (t.coverId || t._remoteThumbnail) await getCoverUrlForTrack(t);
+                        if (t.coverId) await getCoverUrlForTrack(t);
                     }
                 }
 
