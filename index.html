@@ -1,0 +1,2605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MzMusic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0f0f12;
+            --bg-secondary: #1a1a1f;
+            --bg-elevated: #25252c;
+            --text-primary: #efeff1;
+            --text-secondary: #b0b0b8;
+            --accent: #4f9eff;
+            --accent-soft: #2a5a9e;
+            --border-light: #2e2e36;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+            --radius-card: 16px;
+            --transition: all 0.2s ease;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            font-family: var(--font-mono);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* ---------- SIDEBAR ---------- */
+        .sidebar {
+            width: 86px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 0;
+            flex-shrink: 0;
+            height: 100vh;
+            z-index: 20;
+        }
+
+        .sidebar-top {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 32px;
+            width: 100%;
+        }
+
+        .brand {
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: -0.6px;
+            color: var(--accent);
+            text-align: center;
+            line-height: 1.1;
+            padding: 0 4px;
+            margin-bottom: 4px;
+            user-select: none;
+        }
+
+        .brand span { color: var(--text-primary); }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .nav-btn .material-icons { font-size: 28px; }
+
+        .nav-btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            background: var(--accent-soft);
+            color: white;
+        }
+
+        .sidebar-bottom {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .social-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-link:hover {
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        .social-link svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .settings-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .settings-btn:hover {
+            background: transparent;
+            color: var(--accent);
+            transform: rotate(30deg);
+        }
+
+        .settings-btn .material-icons { font-size: 26px; }
+
+        /* ---------- MAIN ---------- */
+        .main {
+            flex: 1;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .main-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 36px 20px 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .main-scroll::-webkit-scrollbar { width: 8px; }
+        .main-scroll::-webkit-scrollbar-track { background: var(--bg-primary); }
+        .main-scroll::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 8px; }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .upload-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .upload-btn:hover {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* ---------- TRACK GRID ---------- */
+        .track-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .track-card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-light);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .track-card:hover {
+            background: var(--bg-elevated);
+            border-color: var(--accent-soft);
+            transform: translateY(-2px);
+        }
+
+        .track-card.active {
+            border-color: var(--accent);
+            background: var(--bg-elevated);
+        }
+
+        .track-cover {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-soft), var(--bg-elevated));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .track-cover .cover-icon {
+            font-size: 48px;
+            opacity: 0.35;
+            color: var(--text-secondary);
+            transition: opacity 0.2s;
+        }
+
+        .track-card:hover .track-cover .cover-icon {
+            opacity: 0.15;
+        }
+
+        .cover-play {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+        }
+
+        .track-card:hover .cover-play {
+            opacity: 1;
+        }
+
+        .cover-play .play-icon {
+            font-size: 64px;
+            color: white;
+            filter: drop-shadow(0 2px 12px rgba(0,0,0,0.6));
+            transition: transform 0.15s ease;
+            line-height: 1;
+        }
+
+        .cover-play:hover .play-icon {
+            transform: scale(1.12);
+        }
+
+        .track-card.active .cover-play .play-icon::before {
+            content: 'pause';
+        }
+
+        .track-card:not(.active) .cover-play .play-icon::before {
+            content: 'play_arrow';
+        }
+
+        .track-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            letter-spacing: -0.2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+
+        .track-title:hover {
+            color: var(--accent);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .track-artist {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-badge {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            background: var(--bg-elevated);
+            border-radius: 30px;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+            align-self: flex-start;
+        }
+
+        .video-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.6rem;
+            color: var(--accent);
+            background: var(--bg-primary);
+            border: 1px solid var(--accent-soft);
+            border-radius: 20px;
+            padding: 2px 8px;
+        }
+
+        .video-badge .material-icons { font-size: 12px; }
+
+        .mini-timeline {
+            display: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+
+        .track-card.active .mini-timeline {
+            display: block;
+        }
+
+        .mini-timeline-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width 0.15s linear;
+        }
+
+        /* ---------- SETTINGS PANEL ---------- */
+        .settings-panel {
+            display: none;
+            flex-direction: column;
+            gap: 30px;
+            background: var(--bg-secondary);
+            padding: 30px;
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-light);
+        }
+
+        .settings-panel.visible { display: flex; }
+
+        .settings-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .settings-group label {
+            font-weight: 500;
+            color: var(--text-primary);
+            letter-spacing: -0.2px;
+        }
+
+        .color-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .color-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-elevated);
+            padding: 8px 16px;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+        }
+
+        .color-input input[type="color"] {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+
+        .theme-toggle {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .theme-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 12px 22px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-btn.active {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            color: white;
+        }
+
+        .settings-note {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .storage-info {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: var(--bg-elevated);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            line-height: 1.6;
+        }
+
+        .storage-info .storage-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-primary);
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .storage-info .storage-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .clear-storage-btn {
+            background: transparent;
+            border: 1px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            align-self: flex-start;
+        }
+
+        .clear-storage-btn:hover {
+            background: rgba(255,107,107,0.1);
+        }
+
+        /* ---------- PLAYLIST SECTION ---------- */
+        .playlist-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .custom-input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-secondary);
+            padding: 8px 8px 8px 24px;
+            border-radius: 60px;
+            border: 1px solid var(--border-light);
+            max-width: 500px;
+        }
+
+        .custom-input-row input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            padding: 14px 6px;
+            outline: none;
+            flex: 1;
+        }
+
+        .custom-input-row input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .create-playlist-btn {
+            background: var(--accent);
+            border: none;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .create-playlist-btn:hover { background: var(--accent-soft); }
+
+        .playlist-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .playlist-chip {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .playlist-chip:hover {
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+            transform: translateY(-1px);
+        }
+
+        .playlist-chip .material-icons {
+            font-size: 18px;
+            color: var(--accent);
+        }
+
+        .playlist-chip.expanded {
+            border-color: var(--accent);
+            background: var(--bg-secondary);
+        }
+
+        .playlist-tracks {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-card);
+            border: 1px solid var(--border-light);
+        }
+
+        .playlist-tracks.visible { display: flex; }
+
+        .playlist-track-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: var(--bg-elevated);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .playlist-track-row:hover {
+            background: var(--bg-primary);
+        }
+
+        .playlist-track-row .material-icons {
+            font-size: 18px;
+            color: var(--accent);
+        }
+
+        .playlist-track-row .pl-title {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .playlist-track-row .pl-artist {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+
+        /* ---------- BOTTOM PLAYER BAR ---------- */
+        .player-bar {
+            flex-shrink: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-light);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            z-index: 15;
+        }
+
+        .player-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 160px;
+            max-width: 220px;
+        }
+
+        .player-info .now-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-info .now-artist {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .player-ctrl-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .player-ctrl-btn:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .player-timeline {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .time-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            min-width: 36px;
+            text-align: center;
+            user-select: none;
+        }
+
+        .timeline-track {
+            flex: 1;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-elevated);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .timeline-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            background: var(--accent);
+            position: relative;
+        }
+
+        .timeline-fill::after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 6px var(--accent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .timeline-track:hover .timeline-fill::after { opacity: 1; }
+
+        .video-toggle-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .video-toggle-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--accent);
+        }
+
+        .video-toggle-btn.active {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* ---------- DETAILS DRAWER ---------- */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 40;
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .details-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 380px;
+            max-width: 90vw;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-light);
+            box-shadow: -12px 0 30px rgba(0, 0, 0, 0.4);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            padding: 28px;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .details-drawer.open { transform: translateX(0); }
+
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-header h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .drawer-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .drawer-close:hover {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .drawer-cover {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius-card);
+            background: linear-gradient(135deg, var(--accent-soft), var(--bg-elevated));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .drawer-cover video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .drawer-cover .material-icons {
+            font-size: 80px;
+            opacity: 0.5;
+        }
+
+        .drawer-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .drawer-field:last-child { border-bottom: none; }
+
+        .drawer-field .field-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .drawer-field .field-label .edit-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+            padding: 2px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .drawer-field .field-label .edit-btn:hover {
+            color: var(--accent);
+            background: var(--bg-elevated);
+        }
+
+        .drawer-field .field-label .edit-btn .material-icons {
+            font-size: 14px;
+        }
+
+        .drawer-field .field-value {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .drawer-field .field-value input {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+            width: 100%;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .drawer-field .field-value input:focus {
+            border-color: var(--accent);
+        }
+
+        .drawer-field .field-value .save-btn,
+        .drawer-field .field-value .cancel-btn {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            margin-top: 6px;
+            margin-right: 6px;
+            transition: var(--transition);
+        }
+
+        .drawer-field .field-value .save-btn {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .drawer-field .field-value .save-btn:hover { background: var(--accent-soft); }
+        .drawer-field .field-value .cancel-btn:hover { background: var(--bg-primary); }
+
+        .upload-video-btn {
+            background: var(--bg-elevated);
+            border: 1px dashed var(--border-light);
+            color: var(--text-secondary);
+            padding: 12px;
+            border-radius: 12px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .upload-video-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--bg-primary);
+        }
+
+        .video-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: var(--bg-elevated);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--accent-soft);
+        }
+
+        .video-status .material-icons { font-size: 16px; }
+
+        .remove-video-btn {
+            background: transparent;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-left: auto;
+        }
+
+        .remove-video-btn:hover { background: rgba(255,107,107,0.1); }
+
+        /* helper */
+        .hidden { display: none !important; }
+
+        /* toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            padding: 14px 24px;
+            border-radius: 40px;
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+            font-size: 0.85rem;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 80vw;
+            text-align: center;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast .material-icons { font-size: 18px; color: var(--accent); }
+
+        /* loading overlay */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15,15,18,0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            z-index: 200;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .loading-overlay .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-light);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* responsive */
+        @media (max-width: 1100px) {
+            .track-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 800px) {
+            .track-grid { grid-template-columns: repeat(2, 1fr); }
+            .main-scroll { padding: 20px; }
+            .sidebar { width: 72px; }
+            .nav-btn, .settings-btn { width: 46px; height: 46px; }
+            .player-info { display: none; }
+            .brand { font-size: 0.85rem; }
+        }
+
+        @media (max-width: 520px) {
+            .track-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="brand">Mz<span>Music</span></div>
+            <button class="nav-btn active" id="libraryBtn" title="Библиотека">
+                <span class="material-icons">library_music</span>
+            </button>
+            <button class="nav-btn" id="playlistsBtn" title="Плейлисты">
+                <span class="material-icons">queue_music</span>
+            </button>
+        </div>
+        <div class="sidebar-bottom">
+            <div class="social-links">
+                <a class="social-link" href="https://t.me/" target="_blank" title="Telegram">
+                    <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+                </a>
+                <a class="social-link" href="https://github.com/" target="_blank" title="GitHub">
+                    <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                </a>
+                <a class="social-link" href="https://youtube.com/" target="_blank" title="YouTube">
+                    <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                </a>
+            </div>
+            <button class="settings-btn" id="settingsBtn" title="Настройки">
+                <span class="material-icons">settings</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <main class="main">
+        <div class="main-scroll" id="mainScroll">
+            <div class="page-header">
+                <h1 class="page-title" id="pageTitle">Библиотека</h1>
+                <div class="header-actions" id="headerActions">
+                    <button class="upload-btn" id="uploadBtn" title="Загрузить музыку">
+                        <span class="material-icons">upload_file</span> Загрузить
+                    </button>
+                    <input type="file" id="fileInput" accept="audio/*" multiple hidden>
+                </div>
+            </div>
+            <div id="dynamicContent"></div>
+            <div class="settings-panel" id="settingsPanel">
+                <h2 style="font-size:1.4rem; margin-bottom:4px;">Настройки</h2>
+                <div class="settings-group">
+                    <label>Цвет акцента</label>
+                    <div class="color-row">
+                        <div class="color-input">
+                            <input type="color" id="accentColorPicker" value="#4f9eff">
+                            <span>Акцент</span>
+                        </div>
+                        <div class="color-input">
+                            <input type="color" id="bgColorPicker" value="#0f0f12">
+                            <span>Фон</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <label>Тема</label>
+                    <div class="theme-toggle">
+                        <button class="theme-btn active" id="darkThemeBtn"><span class="material-icons">dark_mode</span> Тёмная</button>
+                        <button class="theme-btn" id="lightThemeBtn"><span class="material-icons">light_mode</span> Светлая</button>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <label>Хранилище</label>
+                    <div class="storage-info" id="storageInfo">
+                        <div>Использовано: <span id="storageUsed">—</span></div>
+                        <div class="storage-bar"><div class="storage-bar-fill" id="storageBarFill" style="width:0%"></div></div>
+                        <div style="margin-top:6px; font-size:0.75rem;">Лимит браузера: ~5–10 МБ (зависит от браузера).</div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <label>Данные</label>
+                    <button class="clear-storage-btn" id="clearStorageBtn">
+                        <span class="material-icons" style="font-size:16px; vertical-align:middle;">delete</span>
+                        Очистить сохранённые данные
+                    </button>
+                    <span class="settings-note">Музыка, клипы, метаданные и плейлисты сохраняются в браузере.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM PLAYER BAR -->
+        <div class="player-bar">
+            <div class="player-info">
+                <span class="now-title" id="nowTitle">Ничего не играет</span>
+                <span class="now-artist" id="nowArtist">—</span>
+            </div>
+            <div class="player-controls">
+                <button class="player-ctrl-btn" id="prevBtn" title="Предыдущий">
+                    <span class="material-icons">skip_previous</span>
+                </button>
+                <button class="player-ctrl-btn" id="playPauseBtn" title="Воспроизведение">
+                    <span class="material-icons" id="playPauseIcon">play_arrow</span>
+                </button>
+                <button class="player-ctrl-btn" id="nextBtn" title="Следующий">
+                    <span class="material-icons">skip_next</span>
+                </button>
+            </div>
+            <div class="player-timeline">
+                <span class="time-label" id="currentTime">0:00</span>
+                <div class="timeline-track" id="timelineTrack">
+                    <div class="timeline-fill" id="timelineFill"></div>
+                </div>
+                <span class="time-label" id="totalTime">0:00</span>
+            </div>
+            <button class="video-toggle-btn" id="videoToggleBtn" title="Показать видео">
+                <span class="material-icons">videocam</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- TRACK DETAILS DRAWER -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <aside class="details-drawer" id="detailsDrawer">
+        <div class="drawer-header">
+            <h2>Детали трека</h2>
+            <button class="drawer-close" id="drawerClose">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="drawer-cover" id="drawerCover">
+            <span class="material-icons">album</span>
+            <video id="drawerVideo" muted playsinline preload="metadata" style="display:none;"></video>
+        </div>
+        <div class="drawer-field">
+            <span class="field-label">Название
+                <button class="edit-btn" data-edit="title" title="Редактировать">
+                    <span class="material-icons">edit</span>
+                </button>
+            </span>
+            <div class="field-value" id="detailTitle">—</div>
+        </div>
+        <div class="drawer-field">
+            <span class="field-label">Исполнитель
+                <button class="edit-btn" data-edit="artist" title="Редактировать">
+                    <span class="material-icons">edit</span>
+                </button>
+            </span>
+            <div class="field-value" id="detailArtist">—</div>
+        </div>
+        <div class="drawer-field">
+            <span class="field-label">Альбом
+                <button class="edit-btn" data-edit="album" title="Редактировать">
+                    <span class="material-icons">edit</span>
+                </button>
+            </span>
+            <div class="field-value" id="detailAlbum">—</div>
+        </div>
+        <div class="drawer-field">
+            <span class="field-label">Длительность</span>
+            <div class="field-value" id="detailDuration">—</div>
+        </div>
+        <div class="drawer-field">
+            <span class="field-label">Формат</span>
+            <div class="field-value" id="detailFormat">—</div>
+        </div>
+        <div class="drawer-field">
+            <span class="field-label">Клип</span>
+            <div class="field-value" id="detailVideoContainer">
+                <button class="upload-video-btn" id="uploadVideoBtn">
+                    <span class="material-icons">video_call</span> Загрузить клип
+                </button>
+                <input type="file" id="videoFileInput" accept="video/*" hidden>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+        <span class="material-icons">check_circle</span>
+        <span id="toastText">Готово</span>
+    </div>
+
+    <!-- AUDIO + VIDEO ELEMENTS -->
+    <audio id="audioEl"></audio>
+    <video id="videoEl" muted playsinline preload="metadata" style="position:fixed; width:0; height:0; opacity:0; pointer-events:none;"></video>
+
+    <script>
+        (function() {
+            // ---------- CONSTANTS ----------
+            const LS_KEY = 'mzmusic_data_v1';
+            const LS_AUDIO_PREFIX = 'mzmusic_audio_';
+            const LS_VIDEO_PREFIX = 'mzmusic_video_';
+            // Increased video size limit — we try IndexedDB first, fallback to localStorage for metadata.
+            const MAX_VIDEO_SIZE_MB = 50;   // max single clip size
+            const MAX_TOTAL_STORAGE_WARN_MB = 4.5; // warn before exceeding typical localStorage quota
+
+            // ---------- STATE ----------
+            let tracks = [];
+            let playlists = ['Мой плейлист', 'Избранное'];
+            let playlistTrackMap = {};
+            let activeTrackIndex = -1;
+            let isPlaying = false;
+            let currentView = 'library';
+            let settingsVisible = false;
+            let currentDetailIndex = -1;
+            let expandedPlaylist = null;
+            let objectUrls = {};
+            let videoDb = null;
+
+            // ---------- DOM ----------
+            const libraryBtn = document.getElementById('libraryBtn');
+            const playlistsBtn = document.getElementById('playlistsBtn');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const pageTitle = document.getElementById('pageTitle');
+            const dynamicContent = document.getElementById('dynamicContent');
+            const settingsPanel = document.getElementById('settingsPanel');
+            const headerActions = document.getElementById('headerActions');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const fileInput = document.getElementById('fileInput');
+            const clearStorageBtn = document.getElementById('clearStorageBtn');
+            const storageUsedEl = document.getElementById('storageUsed');
+            const storageBarFill = document.getElementById('storageBarFill');
+
+            const audioEl = document.getElementById('audioEl');
+            const videoEl = document.getElementById('videoEl');
+            const nowTitle = document.getElementById('nowTitle');
+            const nowArtist = document.getElementById('nowArtist');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const playPauseIcon = document.getElementById('playPauseIcon');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const currentTimeEl = document.getElementById('currentTime');
+            const totalTimeEl = document.getElementById('totalTime');
+            const timelineTrack = document.getElementById('timelineTrack');
+            const timelineFill = document.getElementById('timelineFill');
+            const videoToggleBtn = document.getElementById('videoToggleBtn');
+
+            const drawerOverlay = document.getElementById('drawerOverlay');
+            const detailsDrawer = document.getElementById('detailsDrawer');
+            const drawerClose = document.getElementById('drawerClose');
+            const drawerCover = document.getElementById('drawerCover');
+            const drawerVideo = document.getElementById('drawerVideo');
+            const detailTitle = document.getElementById('detailTitle');
+            const detailArtist = document.getElementById('detailArtist');
+            const detailAlbum = document.getElementById('detailAlbum');
+            const detailDuration = document.getElementById('detailDuration');
+            const detailFormat = document.getElementById('detailFormat');
+            const detailVideoContainer = document.getElementById('detailVideoContainer');
+            const uploadVideoBtn = document.getElementById('uploadVideoBtn');
+            const videoFileInput = document.getElementById('videoFileInput');
+
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastText');
+
+            // ---------- INDEXED DB FOR VIDEO ----------
+            function openVideoDB() {
+                return new Promise((resolve, reject) => {
+                    if (videoDb) return resolve(videoDb);
+                    const req = indexedDB.open('MzMusicDB', 1);
+                    req.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('videos')) {
+                            db.createObjectStore('videos');
+                        }
+                    };
+                    req.onsuccess = (e) => {
+                        videoDb = e.target.result;
+                        resolve(videoDb);
+                    };
+                    req.onerror = (e) => reject(e.target.error);
+                });
+            }
+
+            function saveVideoToIDB(id, blob) {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const db = await openVideoDB();
+                        const tx = db.transaction('videos', 'readwrite');
+                        tx.objectStore('videos').put(blob, id);
+                        tx.oncomplete = () => resolve(true);
+                        tx.onerror = (e) => reject(e.target.error);
+                    } catch (e) { reject(e); }
+                });
+            }
+
+            function loadVideoFromIDB(id) {
+                return new Promise(async (resolve, reject) => {
+                    try {
+                        const db = await openVideoDB();
+                        const tx = db.transaction('videos', 'readonly');
+                        const req = tx.objectStore('videos').get(id);
+                        req.onsuccess = () => resolve(req.result || null);
+                        req.onerror = (e) => reject(e.target.error);
+                    } catch (e) { reject(e); }
+                });
+            }
+
+            function deleteVideoFromIDB(id) {
+                return new Promise(async (resolve) => {
+                    try {
+                        const db = await openVideoDB();
+                        const tx = db.transaction('videos', 'readwrite');
+                        tx.objectStore('videos').delete(id);
+                        tx.oncomplete = () => resolve(true);
+                        tx.onerror = () => resolve(false);
+                    } catch (e) { resolve(false); }
+                });
+            }
+
+            // ---------- LOCALSTORAGE HELPERS ----------
+            function base64ToBlob(base64, mime) {
+                const byteChars = atob(base64);
+                const byteNums = new Array(byteChars.length);
+                for (let i = 0; i < byteChars.length; i++) {
+                    byteNums[i] = byteChars.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNums);
+                return new Blob([byteArray], { type: mime });
+            }
+
+            function blobToBase64(blob) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const dataUrl = reader.result;
+                        const base64 = dataUrl.split(',')[1];
+                        resolve(base64);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            }
+
+            async function saveAudioBlob(id, blob) {
+                try {
+                    const base64 = await blobToBase64(blob);
+                    localStorage.setItem(LS_AUDIO_PREFIX + id, base64);
+                    return true;
+                } catch (e) {
+                    console.warn('Failed to save audio', e);
+                    return false;
+                }
+            }
+
+            function loadAudioBlob(id, mime) {
+                const base64 = localStorage.getItem(LS_AUDIO_PREFIX + id);
+                if (!base64) return null;
+                try { return base64ToBlob(base64, mime || 'audio/mpeg'); }
+                catch (e) { return null; }
+            }
+
+            function removeAudioBlob(id) {
+                localStorage.removeItem(LS_AUDIO_PREFIX + id);
+                if (objectUrls[id]) {
+                    try { URL.revokeObjectURL(objectUrls[id]); } catch (e) {}
+                    delete objectUrls[id];
+                }
+            }
+
+            // Video: prefer IndexedDB (large), fallback to localStorage (small)
+            async function saveVideoBlob(id, blob) {
+                try {
+                    // check size limit
+                    if (blob.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) {
+                        return { ok: false, reason: 'too_large' };
+                    }
+                    // try IndexedDB first
+                    try {
+                        await saveVideoToIDB(id, blob);
+                        return { ok: true, backend: 'idb' };
+                    } catch (e) {
+                        console.warn('IDB save failed, falling back to localStorage', e);
+                    }
+                    // fallback to localStorage
+                    const base64 = await blobToBase64(blob);
+                    localStorage.setItem(LS_VIDEO_PREFIX + id, base64);
+                    return { ok: true, backend: 'ls' };
+                } catch (e) {
+                    console.warn('Failed to save video', e);
+                    return { ok: false, reason: 'error' };
+                }
+            }
+
+            async function loadVideoBlob(id) {
+                // try IndexedDB first
+                try {
+                    const blob = await loadVideoFromIDB(id);
+                    if (blob) return blob;
+                } catch (e) {}
+                // fallback localStorage
+                const base64 = localStorage.getItem(LS_VIDEO_PREFIX + id);
+                if (!base64) return null;
+                try { return base64ToBlob(base64, 'video/mp4'); }
+                catch (e) { return null; }
+            }
+
+            async function removeVideoBlob(id) {
+                localStorage.removeItem(LS_VIDEO_PREFIX + id);
+                try { await deleteVideoFromIDB(id); } catch (e) {}
+                if (objectUrls['v_' + id]) {
+                    try { URL.revokeObjectURL(objectUrls['v_' + id]); } catch (e) {}
+                    delete objectUrls['v_' + id];
+                }
+            }
+
+            function getAudioUrlForTrack(track) {
+                if (!track.audioId) return null;
+                if (objectUrls[track.audioId]) return objectUrls[track.audioId];
+                const blob = loadAudioBlob(track.audioId, track.mime);
+                if (!blob) return null;
+                const url = URL.createObjectURL(blob);
+                objectUrls[track.audioId] = url;
+                return url;
+            }
+
+            async function getVideoUrlForTrack(track) {
+                if (!track.videoId) return null;
+                if (objectUrls['v_' + track.videoId]) return objectUrls['v_' + track.videoId];
+                const blob = await loadVideoBlob(track.videoId);
+                if (!blob) return null;
+                const url = URL.createObjectURL(blob);
+                objectUrls['v_' + track.videoId] = url;
+                return url;
+            }
+
+            // ---------- STORAGE INFO ----------
+            function updateStorageInfo() {
+                try {
+                    let total = 0;
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && (key.startsWith(LS_AUDIO_PREFIX) || key.startsWith(LS_VIDEO_PREFIX) || key === LS_KEY)) {
+                            total += (localStorage.getItem(key) || '').length;
+                        }
+                    }
+                    const mb = total / (1024 * 1024);
+                    storageUsedEl.textContent = mb.toFixed(2) + ' МБ';
+                    const percent = Math.min(100, (mb / MAX_TOTAL_STORAGE_WARN_MB) * 100);
+                    storageBarFill.style.width = percent + '%';
+                    storageBarFill.style.background = percent > 85 ? '#ff6b6b' : 'var(--accent)';
+                } catch (e) {
+                    storageUsedEl.textContent = '—';
+                }
+            }
+
+            // ---------- PERSISTENCE ----------
+            function serializeData() {
+                return {
+                    tracks: tracks.map(t => ({
+                        id: t.id, title: t.title, artist: t.artist, album: t.album,
+                        duration: t.duration, format: t.format, mime: t.mime,
+                        audioId: t.audioId, videoId: t.videoId, videoMime: t.videoMime
+                    })),
+                    playlists: playlists,
+                    playlistTrackMap: playlistTrackMap,
+                    version: 2
+                };
+            }
+
+            function persistState() {
+                try {
+                    localStorage.setItem(LS_KEY, JSON.stringify(serializeData()));
+                    updateStorageInfo();
+                } catch (e) {
+                    console.warn('persist failed', e);
+                    if (e.name === 'QuotaExceededError') {
+                        showToast('Хранилище переполнено. Удалите часть клипов.');
+                    }
+                }
+            }
+
+            async function loadState() {
+                const raw = localStorage.getItem(LS_KEY);
+                if (!raw) return false;
+                try {
+                    const data = JSON.parse(raw);
+                    if (!data || !Array.isArray(data.tracks)) return false;
+                    tracks = data.tracks.map(t => ({
+                        id: t.id || ('t_' + Math.random().toString(36).slice(2)),
+                        title: t.title || 'Без названия',
+                        artist: t.artist || 'Неизвестный исполнитель',
+                        album: t.album || '—',
+                        duration: t.duration || 0,
+                        format: t.format || '—',
+                        mime: t.mime || 'audio/mpeg',
+                        audioId: t.audioId || null,
+                        videoId: t.videoId || null,
+                        videoMime: t.videoMime || 'video/mp4',
+                    }));
+                    playlists = Array.isArray(data.playlists) && data.playlists.length
+                        ? data.playlists
+                        : ['Мой плейлист', 'Избранное'];
+                    playlistTrackMap = data.playlistTrackMap || {};
+                    playlists.forEach(p => {
+                        if (!Array.isArray(playlistTrackMap[p])) playlistTrackMap[p] = [];
+                    });
+                    return true;
+                } catch (e) {
+                    console.warn('load failed', e);
+                    return false;
+                }
+            }
+
+            async function clearAllStorage() {
+                localStorage.removeItem(LS_KEY);
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const key = localStorage.key(i);
+                    if (key && (key.startsWith(LS_AUDIO_PREFIX) || key.startsWith(LS_VIDEO_PREFIX))) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                // clear IDB videos
+                try {
+                    const db = await openVideoDB();
+                    const tx = db.transaction('videos', 'readwrite');
+                    tx.objectStore('videos').clear();
+                } catch (e) {}
+                Object.keys(objectUrls).forEach(k => {
+                    try { URL.revokeObjectURL(objectUrls[k]); } catch (e) {}
+                });
+                objectUrls = {};
+                tracks = [];
+                playlists = ['Мой плейлист', 'Избранное'];
+                playlistTrackMap = { 'Мой плейлист': [], 'Избранное': [] };
+                activeTrackIndex = -1;
+                isPlaying = false;
+                audioEl.pause();
+                audioEl.removeAttribute('src');
+                audioEl.load();
+                videoEl.pause();
+                videoEl.removeAttribute('src');
+                videoEl.load();
+                updatePlayPauseIcon();
+                updatePlayerInfo();
+                goToView('library');
+                updateStorageInfo();
+                showToast('Данные очищены');
+            }
+
+            // ---------- HELPERS ----------
+            function formatTime(sec) {
+                if (!isFinite(sec) || sec < 0) return '0:00';
+                const m = Math.floor(sec / 60);
+                const s = Math.floor(sec % 60);
+                return `${m}:${s.toString().padStart(2, '0')}`;
+            }
+
+            function showToast(msg) {
+                toastText.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(showToast._t);
+                showToast._t = setTimeout(() => toast.classList.remove('show'), 2400);
+            }
+
+            function uid(prefix) {
+                return (prefix || 'id') + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+            }
+
+            function updatePlayPauseIcon() {
+                playPauseIcon.textContent = isPlaying ? 'pause' : 'play_arrow';
+            }
+
+            function updateTrackCardVisuals() {
+                document.querySelectorAll('.track-card').forEach((card) => {
+                    const idx = parseInt(card.dataset.index, 10);
+                    if (idx === activeTrackIndex && isPlaying) card.classList.add('active');
+                    else card.classList.remove('active');
+                });
+                updateMiniTimelines();
+            }
+
+            function updateMiniTimelines() {
+                document.querySelectorAll('.track-card').forEach(card => {
+                    const idx = parseInt(card.dataset.index, 10);
+                    const fill = card.querySelector('.mini-timeline-fill');
+                    if (!fill) return;
+                    if (idx === activeTrackIndex) {
+                        const t = tracks[idx];
+                        const dur = audioEl.duration || t.duration || 0;
+                        const percent = dur ? Math.min(100, (audioEl.currentTime / dur) * 100) : 0;
+                        fill.style.width = percent + '%';
+                    } else {
+                        fill.style.width = '0%';
+                    }
+                });
+            }
+
+            function updatePlayerInfo() {
+                if (activeTrackIndex < 0) {
+                    nowTitle.textContent = 'Ничего не играет';
+                    nowArtist.textContent = '—';
+                    totalTimeEl.textContent = '0:00';
+                    currentTimeEl.textContent = '0:00';
+                    timelineFill.style.width = '0%';
+                    videoToggleBtn.classList.remove('active');
+                    return;
+                }
+                const t = tracks[activeTrackIndex];
+                nowTitle.textContent = t.title;
+                nowArtist.textContent = t.artist;
+                totalTimeEl.textContent = formatTime(t.duration || audioEl.duration || 0);
+                currentTimeEl.textContent = formatTime(audioEl.currentTime || 0);
+                if (audioEl.duration && isFinite(audioEl.duration)) {
+                    timelineFill.style.width = Math.min(100, (audioEl.currentTime / audioEl.duration) * 100) + '%';
+                }
+                // video toggle state — reflect whether video is shown in drawer
+                if (t.videoId) {
+                    videoToggleBtn.style.opacity = '1';
+                    const isShown = drawerVideo.style.display !== 'none' && drawerVideo.src;
+                    videoToggleBtn.classList.toggle('active', !!isShown);
+                } else {
+                    videoToggleBtn.style.opacity = '0.4';
+                    videoToggleBtn.classList.remove('active');
+                }
+            }
+
+            function getTrackById(id) {
+                return tracks.find(t => t.id === id);
+            }
+
+            // ---------- VIDEO SYNC ----------
+            async function hardSyncVideo() {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId) return;
+                const url = await getVideoUrlForTrack(t);
+                if (!url) return;
+                if (videoEl.src !== url) {
+                    videoEl.src = url;
+                    videoEl.load();
+                }
+                videoEl.muted = true;
+                const target = audioEl.currentTime || 0;
+                try {
+                    if (Math.abs(videoEl.currentTime - target) > 0.05) {
+                        videoEl.currentTime = target;
+                    }
+                } catch (e) {}
+            }
+
+            async function syncVideoSeek() {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId) return;
+                const url = await getVideoUrlForTrack(t);
+                if (!url) return;
+                if (videoEl.src !== url) {
+                    videoEl.src = url;
+                    videoEl.load();
+                }
+                try { videoEl.currentTime = audioEl.currentTime || 0; } catch (e) {}
+                if (isPlaying) videoEl.play().catch(() => {});
+                else videoEl.pause();
+            }
+
+            // ---------- PLAYBACK ----------
+            async function playTrack(index, autoPlay = true) {
+                if (index < 0 || index >= tracks.length) return;
+                const track = tracks[index];
+                const audioUrl = getAudioUrlForTrack(track);
+                if (!audioUrl) {
+                    showToast('Аудиофайл не найден');
+                    return;
+                }
+
+                if (activeTrackIndex === index) {
+                    if (autoPlay) {
+                        if (isPlaying) {
+                            audioEl.pause();
+                            isPlaying = false;
+                        } else {
+                            audioEl.play().then(() => {
+                                isPlaying = true;
+                                updatePlayPauseIcon();
+                                updateTrackCardVisuals();
+                                if (track.videoId) {
+                                    hardSyncVideo();
+                                    if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                                        drawerVideo.play().catch(() => {});
+                                    }
+                                }
+                            }).catch(err => {
+                                console.warn('playback error:', err);
+                                isPlaying = false;
+                                updatePlayPauseIcon();
+                                updateTrackCardVisuals();
+                            });
+                        }
+                    }
+                    updateTrackCardVisuals();
+                    updatePlayerInfo();
+                    return;
+                }
+
+                activeTrackIndex = index;
+                isPlaying = false;
+
+                audioEl.src = audioUrl;
+                audioEl.load();
+
+                nowTitle.textContent = track.title;
+                nowArtist.textContent = track.artist;
+                totalTimeEl.textContent = formatTime(track.duration || 0);
+                currentTimeEl.textContent = '0:00';
+                timelineFill.style.width = '0%';
+
+                // prepare video element
+                const videoUrl = await getVideoUrlForTrack(track);
+                if (videoUrl) {
+                    videoEl.src = videoUrl;
+                    videoEl.load();
+                    videoEl.muted = true;
+                } else {
+                    videoEl.removeAttribute('src');
+                    videoEl.load();
+                }
+
+                // if drawer is open on this track, refresh it
+                if (currentDetailIndex === index) refreshDrawer(index);
+
+                if (autoPlay) {
+                    audioEl.play().then(() => {
+                        isPlaying = true;
+                        updatePlayPauseIcon();
+                        updateTrackCardVisuals();
+                        if (videoUrl) {
+                            videoEl.currentTime = 0;
+                            hardSyncVideo();
+                            // keep drawer video in sync if visible
+                            if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                                try { drawerVideo.currentTime = 0; } catch (e) {}
+                                drawerVideo.play().catch(() => {});
+                            }
+                        }
+                    }).catch(err => {
+                        console.warn('play failed:', err);
+                        isPlaying = false;
+                        updatePlayPauseIcon();
+                        updateTrackCardVisuals();
+                    });
+                } else {
+                    updatePlayPauseIcon();
+                    updateTrackCardVisuals();
+                }
+                updatePlayerInfo();
+            }
+
+            function playNext() {
+                if (tracks.length === 0) return;
+                const nextIndex = (activeTrackIndex + 1) % tracks.length;
+                playTrack(nextIndex, true);
+            }
+
+            function playPrev() {
+                if (tracks.length === 0) return;
+                const prevIndex = (activeTrackIndex - 1 + tracks.length) % tracks.length;
+                playTrack(prevIndex, true);
+            }
+
+            // audio events
+            audioEl.addEventListener('timeupdate', () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (t.videoId && videoEl.src) {
+                    const target = audioEl.currentTime;
+                    if (Math.abs(videoEl.currentTime - target) > 0.15) {
+                        try { videoEl.currentTime = target; } catch (e) {}
+                    }
+                }
+                // sync drawer video too
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src && t.videoId) {
+                    if (Math.abs(drawerVideo.currentTime - audioEl.currentTime) > 0.2) {
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                    }
+                }
+                const dur = audioEl.duration || t.duration || 0;
+                currentTimeEl.textContent = formatTime(audioEl.currentTime);
+                if (dur) {
+                    timelineFill.style.width = Math.min(100, (audioEl.currentTime / dur) * 100) + '%';
+                }
+                updateMiniTimelines();
+            });
+
+            audioEl.addEventListener('loadedmetadata', () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (isFinite(audioEl.duration) && audioEl.duration > 0) {
+                    t.duration = audioEl.duration;
+                    totalTimeEl.textContent = formatTime(audioEl.duration);
+                    persistState();
+                }
+            });
+
+            audioEl.addEventListener('play', () => {
+                if (activeTrackIndex >= 0 && tracks[activeTrackIndex].videoId) {
+                    hardSyncVideo();
+                    if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                        drawerVideo.play().catch(() => {});
+                    }
+                }
+            });
+
+            audioEl.addEventListener('pause', () => {
+                videoEl.pause();
+                if (drawerVideo.style.display !== 'none') drawerVideo.pause();
+            });
+
+            audioEl.addEventListener('seeking', syncVideoSeek);
+            audioEl.addEventListener('seeked', syncVideoSeek);
+
+            audioEl.addEventListener('ended', () => {
+                isPlaying = false;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
+                videoEl.pause();
+                if (tracks.length > 0) playNext();
+            });
+
+            // player controls
+            playPauseBtn.addEventListener('click', () => {
+                if (activeTrackIndex < 0) {
+                    if (tracks.length > 0) playTrack(0, true);
+                    return;
+                }
+                playTrack(activeTrackIndex, true);
+            });
+            prevBtn.addEventListener('click', () => playPrev());
+            nextBtn.addEventListener('click', () => playNext());
+
+            timelineTrack.addEventListener('click', (e) => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                const dur = audioEl.duration || t.duration || 0;
+                if (!dur) return;
+                const rect = timelineTrack.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percent = Math.max(0, Math.min(1, x / rect.width));
+                const newTime = percent * dur;
+                if (audioEl.src) audioEl.currentTime = newTime;
+                if (t.videoId && videoEl.src) {
+                    try { videoEl.currentTime = newTime; } catch (e) {}
+                }
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src && t.videoId) {
+                    try { drawerVideo.currentTime = newTime; } catch (e) {}
+                }
+                currentTimeEl.textContent = formatTime(newTime);
+                timelineFill.style.width = (percent * 100) + '%';
+                updateMiniTimelines();
+            });
+
+            // FIX: video toggle button now uses async getVideoUrlForTrack and keeps state
+            // even after the track loops or re-renders.
+            videoToggleBtn.addEventListener('click', async () => {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId) {
+                    showToast('У этого трека нет клипа');
+                    return;
+                }
+                // if drawer is open showing this track's video -> hide it
+                if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
+                    drawerVideo.pause();
+                    drawerVideo.style.display = 'none';
+                    drawerVideo.removeAttribute('src');
+                    drawerVideo.load();
+                    drawerCover.querySelector('.material-icons').style.display = '';
+                    videoToggleBtn.classList.remove('active');
+                    updatePlayerInfo();
+                    return;
+                }
+                // otherwise open drawer & show video
+                if (currentDetailIndex !== activeTrackIndex) {
+                    openDrawer(activeTrackIndex);
+                } else {
+                    // drawer already open but video hidden — refresh to show
+                    await refreshDrawer(activeTrackIndex);
+                }
+                // after refresh, force show
+                setTimeout(async () => {
+                    const url = await getVideoUrlForTrack(t);
+                    if (url) {
+                        drawerVideo.src = url;
+                        drawerVideo.style.display = 'block';
+                        drawerCover.querySelector('.material-icons').style.display = 'none';
+                        drawerVideo.muted = true;
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                        if (isPlaying) drawerVideo.play().catch(() => {});
+                        else drawerVideo.pause();
+                        videoToggleBtn.classList.add('active');
+                        updatePlayerInfo();
+                    }
+                }, 120);
+            });
+
+            // ---------- RENDER LIBRARY ----------
+            function renderLibrary() {
+                pageTitle.textContent = 'Библиотека';
+                settingsPanel.classList.remove('visible');
+                settingsVisible = false;
+                headerActions.style.display = 'flex';
+
+                if (tracks.length === 0) {
+                    dynamicContent.innerHTML = `<div style="text-align:center; padding:60px 20px; color:var(--text-secondary); background:var(--bg-secondary); border-radius:var(--radius-card); border:1px dashed var(--border-light);">
+                        <span class="material-icons" style="font-size:48px; display:block; margin-bottom:12px;">music_off</span>
+                        Нет треков. Нажмите «Загрузить», чтобы добавить музыку.
+                    </div>`;
+                    return;
+                }
+
+                let html = `<div class="track-grid">`;
+                tracks.forEach((track, index) => {
+                    const isActive = (index === activeTrackIndex && isPlaying);
+                    html += `
+                        <div class="track-card ${isActive ? 'active' : ''}" data-index="${index}">
+                            <div class="track-cover" data-play-index="${index}">
+                                <span class="material-icons cover-icon">album</span>
+                                <div class="cover-play" title="${isActive ? 'Пауза' : 'Воспроизвести'}">
+                                    <span class="material-icons play-icon"></span>
+                                </div>
+                            </div>
+                            <div class="track-meta">
+                                <span class="track-title" data-detail-index="${index}">${track.title}</span>
+                                <span class="track-artist">${track.artist || 'Неизвестный исполнитель'}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                <span class="track-badge">${formatTime(track.duration || 0)}</span>
+                                ${track.videoId ? '<span class="video-badge"><span class="material-icons">videocam</span> клип</span>' : ''}
+                            </div>
+                            <div class="mini-timeline"><div class="mini-timeline-fill"></div></div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+                dynamicContent.innerHTML = html;
+
+                document.querySelectorAll('.track-cover').forEach(cover => {
+                    cover.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(cover.dataset.playIndex, 10);
+                        playTrack(idx, true);
+                    });
+                });
+
+                document.querySelectorAll('.track-title').forEach(titleEl => {
+                    titleEl.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(titleEl.dataset.detailIndex, 10);
+                        openDrawer(idx);
+                    });
+                });
+
+                updateMiniTimelines();
+            }
+
+            // ---------- RENDER PLAYLISTS ----------
+            function renderPlaylists() {
+                pageTitle.textContent = 'Плейлисты';
+                settingsPanel.classList.remove('visible');
+                settingsVisible = false;
+                headerActions.style.display = 'none';
+
+                let html = `
+                    <div class="playlist-section">
+                        <div class="custom-input-row">
+                            <input type="text" id="playlistNameInput" placeholder="Название плейлиста..." autocomplete="off">
+                            <button class="create-playlist-btn" id="createPlaylistBtn">
+                                <span class="material-icons">add</span> Создать
+                            </button>
+                        </div>
+                        <div class="playlist-chips" id="playlistChips">
+                `;
+
+                playlists.forEach((name) => {
+                    const isExpanded = expandedPlaylist === name;
+                    html += `
+                        <div class="playlist-chip ${isExpanded ? 'expanded' : ''}" data-playlist-name="${name.replace(/"/g, '&quot;')}">
+                            <span class="material-icons">${isExpanded ? 'folder_open' : 'playlist_play'}</span>
+                            ${name}
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+
+                if (expandedPlaylist) {
+                    const ids = playlistTrackMap[expandedPlaylist] || [];
+                    const plTracks = ids.map(id => getTrackById(id)).filter(Boolean);
+                    html += `<div class="playlist-tracks visible">`;
+                    if (plTracks.length === 0) {
+                        html += `<div style="color:var(--text-secondary); font-size:0.85rem; padding:8px;">В плейлисте пока нет треков</div>`;
+                    } else {
+                        plTracks.forEach((t) => {
+                            const realIdx = tracks.indexOf(t);
+                            html += `
+                                <div class="playlist-track-row" data-track-idx="${realIdx}">
+                                    <span class="material-icons">audiotrack</span>
+                                    <span class="pl-title">${t.title}</span>
+                                    <span class="pl-artist">${t.artist}</span>
+                                </div>
+                            `;
+                        });
+                    }
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+                dynamicContent.innerHTML = html;
+
+                document.querySelectorAll('.playlist-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        const name = chip.dataset.playlistName;
+                        if (expandedPlaylist === name) expandedPlaylist = null;
+                        else expandedPlaylist = name;
+                        renderPlaylists();
+                    });
+                });
+
+                document.querySelectorAll('.playlist-track-row').forEach(row => {
+                    row.addEventListener('click', () => {
+                        const idx = parseInt(row.dataset.trackIdx, 10);
+                        playTrack(idx, true);
+                    });
+                });
+
+                const createBtn = document.getElementById('createPlaylistBtn');
+                const nameInput = document.getElementById('playlistNameInput');
+
+                const createPlaylist = () => {
+                    if (!nameInput) return;
+                    const newName = nameInput.value.trim();
+                    if (newName === '') {
+                        nameInput.style.borderColor = '#ff4d4d';
+                        setTimeout(() => { if (nameInput) nameInput.style.borderColor = ''; }, 1000);
+                        showToast('Введите название');
+                        return;
+                    }
+                    if (playlists.includes(newName)) {
+                        nameInput.style.borderColor = '#ffaa33';
+                        setTimeout(() => { if (nameInput) nameInput.style.borderColor = ''; }, 1000);
+                        showToast('Такой плейлист уже есть');
+                        return;
+                    }
+                    playlists.push(newName);
+                    playlistTrackMap[newName] = [];
+                    persistState();
+                    showToast('Плейлист создан');
+                    renderPlaylists();
+                };
+
+                createBtn.addEventListener('click', createPlaylist);
+                nameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        createPlaylist();
+                    }
+                });
+                nameInput.focus();
+            }
+
+            // ---------- DRAWER ----------
+            async function refreshDrawer(index) {
+                if (index < 0 || index >= tracks.length) return;
+                const t = tracks[index];
+                detailTitle.textContent = t.title;
+                detailArtist.textContent = t.artist || 'Неизвестный исполнитель';
+                detailAlbum.textContent = t.album || '—';
+                detailDuration.textContent = formatTime(t.duration || 0);
+                detailFormat.textContent = t.format || '—';
+
+                if (t.videoId) {
+                    const url = await getVideoUrlForTrack(t);
+                    if (url) {
+                        drawerCover.querySelector('.material-icons').style.display = 'none';
+                        drawerVideo.style.display = 'block';
+                        if (drawerVideo.src !== url) {
+                            drawerVideo.src = url;
+                            drawerVideo.load();
+                        }
+                        drawerVideo.muted = true;
+                        try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
+                        if (isPlaying) drawerVideo.play().catch(() => {});
+                        else drawerVideo.pause();
+
+                        detailVideoContainer.innerHTML = `
+                            <div class="video-status">
+                                <span class="material-icons">videocam</span>
+                                Клип загружен
+                                <button class="remove-video-btn" id="removeVideoBtn">Удалить</button>
+                            </div>
+                        `;
+                        const removeBtn = document.getElementById('removeVideoBtn');
+                        if (removeBtn) {
+                            removeBtn.addEventListener('click', async () => {
+                                await removeVideoBlob(t.videoId);
+                                t.videoId = null;
+                                t.videoMime = null;
+                                videoEl.removeAttribute('src');
+                                videoEl.load();
+                                drawerVideo.removeAttribute('src');
+                                drawerVideo.load();
+                                persistState();
+                                refreshDrawer(index);
+                                showToast('Клип удалён');
+                                if (currentView === 'library') renderLibrary();
+                                updatePlayerInfo();
+                            });
+                        }
+                    } else {
+                        t.videoId = null;
+                        persistState();
+                        refreshDrawer(index);
+                    }
+                } else {
+                    drawerCover.querySelector('.material-icons').style.display = '';
+                    drawerVideo.style.display = 'none';
+                    drawerVideo.removeAttribute('src');
+                    drawerVideo.load();
+                    detailVideoContainer.innerHTML = `
+                        <button class="upload-video-btn" id="uploadVideoBtnInner">
+                            <span class="material-icons">video_call</span> Загрузить клип
+                        </button>
+                    `;
+                    const innerBtn = document.getElementById('uploadVideoBtnInner');
+                    if (innerBtn) innerBtn.addEventListener('click', () => videoFileInput.click());
+                }
+            }
+
+            async function openDrawer(index) {
+                currentDetailIndex = index;
+                await refreshDrawer(index);
+                detailsDrawer.classList.add('open');
+                drawerOverlay.classList.add('open');
+            }
+
+            function closeDrawer() {
+                detailsDrawer.classList.remove('open');
+                drawerOverlay.classList.remove('open');
+                currentDetailIndex = -1;
+                // pause drawer video but keep src for fast re-open
+                if (drawerVideo.style.display !== 'none') drawerVideo.pause();
+            }
+
+            drawerClose.addEventListener('click', closeDrawer);
+            drawerOverlay.addEventListener('click', closeDrawer);
+
+            // ---------- EDIT METADATA ----------
+            detailsDrawer.addEventListener('click', (e) => {
+                const editBtn = e.target.closest('.edit-btn');
+                if (!editBtn) return;
+                e.preventDefault();
+                e.stopPropagation();
+                const field = editBtn.dataset.edit;
+                if (!field) return;
+                if (currentDetailIndex < 0 || currentDetailIndex >= tracks.length) return;
+                const t = tracks[currentDetailIndex];
+                const currentVal = t[field] || '';
+
+                const fieldEl = field === 'title' ? detailTitle :
+                                field === 'artist' ? detailArtist : detailAlbum;
+
+                fieldEl.innerHTML = `
+                    <input type="text" class="edit-input" value="${String(currentVal).replace(/"/g, '&quot;')}">
+                    <div style="display:flex; gap:6px; margin-top:8px;">
+                        <button class="save-btn">Сохранить</button>
+                        <button class="cancel-btn">Отмена</button>
+                    </div>
+                `;
+                const input = fieldEl.querySelector('.edit-input');
+                input.focus();
+                input.select();
+
+                const save = () => {
+                    const newVal = input.value.trim();
+                    if (newVal) t[field] = newVal;
+                    persistState();
+                    refreshDrawer(currentDetailIndex);
+                    if (currentView === 'library') renderLibrary();
+                    if (currentView === 'playlists') renderPlaylists();
+                    updatePlayerInfo();
+                    showToast('Сохранено');
+                };
+                const cancel = () => refreshDrawer(currentDetailIndex);
+
+                fieldEl.querySelector('.save-btn').addEventListener('click', save);
+                fieldEl.querySelector('.cancel-btn').addEventListener('click', cancel);
+                input.addEventListener('keypress', (ev) => {
+                    if (ev.key === 'Enter') { ev.preventDefault(); save(); }
+                    if (ev.key === 'Escape') { ev.preventDefault(); cancel(); }
+                });
+            });
+
+            // video upload in drawer
+            uploadVideoBtn.addEventListener('click', () => videoFileInput.click());
+
+            videoFileInput.addEventListener('change', async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file || !file.type.startsWith('video/')) {
+                    showToast('Выберите видео-файл');
+                    videoFileInput.value = '';
+                    return;
+                }
+                if (currentDetailIndex < 0) return;
+                if (file.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) {
+                    showToast(`Клип слишком большой (макс. ${MAX_VIDEO_SIZE_MB} МБ)`);
+                    videoFileInput.value = '';
+                    return;
+                }
+                const t = tracks[currentDetailIndex];
+                const videoId = uid('v');
+                showToast('Сохранение клипа...');
+                const result = await saveVideoBlob(videoId, file);
+                if (!result.ok) {
+                    showToast(result.reason === 'too_large'
+                        ? `Клип слишком большой (макс. ${MAX_VIDEO_SIZE_MB} МБ)`
+                        : 'Не удалось сохранить клип');
+                    videoFileInput.value = '';
+                    return;
+                }
+                if (t.videoId) await removeVideoBlob(t.videoId);
+                t.videoId = videoId;
+                t.videoMime = file.type;
+                const url = URL.createObjectURL(file);
+                objectUrls['v_' + videoId] = url;
+                videoEl.src = url;
+                videoEl.load();
+                videoEl.muted = true;
+                persistState();
+                showToast('Клип загружен');
+                await refreshDrawer(currentDetailIndex);
+                videoFileInput.value = '';
+                if (currentView === 'library') renderLibrary();
+                updatePlayerInfo();
+            });
+
+            // ---------- UPLOAD MUSIC ----------
+            uploadBtn.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', async (e) => {
+                const files = Array.from(e.target.files || []);
+                if (files.length === 0) return;
+
+                let added = 0;
+                let failed = 0;
+
+                for (const file of files) {
+                    if (!file.type.startsWith('audio/')) {
+                        showToast('Пропущен не-аудио файл: ' + file.name);
+                        failed++;
+                        continue;
+                    }
+                    const audioId = uid('a');
+                    const saved = await saveAudioBlob(audioId, file);
+                    if (!saved) { failed++; continue; }
+                    const url = URL.createObjectURL(file);
+                    objectUrls[audioId] = url;
+                    const meta = await readMetadata(file, url);
+                    const track = {
+                        id: uid('t'),
+                        title: meta.title,
+                        artist: meta.artist,
+                        album: meta.album,
+                        duration: meta.duration || 0,
+                        format: meta.format || '—',
+                        mime: file.type,
+                        audioId: audioId,
+                        videoId: null,
+                        videoMime: null,
+                    };
+                    tracks.push(track);
+                    added++;
+                }
+
+                fileInput.value = '';
+                persistState();
+                showToast(`Добавлено: ${added}${failed ? ', ошибок: ' + failed : ''}`);
+                if (currentView === 'library') renderLibrary();
+                else goToView('library');
+            });
+
+            function readMetadata(file, url) {
+                return new Promise((resolve) => {
+                    const fallback = {
+                        title: file.name.replace(/\.[^.]+$/, ''),
+                        artist: 'Неизвестный исполнитель',
+                        album: '—',
+                        duration: 0,
+                        format: file.type.split('/')[1]?.toUpperCase() || '—',
+                    };
+
+                    const tempAudio = new Audio();
+                    tempAudio.preload = 'metadata';
+                    tempAudio.src = url;
+
+                    const done = (meta) => {
+                        if (!meta.duration || meta.duration <= 0) {
+                            const finish = () => {
+                                if (isFinite(tempAudio.duration) && tempAudio.duration > 0) {
+                                    meta.duration = tempAudio.duration;
+                                }
+                                tempAudio.src = '';
+                                resolve(meta);
+                            };
+                            tempAudio.addEventListener('loadedmetadata', finish, { once: true });
+                            tempAudio.addEventListener('error', () => { tempAudio.src = ''; resolve(meta); }, { once: true });
+                            setTimeout(() => {
+                                if (!meta.duration) resolve(meta);
+                            }, 2000);
+                        } else {
+                            resolve(meta);
+                        }
+                    };
+
+                    if (window.jsmediatags) {
+                        try {
+                            window.jsmediatags.read(file, {
+                                onSuccess: (tag) => {
+                                    const tags = tag.tags || {};
+                                    const meta = {
+                                        title: tags.title || fallback.title,
+                                        artist: tags.artist || fallback.artist,
+                                        album: tags.album || fallback.album,
+                                        duration: 0,
+                                        format: (tags.format || '').includes('MP3') ? 'MP3' :
+                                                file.type.split('/')[1]?.toUpperCase() || '—',
+                                    };
+                                    done(meta);
+                                },
+                                onError: () => done(fallback),
+                            });
+                        } catch (err) {
+                            done(fallback);
+                        }
+                    } else {
+                        tempAudio.addEventListener('loadedmetadata', () => {
+                            if (isFinite(tempAudio.duration)) fallback.duration = tempAudio.duration;
+                        }, { once: true });
+                        tempAudio.addEventListener('error', () => {}, { once: true });
+                        done(fallback);
+                    }
+                });
+            }
+
+            // Load jsmediatags
+            (function loadJsmediatags() {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js';
+                script.async = true;
+                script.onerror = () => console.warn('jsmediatags failed to load');
+                document.head.appendChild(script);
+            })();
+
+            // ---------- NAVIGATION ----------
+            function showSettings() {
+                pageTitle.textContent = 'Настройки';
+                settingsPanel.classList.add('visible');
+                settingsVisible = true;
+                dynamicContent.innerHTML = '';
+                headerActions.style.display = 'none';
+                libraryBtn.classList.remove('active');
+                playlistsBtn.classList.remove('active');
+                updateStorageInfo();
+            }
+
+            function goToView(view) {
+                currentView = view;
+                settingsPanel.classList.remove('visible');
+                settingsVisible = false;
+                expandedPlaylist = null;
+                if (view === 'library') {
+                    libraryBtn.classList.add('active');
+                    playlistsBtn.classList.remove('active');
+                    renderLibrary();
+                } else {
+                    playlistsBtn.classList.add('active');
+                    libraryBtn.classList.remove('active');
+                    renderPlaylists();
+                }
+            }
+
+            libraryBtn.addEventListener('click', () => goToView('library'));
+            playlistsBtn.addEventListener('click', () => goToView('playlists'));
+
+            settingsBtn.addEventListener('click', () => {
+                if (settingsVisible) goToView(currentView);
+                else showSettings();
+            });
+
+            clearStorageBtn.addEventListener('click', () => {
+                if (confirm('Удалить все сохранённые треки, клипы и плейлисты?')) {
+                    clearAllStorage();
+                }
+            });
+
+            // ---------- THEME / COLORS ----------
+            darkThemeBtn.addEventListener('click', () => {
+                document.documentElement.style.setProperty('--bg-primary', '#0f0f12');
+                document.documentElement.style.setProperty('--bg-secondary', '#1a1a1f');
+                document.documentElement.style.setProperty('--bg-elevated', '#25252c');
+                document.documentElement.style.setProperty('--text-primary', '#efeff1');
+                document.documentElement.style.setProperty('--text-secondary', '#b0b0b8');
+                document.documentElement.style.setProperty('--border-light', '#2e2e36');
+                bgColorPicker.value = '#0f0f12';
+                darkThemeBtn.classList.add('active');
+                lightThemeBtn.classList.remove('active');
+            });
+
+            lightThemeBtn.addEventListener('click', () => {
+                document.documentElement.style.setProperty('--bg-primary', '#f4f4f8');
+                document.documentElement.style.setProperty('--bg-secondary', '#ffffff');
+                document.documentElement.style.setProperty('--bg-elevated', '#eaeaf0');
+                document.documentElement.style.setProperty('--text-primary', '#1e1e24');
+                document.documentElement.style.setProperty('--text-secondary', '#5a5a66');
+                document.documentElement.style.setProperty('--border-light', '#d0d0dc');
+                bgColorPicker.value = '#f4f4f8';
+                lightThemeBtn.classList.add('active');
+                darkThemeBtn.classList.remove('active');
+            });
+
+            accentColorPicker.addEventListener('input', (e) => {
+                const color = e.target.value;
+                document.documentElement.style.setProperty('--accent', color);
+                document.documentElement.style.setProperty('--accent-soft', color + 'cc');
+            });
+
+            bgColorPicker.addEventListener('input', (e) => {
+                const color = e.target.value;
+                function adjustBrightness(hex, percent) {
+                    let r = parseInt(hex.slice(1,3), 16);
+                    let g = parseInt(hex.slice(3,5), 16);
+                    let b = parseInt(hex.slice(5,7), 16);
+                    r = Math.min(255, Math.max(0, r + percent));
+                    g = Math.min(255, Math.max(0, g + percent));
+                    b = Math.min(255, Math.max(0, b + percent));
+                    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+                }
+                const r = parseInt(color.slice(1,3), 16);
+                const g = parseInt(color.slice(3,5), 16);
+                const b = parseInt(color.slice(5,7), 16);
+                const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                let secondary, elevated, border, textPrimary, textSecondary;
+                if (luminance < 0.5) {
+                    secondary = adjustBrightness(color, 20);
+                    elevated = adjustBrightness(color, 40);
+                    border = adjustBrightness(color, 60);
+                    textPrimary = '#efeff1';
+                    textSecondary = '#b0b0b8';
+                } else {
+                    secondary = adjustBrightness(color, -10);
+                    elevated = adjustBrightness(color, -25);
+                    border = adjustBrightness(color, -35);
+                    textPrimary = '#1e1e24';
+                    textSecondary = '#5a5a66';
+                }
+                document.documentElement.style.setProperty('--bg-primary', color);
+                document.documentElement.style.setProperty('--bg-secondary', secondary);
+                document.documentElement.style.setProperty('--bg-elevated', elevated);
+                document.documentElement.style.setProperty('--border-light', border);
+                document.documentElement.style.setProperty('--text-primary', textPrimary);
+                document.documentElement.style.setProperty('--text-secondary', textSecondary);
+
+                if (luminance < 0.5) {
+                    darkThemeBtn.classList.add('active');
+                    lightThemeBtn.classList.remove('active');
+                } else {
+                    lightThemeBtn.classList.add('active');
+                    darkThemeBtn.classList.remove('active');
+                }
+            });
+
+            // ---------- INIT ----------
+            (async function init() {
+                document.documentElement.style.setProperty('--accent-soft', '#2a5a9e');
+
+                const overlay = document.createElement('div');
+                overlay.className = 'loading-overlay';
+                overlay.innerHTML = `<div class="spinner"></div><span>Загрузка MzMusic...</span>`;
+                document.body.appendChild(overlay);
+
+                await openVideoDB().catch(() => {});
+
+                const loaded = await loadState();
+                if (loaded) {
+                    tracks.forEach(t => {
+                        if (t.audioId) getAudioUrlForTrack(t);
+                        if (t.videoId) getVideoUrlForTrack(t);
+                    });
+                }
+
+                goToView('library');
+                updatePlayPauseIcon();
+                updatePlayerInfo();
+                updateStorageInfo();
+
+                overlay.remove();
+                if (loaded && tracks.length > 0) {
+                    showToast(`MzMusic: загружено ${tracks.length} треков`);
+                }
+            })();
+
+        })();
+    </script>
+</body>
+</html>
