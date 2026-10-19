@@ -34,11 +34,7 @@
             --mobile-nav-height: 60px;
         }
 
-        html, body {
-            height: 100%;
-            overflow: hidden;
-            overscroll-behavior: none;
-        }
+        html, body { height: 100%; overflow: hidden; overscroll-behavior: none; }
 
         body {
             font-family: var(--font-mono);
@@ -47,10 +43,9 @@
             display: flex;
             transition: background-color 0.2s, color 0.2s;
             -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
         }
 
-        /* ================= SIDEBAR (desktop) ================= */
+        /* ================= SIDEBAR ================= */
         .sidebar {
             width: 86px;
             background: var(--bg-secondary);
@@ -235,7 +230,7 @@
             gap: 10px;
             transition: var(--transition);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .track-card:hover { background: var(--bg-elevated); border-color: var(--accent-soft); transform: translateY(-2px); }
@@ -254,12 +249,22 @@
             cursor: pointer;
         }
 
+        .track-cover .cover-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+        }
+
         .track-cover .cover-icon {
             font-size: 48px;
             opacity: 0.35;
             color: var(--text-secondary);
             transition: opacity 0.2s;
         }
+
+        .track-cover.has-custom .cover-icon { display: none; }
 
         .track-card:hover .track-cover .cover-icon { opacity: 0.15; }
 
@@ -273,6 +278,7 @@
             opacity: 0;
             transition: opacity 0.2s;
             cursor: pointer;
+            z-index: 2;
         }
 
         .track-card:hover .cover-play { opacity: 1; }
@@ -314,12 +320,7 @@
             text-overflow: ellipsis;
         }
 
-        .track-footer {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
+        .track-footer { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
         .track-badge {
             font-size: 0.65rem;
@@ -389,7 +390,7 @@
         .track-menu-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
         .track-menu-btn .material-icons { font-size: 18px; }
 
-        /* Dropdown */
+        /* Dropdown (desktop: attached to card) */
         .track-dropdown {
             position: absolute;
             top: 58px;
@@ -398,8 +399,9 @@
             border: 1px solid var(--border-light);
             border-radius: 12px;
             box-shadow: var(--shadow);
-            z-index: 10;
-            min-width: 200px;
+            z-index: 100;
+            min-width: 220px;
+            max-width: 90vw;
             padding: 6px;
             display: none;
         }
@@ -435,7 +437,7 @@
             letter-spacing: 1px;
         }
 
-        /* Settings panel */
+        /* Settings */
         .settings-panel {
             display: none;
             flex-direction: column;
@@ -646,7 +648,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            z-index: 15;
+            z-index: 55;
         }
 
         .player-controls { display: flex; align-items: center; gap: 6px; }
@@ -835,10 +837,45 @@
             overflow: hidden;
             position: relative;
             flex-shrink: 0;
+            cursor: pointer;
         }
 
-        .drawer-cover video { width: 100%; height: 100%; object-fit: cover; }
-        .drawer-cover .material-icons { font-size: 80px; opacity: 0.5; }
+        .drawer-cover .cover-img-drawer {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        .drawer-cover video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+        }
+
+        .drawer-cover .material-icons { font-size: 80px; opacity: 0.5; position: relative; z-index: 1; }
+
+        .drawer-cover .cover-overlay-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(15, 15, 18, 0.75);
+            border-radius: 10px;
+            padding: 6px 10px;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        .drawer-cover .cover-overlay-hint .material-icons { font-size: 14px; opacity: 1; }
 
         .drawer-field {
             display: flex;
@@ -965,10 +1002,9 @@
 
         .remove-video-btn:hover { background: rgba(255,107,107,0.1); }
 
-        /* helper */
         .hidden { display: none !important; }
 
-        /* toast */
+        /* Toast */
         .toast {
             position: fixed;
             bottom: calc(100px + var(--safe-bottom));
@@ -1004,7 +1040,7 @@
             align-items: center;
             justify-content: center;
             gap: 16px;
-            z-index: 200;
+            z-index: 300;
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
@@ -1020,76 +1056,190 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Mobile bottom navigation - hidden on desktop */
         .mobile-nav { display: none; }
 
-        /* Toast for mobile "add to playlist" popup */
-        .playlist-picker-overlay {
+        /* ================= DESKTOP DROPDOWN (attached) ================= */
+        /* The .track-dropdown is positioned relative to .track-card and appears above other content */
+
+        /* ================= MOBILE DROPDOWN (overlay at bottom) ================= */
+        .mobile-dropdown-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 150;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 120;
             display: none;
-            align-items: center;
+            align-items: flex-end;
             justify-content: center;
-            padding: 20px;
+            padding: 0;
+            backdrop-filter: blur(2px);
         }
 
-        .playlist-picker-overlay.open { display: flex; }
+        .mobile-dropdown-overlay.open { display: flex; }
 
-        .playlist-picker {
+        .mobile-dropdown {
             background: var(--bg-secondary);
-            border: 1px solid var(--border-light);
-            border-radius: 16px;
-            padding: 20px;
-            max-width: 360px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
             width: 100%;
-            max-height: 70vh;
+            max-width: 100%;
+            padding: 16px 16px calc(16px + var(--safe-bottom));
+            max-height: 75vh;
             overflow-y: auto;
-            box-shadow: var(--shadow);
+            -webkit-overflow-scrolling: touch;
+            border-top: 1px solid var(--border-light);
+            animation: slideUp 0.25s ease;
         }
 
-        .playlist-picker h3 {
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .mobile-dropdown .dropdown-handle {
+            width: 40px;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border-light);
+            margin: 0 auto 12px;
+        }
+
+        .mobile-dropdown .mobile-dropdown-title {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            padding: 0 6px;
+        }
+
+        .mobile-dropdown .dropdown-item {
+            padding: 14px 12px;
+            font-size: 0.9rem;
+            border-radius: 10px;
+        }
+
+        .mobile-dropdown .dropdown-item .material-icons { font-size: 20px; }
+
+        .mobile-dropdown .dropdown-item.pl { padding-left: 32px; font-size: 0.85rem; }
+
+        /* Bottom sheet for music picker */
+        .music-picker-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 130;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .music-picker-overlay.open { display: flex; }
+
+        .music-picker {
+            background: var(--bg-secondary);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid var(--border-light);
+            animation: slideUp 0.25s ease;
+            padding-bottom: var(--safe-bottom);
+        }
+
+        .music-picker-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+
+        .music-picker-header h3 {
             font-size: 1rem;
-            margin-bottom: 14px;
             color: var(--text-primary);
         }
 
-        .playlist-picker-item {
+        .music-picker-close {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+        }
+
+        .music-picker-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
+
+        .music-picker-body {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px 14px 14px;
+            flex: 1;
+        }
+
+        .music-picker-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .music-picker-empty .material-icons {
+            display: block;
+            font-size: 48px;
+            opacity: 0.4;
+            margin-bottom: 10px;
+        }
+
+        .music-picker-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             padding: 12px 14px;
-            border-radius: 10px;
+            border-radius: 12px;
             background: var(--bg-elevated);
             margin-bottom: 8px;
             cursor: pointer;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-            color: var(--text-primary);
             border: 1px solid var(--border-light);
             transition: var(--transition);
-            width: 100%;
-            text-align: left;
         }
 
-        .playlist-picker-item:hover { border-color: var(--accent); }
-        .playlist-picker-item .material-icons { font-size: 18px; color: var(--accent); }
+        .music-picker-option:hover { border-color: var(--accent); }
 
-        .playlist-picker-cancel {
-            margin-top: 8px;
-            background: transparent;
-            border: 1px solid var(--border-light);
-            color: var(--text-secondary);
-            padding: 12px;
-            border-radius: 10px;
-            width: 100%;
-            cursor: pointer;
-            font-family: var(--font-mono);
+        .music-picker-option .material-icons { color: var(--accent); font-size: 22px; }
+
+        .music-picker-option .option-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .music-picker-option .option-title {
             font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
-        .playlist-picker-cancel:hover { color: var(--text-primary); }
+        .music-picker-option .option-sub {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .music-picker-option .option-size {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+        }
 
         /* ================= TABLET ================= */
         @media (max-width: 1100px) {
@@ -1147,7 +1297,6 @@
 
             .mobile-nav-btn.active { color: var(--accent); background: var(--bg-elevated); }
 
-            /* Main area on mobile: reserve space for bottom nav AND player */
             .main {
                 height: 100vh;
                 height: 100dvh;
@@ -1156,7 +1305,6 @@
                 padding-right: var(--safe-right);
             }
 
-            /* Scroll area with proper top spacing */
             .main-scroll {
                 padding: 16px 14px 14px 14px;
                 padding-top: calc(16px + var(--safe-top));
@@ -1165,7 +1313,6 @@
 
             .page-title { font-size: 1.3rem; }
             .page-header { gap: 10px; }
-
             .upload-btn { padding: 9px 14px; font-size: 0.78rem; }
 
             .track-grid {
@@ -1173,11 +1320,10 @@
                 gap: 10px;
             }
 
-            .track-card { padding: 10px; gap: 8px; border-radius: 14px; }
+            .track-card { padding: 10px; gap: 8px; border-radius: 14px; overflow: hidden; }
             .track-cover { border-radius: 10px; }
             .track-cover .cover-icon { font-size: 34px; }
 
-            /* Mobile: always show indicator (no hover) */
             .cover-play { opacity: 1; background: linear-gradient(to top, rgba(0,0,0,0.35), transparent 50%); }
             .cover-play .play-icon { font-size: 44px; }
 
@@ -1186,7 +1332,6 @@
             .track-artist { font-size: 0.66rem; }
             .track-badge { font-size: 0.58rem; padding: 2px 6px; }
 
-            /* menu button smaller on mobile */
             .track-menu-btn {
                 top: 18px;
                 right: 18px;
@@ -1196,16 +1341,10 @@
             }
             .track-menu-btn .material-icons { font-size: 16px; }
 
-            .track-dropdown {
-                top: 52px;
-                right: 18px;
-                min-width: 180px;
-            }
+            /* Hide attached dropdown on mobile — replaced by bottom overlay */
+            .track-dropdown { display: none !important; }
 
-            .dropdown-item { padding: 12px 12px; font-size: 0.78rem; }
-            .dropdown-item.pl { padding-left: 26px; font-size: 0.75rem; }
-
-            /* Bottom player bar above mobile nav — fixed positioning */
+            /* Player bar fixed above bottom nav */
             .player-bar {
                 position: fixed;
                 bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
@@ -1244,7 +1383,6 @@
             .player-timeline .timeline-track { height: 8px; }
             .timeline-fill::after { opacity: 1; width: 16px; height: 16px; right: -8px; }
 
-            /* Drawer full-width on mobile */
             .details-drawer {
                 width: 100%;
                 max-width: 100%;
@@ -1265,7 +1403,6 @@
 
             .drawer-cover { max-width: 260px; align-self: center; }
 
-            /* Settings adjustments */
             .settings-panel { padding: 20px; gap: 20px; }
             .color-row { gap: 10px; }
             .color-input { padding: 6px 12px; gap: 6px; font-size: 0.82rem; }
@@ -1282,7 +1419,6 @@
             .playlist-track-row .pl-title { font-size: 0.78rem; }
             .playlist-track-row .pl-artist { font-size: 0.63rem; }
 
-            /* toast above mobile nav + player */
             .toast {
                 bottom: calc(var(--mobile-nav-height) + 118px + 12px + var(--safe-bottom));
                 font-size: 0.76rem;
@@ -1293,18 +1429,10 @@
 
             input, .custom-input-row input, .drawer-field .field-value input { font-size: 16px; }
             .track-title, .track-artist, .drawer-field .field-value { -webkit-user-select: none; user-select: none; }
-
-            /* Playlist picker overlay styling on mobile */
-            .playlist-picker {
-                max-width: 90vw;
-                padding: 18px;
-            }
         }
 
-        /* Small phones */
         @media (max-width: 420px) {
             .track-grid { gap: 8px; }
-
             .player-bar { padding: 8px 12px; gap: 4px 8px; }
             .player-ctrl-btn { width: 32px; height: 32px; }
             .player-ctrl-btn .material-icons { font-size: 18px; }
@@ -1320,7 +1448,6 @@
             .main { padding-bottom: calc(var(--mobile-nav-height) + 110px + var(--safe-bottom)); }
         }
 
-        /* Landscape phones */
         @media (max-height: 500px) and (orientation: landscape) {
             .player-bar {
                 grid-template-areas: "controls info timeline video";
@@ -1331,7 +1458,6 @@
                 padding-bottom: calc(8px + var(--safe-bottom));
                 gap: 8px;
             }
-
             .player-timeline { grid-area: timeline; }
             .main { padding-bottom: calc(var(--mobile-nav-height) + 70px + var(--safe-bottom)); }
             .details-drawer { padding: 16px; gap: 14px; }
@@ -1475,6 +1601,29 @@
         </button>
     </nav>
 
+    <!-- MOBILE DROPDOWN OVERLAY (options menu above player) -->
+    <div class="mobile-dropdown-overlay" id="mobileDropdownOverlay">
+        <div class="mobile-dropdown" id="mobileDropdown">
+            <div class="dropdown-handle"></div>
+            <div id="mobileDropdownContent"></div>
+        </div>
+    </div>
+
+    <!-- MUSIC PICKER BOTTOM SHEET (for mobile upload) -->
+    <div class="music-picker-overlay" id="musicPickerOverlay">
+        <div class="music-picker">
+            <div class="music-picker-header">
+                <h3>Выбрать музыку</h3>
+                <button class="music-picker-close" id="musicPickerClose">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="music-picker-body" id="musicPickerBody">
+                <!-- Filled dynamically -->
+            </div>
+        </div>
+    </div>
+
     <!-- TRACK DETAILS DRAWER -->
     <div class="drawer-overlay" id="drawerOverlay"></div>
     <aside class="details-drawer" id="detailsDrawer">
@@ -1484,9 +1633,14 @@
                 <span class="material-icons">close</span>
             </button>
         </div>
-        <div class="drawer-cover" id="drawerCover">
+        <div class="drawer-cover" id="drawerCover" title="Нажмите, чтобы загрузить обложку">
             <span class="material-icons">album</span>
+            <img class="cover-img-drawer" id="drawerCoverImg" alt="" style="display:none;">
             <video id="drawerVideo" muted playsinline preload="metadata" style="display:none;"></video>
+            <div class="cover-overlay-hint" id="drawerCoverHint">
+                <span class="material-icons">image</span> обложка
+            </div>
+            <input type="file" id="coverFileInput" accept="image/*" hidden>
         </div>
         <div class="drawer-field">
             <span class="field-label">Название
@@ -1535,15 +1689,6 @@
         </div>
     </aside>
 
-    <!-- PLAYLIST PICKER (for mobile-friendly add-to-playlist) -->
-    <div class="playlist-picker-overlay" id="playlistPickerOverlay">
-        <div class="playlist-picker">
-            <h3>Добавить в плейлист</h3>
-            <div id="playlistPickerList"></div>
-            <button class="playlist-picker-cancel" id="playlistPickerCancel">Отмена</button>
-        </div>
-    </div>
-
     <!-- TOAST -->
     <div class="toast" id="toast">
         <span class="material-icons">check_circle</span>
@@ -1560,8 +1705,9 @@
             const LS_KEY = 'mzmusic_data_v2';
             const MAX_VIDEO_SIZE_MB = 200;
             const MAX_AUDIO_SIZE_MB = 100;
+            const MAX_COVER_SIZE_MB = 5;
             const DB_NAME = 'MzMusicDB';
-            const DB_VERSION = 2;
+            const DB_VERSION = 3; // bumped for covers store
 
             // ---------- STATE ----------
             let tracks = [];
@@ -1575,8 +1721,7 @@
             let expandedPlaylist = null;
             let objectUrls = {};
             let db = null;
-            let openMenuIndex = -1;
-            let pendingAddTrackIndex = -1;
+            let mobileMenuTrackIndex = -1;
 
             // ---------- DOM ----------
             const libraryBtn = document.getElementById('libraryBtn');
@@ -1614,6 +1759,9 @@
             const detailsDrawer = document.getElementById('detailsDrawer');
             const drawerClose = document.getElementById('drawerClose');
             const drawerCover = document.getElementById('drawerCover');
+            const drawerCoverImg = document.getElementById('drawerCoverImg');
+            const drawerCoverHint = document.getElementById('drawerCoverHint');
+            const coverFileInput = document.getElementById('coverFileInput');
             const drawerVideo = document.getElementById('drawerVideo');
             const detailTitle = document.getElementById('detailTitle');
             const detailArtist = document.getElementById('detailArtist');
@@ -1625,12 +1773,19 @@
             const uploadVideoBtn = document.getElementById('uploadVideoBtn');
             const videoFileInput = document.getElementById('videoFileInput');
 
-            const playlistPickerOverlay = document.getElementById('playlistPickerOverlay');
-            const playlistPickerList = document.getElementById('playlistPickerList');
-            const playlistPickerCancel = document.getElementById('playlistPickerCancel');
+            const mobileDropdownOverlay = document.getElementById('mobileDropdownOverlay');
+            const mobileDropdown = document.getElementById('mobileDropdown');
+            const mobileDropdownContent = document.getElementById('mobileDropdownContent');
+
+            const musicPickerOverlay = document.getElementById('musicPickerOverlay');
+            const musicPickerBody = document.getElementById('musicPickerBody');
+            const musicPickerClose = document.getElementById('musicPickerClose');
 
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toastText');
+
+            // Detect mobile
+            const isMobile = () => window.matchMedia('(max-width: 800px)').matches;
 
             // ---------- INDEXED DB ----------
             function openDB() {
@@ -1641,6 +1796,7 @@
                         const database = e.target.result;
                         if (!database.objectStoreNames.contains('videos')) database.createObjectStore('videos');
                         if (!database.objectStoreNames.contains('audio')) database.createObjectStore('audio');
+                        if (!database.objectStoreNames.contains('covers')) database.createObjectStore('covers');
                     };
                     req.onsuccess = (e) => { db = e.target.result; resolve(db); };
                     req.onerror = (e) => reject(e.target.error);
@@ -1695,42 +1851,34 @@
                 });
             }
 
-            // Save/get audio via IDB (no size limit)
-            async function saveAudioBlob(id, blob) {
-                try { await idbPut('audio', id, blob); return true; }
-                catch (e) { return false; }
-            }
-
-            async function loadAudioBlob(id) {
-                try { return await idbGet('audio', id); }
-                catch (e) { return null; }
-            }
-
+            // Audio
+            async function saveAudioBlob(id, blob) { try { await idbPut('audio', id, blob); return true; } catch (e) { return false; } }
+            async function loadAudioBlob(id) { try { return await idbGet('audio', id); } catch (e) { return null; } }
             async function removeAudioBlob(id) {
                 await idbDelete('audio', id);
-                if (objectUrls['a_' + id]) {
-                    try { URL.revokeObjectURL(objectUrls['a_' + id]); } catch (e) {}
-                    delete objectUrls['a_' + id];
-                }
+                if (objectUrls['a_' + id]) { try { URL.revokeObjectURL(objectUrls['a_' + id]); } catch (e) {} delete objectUrls['a_' + id]; }
             }
 
+            // Video
             async function saveVideoBlob(id, blob) {
                 if (blob.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) return { ok: false, reason: 'too_large' };
-                try { await idbPut('videos', id, blob); return { ok: true }; }
-                catch (e) { return { ok: false, reason: 'error' }; }
+                try { await idbPut('videos', id, blob); return { ok: true }; } catch (e) { return { ok: false, reason: 'error' }; }
             }
-
-            async function loadVideoBlob(id) {
-                try { return await idbGet('videos', id); }
-                catch (e) { return null; }
-            }
-
+            async function loadVideoBlob(id) { try { return await idbGet('videos', id); } catch (e) { return null; } }
             async function removeVideoBlob(id) {
                 await idbDelete('videos', id);
-                if (objectUrls['v_' + id]) {
-                    try { URL.revokeObjectURL(objectUrls['v_' + id]); } catch (e) {}
-                    delete objectUrls['v_' + id];
-                }
+                if (objectUrls['v_' + id]) { try { URL.revokeObjectURL(objectUrls['v_' + id]); } catch (e) {} delete objectUrls['v_' + id]; }
+            }
+
+            // Cover
+            async function saveCoverBlob(id, blob) {
+                if (blob.size > MAX_COVER_SIZE_MB * 1024 * 1024) return { ok: false, reason: 'too_large' };
+                try { await idbPut('covers', id, blob); return { ok: true }; } catch (e) { return { ok: false, reason: 'error' }; }
+            }
+            async function loadCoverBlob(id) { try { return await idbGet('covers', id); } catch (e) { return null; } }
+            async function removeCoverBlob(id) {
+                await idbDelete('covers', id);
+                if (objectUrls['c_' + id]) { try { URL.revokeObjectURL(objectUrls['c_' + id]); } catch (e) {} delete objectUrls['c_' + id]; }
             }
 
             async function getAudioUrlForTrack(track) {
@@ -1755,11 +1903,22 @@
                 return url;
             }
 
+            async function getCoverUrlForTrack(track) {
+                if (!track.coverId) return null;
+                const key = 'c_' + track.coverId;
+                if (objectUrls[key]) return objectUrls[key];
+                const blob = await loadCoverBlob(track.coverId);
+                if (!blob) return null;
+                const url = URL.createObjectURL(blob);
+                objectUrls[key] = url;
+                return url;
+            }
+
             // ---------- STORAGE INFO ----------
             async function updateStorageInfo() {
                 try {
+                    let audioCount = 0, videoCount = 0, coverCount = 0;
                     const database = await openDB();
-                    let audioCount = 0, videoCount = 0;
                     await new Promise((resolve) => {
                         const tx = database.transaction('audio', 'readonly');
                         const req = tx.objectStore('audio').count();
@@ -1772,35 +1931,39 @@
                         req.onsuccess = () => { videoCount = req.result || 0; resolve(); };
                         req.onerror = () => resolve();
                     });
+                    await new Promise((resolve) => {
+                        const tx = database.transaction('covers', 'readonly');
+                        const req = tx.objectStore('covers').count();
+                        req.onsuccess = () => { coverCount = req.result || 0; resolve(); };
+                        req.onerror = () => resolve();
+                    });
 
                     if (navigator.storage && navigator.storage.estimate) {
                         const est = await navigator.storage.estimate();
                         const usedMB = (est.usage || 0) / (1024 * 1024);
                         const quotaMB = (est.quota || 0) / (1024 * 1024);
-                        storageUsedEl.textContent = `${usedMB.toFixed(2)} МБ / ${quotaMB.toFixed(0)} МБ (аудио: ${audioCount}, клипы: ${videoCount})`;
+                        storageUsedEl.textContent = `${usedMB.toFixed(2)} МБ / ${quotaMB.toFixed(0)} МБ (аудио: ${audioCount}, клипы: ${videoCount}, обложки: ${coverCount})`;
                         const percent = quotaMB ? Math.min(100, (usedMB / quotaMB) * 100) : 0;
                         storageBarFill.style.width = percent + '%';
                         storageBarFill.style.background = percent > 85 ? '#ff6b6b' : 'var(--accent)';
                     } else {
-                        storageUsedEl.textContent = `Аудио: ${audioCount}, клипы: ${videoCount}`;
-                        storageBarFill.style.width = '0%';
+                        storageUsedEl.textContent = `Аудио: ${audioCount}, клипы: ${videoCount}, обложки: ${coverCount}`;
                     }
-                } catch (e) {
-                    storageUsedEl.textContent = '—';
-                }
+                } catch (e) { storageUsedEl.textContent = '—'; }
             }
 
-            // ---------- PERSISTENCE (metadata) ----------
+            // ---------- PERSISTENCE ----------
             function serializeData() {
                 return {
                     tracks: tracks.map(t => ({
                         id: t.id, title: t.title, artist: t.artist, album: t.album,
                         duration: t.duration, format: t.format, mime: t.mime,
-                        audioId: t.audioId, videoId: t.videoId, videoMime: t.videoMime
+                        audioId: t.audioId, videoId: t.videoId, videoMime: t.videoMime,
+                        coverId: t.coverId, coverMime: t.coverMime
                     })),
                     playlists: playlists,
                     playlistTrackMap: playlistTrackMap,
-                    version: 2
+                    version: 3
                 };
             }
 
@@ -1825,6 +1988,8 @@
                         audioId: t.audioId || null,
                         videoId: t.videoId || null,
                         videoMime: t.videoMime || 'video/mp4',
+                        coverId: t.coverId || null,
+                        coverMime: t.coverMime || 'image/jpeg',
                     }));
                     playlists = Array.isArray(data.playlists) && data.playlists.length ? data.playlists : ['Мой плейлист', 'Избранное'];
                     playlistTrackMap = data.playlistTrackMap || {};
@@ -1838,6 +2003,7 @@
                 localStorage.removeItem('mzmusic_data_v1');
                 await idbClear('audio');
                 await idbClear('videos');
+                await idbClear('covers');
                 Object.keys(objectUrls).forEach(k => { try { URL.revokeObjectURL(objectUrls[k]); } catch (e) {} });
                 objectUrls = {};
                 tracks = [];
@@ -1864,6 +2030,13 @@
                 const m = Math.floor(sec / 60);
                 const s = Math.floor(sec % 60);
                 return `${m}:${s.toString().padStart(2, '0')}`;
+            }
+
+            function formatSize(bytes) {
+                if (!bytes) return '';
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
             }
 
             function showToast(msg) {
@@ -1964,102 +2137,196 @@
                 return false;
             }
 
-            // ---------- ADD TO PLAYLIST PICKER ----------
-            function openPlaylistPicker(trackIndex) {
-                pendingAddTrackIndex = trackIndex;
-                playlistPickerList.innerHTML = '';
-                if (playlists.length === 0) {
-                    playlistPickerList.innerHTML = `<div style="color:var(--text-secondary); font-size:0.8rem; padding:8px;">Нет плейлистов. Создайте на вкладке «Плейлисты».</div>`;
-                } else {
-                    const track = tracks[trackIndex];
+            // ---------- MOBILE DROPDOWN (overlay above player) ----------
+            function buildDropdownContent(trackIndex) {
+                const track = tracks[trackIndex];
+                if (!track) return '';
+                let html = `<div class="mobile-dropdown-title">${track.title}</div>`;
+
+                if (playlists.length > 0) {
+                    html += `<div class="dropdown-header">Добавить в плейлист</div>`;
                     playlists.forEach(p => {
                         const already = (playlistTrackMap[p] || []).includes(track.id);
-                        const btn = document.createElement('button');
-                        btn.className = 'playlist-picker-item';
-                        btn.innerHTML = `
-                            <span class="material-icons">${already ? 'check_circle' : 'playlist_add'}</span>
-                            <span style="flex:1;">${p}</span>
-                            ${already ? '<span style="font-size:0.65rem; color:var(--accent);">добавлено</span>' : ''}
+                        html += `
+                            <button class="dropdown-item pl" data-add-playlist="${p.replace(/"/g, '&quot;')}" data-track-index="${trackIndex}">
+                                <span class="material-icons">${already ? 'check' : 'playlist_add'}</span>
+                                ${p}
+                            </button>
                         `;
-                        btn.addEventListener('click', () => {
-                            if (already) {
-                                removeTrackFromPlaylist(track.id, p);
-                                showToast('Удалено из «' + p + '»');
-                            } else {
-                                addTrackToPlaylist(track.id, p);
-                                showToast('Добавлено в «' + p + '»');
-                            }
-                            closePlaylistPicker();
-                            if (currentView === 'playlists') renderPlaylists();
-                            if (currentView === 'library') renderLibrary();
-                        });
-                        playlistPickerList.appendChild(btn);
                     });
+                } else {
+                    html += `<div style="padding:8px 14px; font-size:0.75rem; color:var(--text-secondary);">Нет плейлистов</div>`;
                 }
-                playlistPickerOverlay.classList.add('open');
+
+                html += `<div style="border-top:1px solid var(--border-light); margin:6px 0;"></div>`;
+                html += `<button class="dropdown-item" data-details-index="${trackIndex}">
+                    <span class="material-icons">info</span> Подробнее
+                </button>`;
+                html += `<button class="dropdown-item" data-cover-index="${trackIndex}">
+                    <span class="material-icons">image</span> Загрузить обложку
+                </button>`;
+                return html;
             }
 
-            function closePlaylistPicker() {
-                playlistPickerOverlay.classList.remove('open');
-                pendingAddTrackIndex = -1;
+            function openMobileDropdown(trackIndex) {
+                mobileMenuTrackIndex = trackIndex;
+                mobileDropdownContent.innerHTML = buildDropdownContent(trackIndex);
+                mobileDropdownOverlay.classList.add('open');
             }
 
-            playlistPickerCancel.addEventListener('click', closePlaylistPicker);
-            playlistPickerOverlay.addEventListener('click', (e) => {
-                if (e.target === playlistPickerOverlay) closePlaylistPicker();
+            function closeMobileDropdown() {
+                mobileDropdownOverlay.classList.remove('open');
+                mobileMenuTrackIndex = -1;
+            }
+
+            mobileDropdownOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileDropdownOverlay) closeMobileDropdown();
             });
 
-            // ---------- DROPDOWN MENU (three dots) ----------
-            function closeAllDropdowns() {
-                document.querySelectorAll('.track-dropdown.open').forEach(d => d.classList.remove('open'));
-                openMenuIndex = -1;
-            }
+            mobileDropdownContent.addEventListener('click', (e) => {
+                const item = e.target.closest('.dropdown-item');
+                if (!item) return;
+                e.stopPropagation();
 
-            function toggleDropdown(index, btnEl) {
-                closeAllDropdowns();
-                const dropdown = document.getElementById('dropdown-' + index);
-                if (!dropdown) return;
-                if (openMenuIndex === index) {
-                    dropdown.classList.remove('open');
-                    openMenuIndex = -1;
-                    return;
+                if (item.hasAttribute('data-add-playlist')) {
+                    const p = item.getAttribute('data-add-playlist');
+                    const trackIndex = parseInt(item.dataset.trackIndex, 10);
+                    const track = tracks[trackIndex];
+                    const already = (playlistTrackMap[p] || []).includes(track.id);
+                    if (already) {
+                        removeTrackFromPlaylist(track.id, p);
+                        showToast('Удалено из «' + p + '»');
+                    } else {
+                        addTrackToPlaylist(track.id, p);
+                        showToast('Добавлено в «' + p + '»');
+                    }
+                    // Rebuild dropdown to update check states
+                    mobileDropdownContent.innerHTML = buildDropdownContent(trackIndex);
+                    if (currentView === 'library') renderLibrary();
+                    if (currentView === 'playlists') renderPlaylists();
+                } else if (item.hasAttribute('data-details-index')) {
+                    const idx = parseInt(item.dataset.detailsIndex, 10);
+                    closeMobileDropdown();
+                    openDrawer(idx);
+                } else if (item.hasAttribute('data-cover-index')) {
+                    const idx = parseInt(item.dataset.coverIndex, 10);
+                    closeMobileDropdown();
+                    // Trigger cover upload for that track
+                    pendingCoverTrackIndex = idx;
+                    coverFileInput.value = '';
+                    coverFileInput.click();
                 }
-                dropdown.classList.add('open');
-                openMenuIndex = index;
+            });
+
+            // ---------- DESKTOP 3-DOT DROPDOWN ----------
+            function closeAllDesktopDropdowns() {
+                document.querySelectorAll('.track-dropdown.open').forEach(d => d.classList.remove('open'));
             }
 
-            // Close dropdowns on outside click
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('.track-dropdown') && !e.target.closest('.track-menu-btn')) {
-                    closeAllDropdowns();
+                    closeAllDesktopDropdowns();
                 }
             });
 
-            // ---------- VIDEO SYNC ----------
-            async function hardSyncVideo() {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (!t.videoId) return;
-                const url = await getVideoUrlForTrack(t);
-                if (!url) return;
-                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
-                videoEl.muted = true;
-                try {
-                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.05) videoEl.currentTime = audioEl.currentTime;
-                } catch (e) {}
+            // Track menu click handler is attached during render.
+            // On mobile it opens the overlay; on desktop it toggles the attached dropdown.
+
+            // ---------- MUSIC PICKER (mobile only) ----------
+            function openMusicPicker() {
+                if (!isMobile()) {
+                    fileInput.click();
+                    return;
+                }
+                musicPickerBody.innerHTML = `
+                    <div class="music-picker-option" data-action="browse">
+                        <span class="material-icons">folder_open</span>
+                        <div class="option-text">
+                            <span class="option-title">Обзор файлов устройства</span>
+                            <span class="option-sub">Открыть системный проводник</span>
+                        </div>
+                    </div>
+                    <div class="music-picker-empty" style="padding:20px 0 10px;">
+                        <span class="material-icons">music_note</span>
+                        Выбор из проводника или загрузка своих файлов
+                    </div>
+                `;
+                musicPickerOverlay.classList.add('open');
+
+                musicPickerBody.onclick = (e) => {
+                    const opt = e.target.closest('.music-picker-option');
+                    if (!opt) return;
+                    if (opt.dataset.action === 'browse') {
+                        closeMusicPicker();
+                        fileInput.click();
+                    }
+                };
             }
 
-            async function syncVideoSeek() {
-                if (activeTrackIndex < 0) return;
-                const t = tracks[activeTrackIndex];
-                if (!t.videoId) return;
-                const url = await getVideoUrlForTrack(t);
-                if (!url) return;
-                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
-                try { videoEl.currentTime = audioEl.currentTime || 0; } catch (e) {}
-                if (isPlaying) videoEl.play().catch(() => {});
-                else videoEl.pause();
+            function closeMusicPicker() {
+                musicPickerOverlay.classList.remove('open');
+                musicPickerBody.onclick = null;
             }
+
+            musicPickerClose.addEventListener('click', closeMusicPicker);
+            musicPickerOverlay.addEventListener('click', (e) => {
+                if (e.target === musicPickerOverlay) closeMusicPicker();
+            });
+
+            // ---------- COVER UPLOAD ----------
+            let pendingCoverTrackIndex = -1;
+
+            // Drawer cover click → upload cover
+            drawerCover.addEventListener('click', (e) => {
+                // Don't trigger if clicking on video or file input
+                if (e.target.closest('video') || e.target === coverFileInput) return;
+                if (currentDetailIndex < 0) return;
+                pendingCoverTrackIndex = currentDetailIndex;
+                coverFileInput.value = '';
+                coverFileInput.click();
+            });
+
+            coverFileInput.addEventListener('change', async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file || !file.type.startsWith('image/')) {
+                    if (file) showToast('Выберите изображение');
+                    coverFileInput.value = '';
+                    return;
+                }
+                const idx = pendingCoverTrackIndex >= 0 ? pendingCoverTrackIndex : currentDetailIndex;
+                if (idx < 0 || idx >= tracks.length) { coverFileInput.value = ''; return; }
+                if (file.size > MAX_COVER_SIZE_MB * 1024 * 1024) {
+                    showToast(`Обложка слишком большая (макс. ${MAX_COVER_SIZE_MB} МБ)`);
+                    coverFileInput.value = '';
+                    return;
+                }
+
+                const t = tracks[idx];
+                const coverId = uid('c');
+                const result = await saveCoverBlob(coverId, file);
+                if (!result.ok) {
+                    showToast(result.reason === 'too_large' ? 'Обложка слишком большая' : 'Не удалось сохранить обложку');
+                    coverFileInput.value = '';
+                    return;
+                }
+                // remove old cover
+                if (t.coverId) await removeCoverBlob(t.coverId);
+                t.coverId = coverId;
+                t.coverMime = file.type;
+
+                // create object URL
+                const url = URL.createObjectURL(file);
+                objectUrls['c_' + coverId] = url;
+
+                persistState();
+                showToast('Обложка установлена');
+                if (currentView === 'library') renderLibrary();
+                if (currentView === 'playlists') renderPlaylists();
+                if (currentDetailIndex === idx) await refreshDrawer(idx);
+                updateStorageInfo();
+                coverFileInput.value = '';
+                pendingCoverTrackIndex = -1;
+            });
 
             // ---------- PLAYBACK ----------
             async function playTrack(index, autoPlay = true) {
@@ -2137,6 +2404,31 @@
             function playPrev() {
                 if (tracks.length === 0) return;
                 playTrack((activeTrackIndex - 1 + tracks.length) % tracks.length, true);
+            }
+
+            async function hardSyncVideo() {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId) return;
+                const url = await getVideoUrlForTrack(t);
+                if (!url) return;
+                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
+                videoEl.muted = true;
+                try {
+                    if (Math.abs(videoEl.currentTime - audioEl.currentTime) > 0.05) videoEl.currentTime = audioEl.currentTime;
+                } catch (e) {}
+            }
+
+            async function syncVideoSeek() {
+                if (activeTrackIndex < 0) return;
+                const t = tracks[activeTrackIndex];
+                if (!t.videoId) return;
+                const url = await getVideoUrlForTrack(t);
+                if (!url) return;
+                if (videoEl.src !== url) { videoEl.src = url; videoEl.load(); }
+                try { videoEl.currentTime = audioEl.currentTime || 0; } catch (e) {}
+                if (isPlaying) videoEl.play().catch(() => {});
+                else videoEl.pause();
             }
 
             audioEl.addEventListener('timeupdate', () => {
@@ -2245,7 +2537,7 @@
                     drawerVideo.style.display = 'none';
                     drawerVideo.removeAttribute('src');
                     drawerVideo.load();
-                    drawerCover.querySelector('.material-icons').style.display = '';
+                    drawerCoverHint.style.display = 'flex';
                     videoToggleBtn.classList.remove('active');
                     updatePlayerInfo();
                     return;
@@ -2257,7 +2549,7 @@
                     if (url) {
                         drawerVideo.src = url;
                         drawerVideo.style.display = 'block';
-                        drawerCover.querySelector('.material-icons').style.display = 'none';
+                        drawerCoverHint.style.display = 'none';
                         drawerVideo.muted = true;
                         try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
                         if (isPlaying) drawerVideo.play().catch(() => {});
@@ -2268,13 +2560,13 @@
                 }, 120);
             });
 
-            // ---------- RENDER LIBRARY (with 3-dot menu) ----------
-            function renderLibrary() {
+            // ---------- RENDER LIBRARY ----------
+            async function renderLibrary() {
                 pageTitle.textContent = 'Библиотека';
                 settingsPanel.classList.remove('visible');
                 settingsVisible = false;
                 headerActions.style.display = 'flex';
-                openMenuIndex = -1;
+                closeAllDesktopDropdowns();
 
                 if (tracks.length === 0) {
                     dynamicContent.innerHTML = `<div style="text-align:center; padding:60px 20px; color:var(--text-secondary); background:var(--bg-secondary); border-radius:var(--radius-card); border:1px dashed var(--border-light);">
@@ -2284,11 +2576,21 @@
                     return;
                 }
 
+                // Pre-load cover URLs for cards
+                const coverUrls = {};
+                for (let i = 0; i < tracks.length; i++) {
+                    if (tracks[i].coverId) {
+                        const url = await getCoverUrlForTrack(tracks[i]);
+                        if (url) coverUrls[tracks[i].coverId] = url;
+                    }
+                }
+
                 let html = `<div class="track-grid">`;
                 tracks.forEach((track, index) => {
                     const isActive = (index === activeTrackIndex && isPlaying);
+                    const coverUrl = track.coverId ? coverUrls[track.coverId] : null;
 
-                    // Build dropdown items
+                    // Build dropdown items (desktop)
                     let dropdownItems = `<div class="dropdown-header">Добавить в плейлист</div>`;
                     playlists.forEach(p => {
                         const already = (playlistTrackMap[p] || []).includes(track.id);
@@ -2311,7 +2613,8 @@
 
                     html += `
                         <div class="track-card ${isActive ? 'active' : ''}" data-index="${index}">
-                            <div class="track-cover" data-play-index="${index}">
+                            <div class="track-cover ${coverUrl ? 'has-custom' : ''}" data-play-index="${index}">
+                                ${coverUrl ? `<img class="cover-img" src="${coverUrl}" alt="">` : ''}
                                 <span class="material-icons cover-icon">album</span>
                                 <div class="cover-play" title="${isActive ? 'Пауза' : 'Воспроизвести'}">
                                     <span class="material-icons play-icon"></span>
@@ -2338,7 +2641,7 @@
                 html += `</div>`;
                 dynamicContent.innerHTML = html;
 
-                // cover play
+                // Cover play
                 document.querySelectorAll('.track-cover').forEach(cover => {
                     cover.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -2346,7 +2649,7 @@
                     });
                 });
 
-                // title → drawer
+                // Title → drawer
                 document.querySelectorAll('.track-title').forEach(titleEl => {
                     titleEl.addEventListener('click', (e) => {
                         e.stopPropagation();
@@ -2359,11 +2662,24 @@
                     btn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         const idx = parseInt(btn.dataset.menuIndex, 10);
-                        toggleDropdown(idx, btn);
+                        if (isMobile()) {
+                            // toggle: if same track open → close
+                            if (mobileDropdownOverlay.classList.contains('open') && mobileMenuTrackIndex === idx) {
+                                closeMobileDropdown();
+                            } else {
+                                openMobileDropdown(idx);
+                            }
+                        } else {
+                            // desktop: toggle attached dropdown
+                            const dropdown = document.getElementById('dropdown-' + idx);
+                            const isOpen = dropdown.classList.contains('open');
+                            closeAllDesktopDropdowns();
+                            if (!isOpen) dropdown.classList.add('open');
+                        }
                     });
                 });
 
-                // Dropdown item handlers
+                // Desktop dropdown item handlers
                 document.querySelectorAll('.track-dropdown').forEach(dropdown => {
                     dropdown.addEventListener('click', (e) => {
                         const item = e.target.closest('.dropdown-item');
@@ -2382,12 +2698,12 @@
                                 addTrackToPlaylist(track.id, p);
                                 showToast('Добавлено в «' + p + '»');
                             }
-                            closeAllDropdowns();
+                            closeAllDesktopDropdowns();
                             if (currentView === 'library') renderLibrary();
                             if (currentView === 'playlists') renderPlaylists();
                         } else if (item.hasAttribute('data-details-index')) {
                             const idx = parseInt(item.dataset.detailsIndex, 10);
-                            closeAllDropdowns();
+                            closeAllDesktopDropdowns();
                             openDrawer(idx);
                         }
                     });
@@ -2509,11 +2825,25 @@
                 const inLists = getPlaylistsForTrack(t.id);
                 detailPlaylists.textContent = inLists.length ? inLists.join(', ') : 'Не добавлен ни в один';
 
+                // Cover
+                if (t.coverId) {
+                    const url = await getCoverUrlForTrack(t);
+                    if (url) {
+                        drawerCoverImg.src = url;
+                        drawerCoverImg.style.display = 'block';
+                        drawerCover.querySelector('.material-icons').style.display = 'none';
+                    }
+                } else {
+                    drawerCoverImg.style.display = 'none';
+                    drawerCover.querySelector('.material-icons').style.display = '';
+                }
+
+                // Video
                 if (t.videoId) {
                     const url = await getVideoUrlForTrack(t);
                     if (url) {
-                        drawerCover.querySelector('.material-icons').style.display = 'none';
                         drawerVideo.style.display = 'block';
+                        drawerCoverHint.style.display = 'none';
                         if (drawerVideo.src !== url) { drawerVideo.src = url; drawerVideo.load(); }
                         drawerVideo.muted = true;
                         try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
@@ -2551,10 +2881,10 @@
                         refreshDrawer(index);
                     }
                 } else {
-                    drawerCover.querySelector('.material-icons').style.display = '';
                     drawerVideo.style.display = 'none';
                     drawerVideo.removeAttribute('src');
                     drawerVideo.load();
+                    drawerCoverHint.style.display = 'flex';
                     detailVideoContainer.innerHTML = `
                         <button class="upload-video-btn" id="uploadVideoBtnInner">
                             <span class="material-icons">video_call</span> Загрузить клип
@@ -2667,8 +2997,14 @@
                 updateStorageInfo();
             });
 
-            // ---------- UPLOAD MUSIC (via IndexedDB, no size limit) ----------
-            uploadBtn.addEventListener('click', () => fileInput.click());
+            // ---------- UPLOAD MUSIC ----------
+            uploadBtn.addEventListener('click', () => {
+                if (isMobile()) {
+                    openMusicPicker();
+                } else {
+                    fileInput.click();
+                }
+            });
 
             fileInput.addEventListener('change', async (e) => {
                 const files = Array.from(e.target.files || []);
@@ -2699,6 +3035,8 @@
                         audioId: audioId,
                         videoId: null,
                         videoMime: null,
+                        coverId: null,
+                        coverMime: null,
                     });
                     added++;
                 }
@@ -2799,7 +3137,8 @@
                 settingsPanel.classList.remove('visible');
                 settingsVisible = false;
                 expandedPlaylist = null;
-                closeAllDropdowns();
+                closeAllDesktopDropdowns();
+                closeMobileDropdown();
                 if (view === 'library') {
                     updateNavButtons('library');
                     renderLibrary();
@@ -2828,6 +3167,11 @@
             });
 
             // ---------- THEME / COLORS ----------
+            const accentColorPicker = document.getElementById('accentColorPicker');
+            const bgColorPicker = document.getElementById('bgColorPicker');
+            const darkThemeBtn = document.getElementById('darkThemeBtn');
+            const lightThemeBtn = document.getElementById('lightThemeBtn');
+
             darkThemeBtn.addEventListener('click', () => {
                 document.documentElement.style.setProperty('--bg-primary', '#0f0f12');
                 document.documentElement.style.setProperty('--bg-secondary', '#1a1a1f');
@@ -2912,10 +3256,10 @@
 
                 const loaded = await loadState();
                 if (loaded) {
-                    // Pre-create object urls for tracks
                     for (const t of tracks) {
                         if (t.audioId) await getAudioUrlForTrack(t);
                         if (t.videoId) await getVideoUrlForTrack(t);
+                        if (t.coverId) await getCoverUrlForTrack(t);
                     }
                 }
 
