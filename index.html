@@ -56,10 +56,13 @@ body{font-family:var(--font-mono);background:var(--bg-primary);color:var(--text-
 .track-card:hover{background:var(--bg-elevated);border-color:var(--accent-soft);transform:translateY(-2px)}
 .track-card.current{border-color:var(--accent);background:var(--bg-elevated)}
 .track-cover{width:100%;aspect-ratio:1/1;border-radius:12px;background:linear-gradient(135deg,var(--accent-soft),var(--bg-elevated));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:pointer}
-.track-cover .cover-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.track-cover .cover-icon{font-size:48px;opacity:.35;color:var(--text-secondary);transition:opacity .2s}
+.track-cover .cover-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1}
+.track-cover .cover-icon{font-size:48px;opacity:.35;color:var(--text-secondary);transition:opacity .2s;z-index:0}
 .track-cover.has-custom .cover-icon{display:none}
 .track-card:hover .track-cover .cover-icon{opacity:.15}
+.track-cover video.hover-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;display:none;pointer-events:none}
+.track-cover.has-custom video.hover-preview{display:none}
+.track-card.current .track-cover video.hover-preview.video-as-cover{display:block}
 .cover-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:transparent;opacity:0;transition:opacity .2s;cursor:pointer;z-index:2}
 .track-card:hover .cover-play,.track-card.current .cover-play{opacity:1}
 .cover-play .play-icon{font-size:64px;color:#fff;filter:drop-shadow(0 2px 12px rgba(0,0,0,.6));transition:transform .15s;line-height:1}
@@ -80,7 +83,7 @@ body{font-family:var(--font-mono);background:var(--bg-primary);color:var(--text-
 .mini-timeline{display:none;width:100%;height:4px;border-radius:2px;background:var(--bg-primary);position:relative;overflow:hidden;margin-top:2px}
 .track-card.current .mini-timeline{display:block}
 .mini-timeline-fill{height:100%;width:0;background:var(--accent);border-radius:2px;transition:width .15s linear}
-.track-menu-btn{position:absolute;top:22px;right:22px;width:32px;height:32px;border-radius:10px;background:rgba(15,15,18,.75);border:1px solid var(--border-light);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;transition:var(--transition);backdrop-filter:blur(6px)}
+.track-menu-btn{position:absolute;top:22px;right:22px;width:32px;height:32px;border-radius:10px;background:rgba(15,15,18,.75);border:1px solid var(--border-light);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:5;transition:var(--transition);backdrop-filter:blur(6px)}
 .track-menu-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .track-menu-btn .material-icons{font-size:18px}
 .track-list{display:flex;flex-direction:column;gap:8px}
@@ -88,9 +91,12 @@ body{font-family:var(--font-mono);background:var(--bg-primary);color:var(--text-
 .track-row:hover{background:var(--bg-elevated);border-color:var(--accent-soft)}
 .track-row.current{border-color:var(--accent);background:var(--bg-elevated)}
 .row-cover{width:56px;height:56px;border-radius:14px;flex-shrink:0;background:linear-gradient(135deg,var(--accent-soft),var(--bg-elevated));position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.row-cover .row-cover-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
-.row-cover .row-cover-icon{font-size:24px;opacity:.4;color:var(--text-secondary)}
+.row-cover .row-cover-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1}
+.row-cover .row-cover-icon{font-size:24px;opacity:.4;color:var(--text-secondary);z-index:0}
 .row-cover.has-custom .row-cover-icon{display:none}
+.row-cover video.hover-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;display:none;pointer-events:none}
+.row-cover.has-custom video.hover-preview{display:none}
+.track-row.current .row-cover video.hover-preview.video-as-cover{display:block}
 .row-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,15,18,.5);opacity:0;transition:opacity .2s;cursor:pointer;z-index:2}
 .track-row:hover .row-play,.track-row.current .row-play{opacity:1}
 .row-play .material-icons{font-size:24px;color:#fff;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
@@ -106,13 +112,13 @@ body{font-family:var(--font-mono);background:var(--bg-primary);color:var(--text-
 .row-duration{font-size:.7rem;color:var(--text-secondary);flex-shrink:0;min-width:36px;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:6px}
 .row-video-dot{display:inline-flex;align-items:center;color:var(--accent)}
 .row-video-dot .material-icons{font-size:14px}
-.row-menu-btn{width:32px;height:32px;border-radius:10px;background:transparent;border:1px solid transparent;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--transition);position:relative}
+.row-menu-btn{width:32px;height:32px;border-radius:10px;background:transparent;border:1px solid transparent;color:var(--text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--transition);position:relative;z-index:5}
 .row-menu-btn:hover{background:var(--bg-primary);border-color:var(--border-light);color:var(--text-primary)}
 .row-menu-btn .material-icons{font-size:18px}
 .track-dropdown{position:absolute;top:calc(100% + 6px);right:0;background:var(--bg-elevated);border:1px solid var(--border-light);border-radius:12px;box-shadow:var(--shadow);z-index:100;min-width:220px;max-width:90vw;padding:6px;display:none}
 .track-dropdown.open{display:block}
 .track-card .track-dropdown{top:58px;right:22px}
-.track-row .track-dropdown{top:calc(100% + 6px);right:14px}
+.track-row .track-dropdown{top:calc(100% + 6px);right:14px;z-index:150}
 .dropdown-item{padding:10px 14px;font-size:.8rem;color:var(--text-primary);cursor:pointer;border-radius:8px;display:flex;align-items:center;gap:10px;transition:var(--transition);background:transparent;border:none;width:100%;text-align:left;font-family:var(--font-mono)}
 .dropdown-item:hover{background:var(--bg-primary)}
 .dropdown-item .material-icons{font-size:16px;color:var(--accent)}
@@ -479,7 +485,7 @@ input,.custom-input-row input,.drawer-field .field-value input{font-size:16px}
 <script>
 (function(){
 'use strict';
-const LS_KEY='mzmusic_data_v9',LS_VIEW='mzmusic_view',LS_SHUF='mzmusic_shuffle',LS_REP='mzmusic_repeat',LS_VOL='mzmusic_volume',LS_MUTE='mzmusic_muted';
+const LS_KEY='mzmusic_data_v10',LS_VIEW='mzmusic_view',LS_SHUF='mzmusic_shuffle',LS_REP='mzmusic_repeat',LS_VOL='mzmusic_volume',LS_MUTE='mzmusic_muted';
 const MAX_V=160,MAX_VIDEO=200,MAX_AUDIO=100,MAX_COVER=5,DB_NAME='MzMusicDB',DB_VER=5,CLIP_TOL=30;
 
 let tracks=[],playlists=['Мой плейлист','Избранное'],trackMap={},activeIdx=-1,isPlaying=false,curView='library',settingsOpen=false,detailIdx=-1,expPlaylist=null,urls={},db=null,mobileMenuIdx=-1,pendingCoverIdx=-1;
@@ -488,6 +494,8 @@ let volPct=Math.min(MAX_V,Math.max(0,parseInt(localStorage.getItem(LS_VOL)||'100
 let isMuted=localStorage.getItem(LS_MUTE)==='1';
 let audioCtx=null,gainNode=null,audioSrc=null;
 let coverCache={};
+// Video frame cache for cover fallback (data URL)
+let videoFrameCache={};
 
 const $=id=>document.getElementById(id);
 const libBtn=$('libraryBtn'),plBtn=$('playlistsBtn'),setBtn=$('settingsBtn');
@@ -528,10 +536,43 @@ async function getAudioUrl(t){if(!t||!t.audioId)return null;const k='a_'+t.audio
 async function getVideoUrl(t){if(!t||!t.videoId)return null;const k='v_'+t.videoId;if(urls[k])return urls[k];const b=await loadVideo(t.videoId);if(!b)return null;const u=URL.createObjectURL(b);urls[k]=u;return u}
 async function getCoverUrl(t){if(!t||!t.coverId)return null;if(coverCache[t.id]!==undefined)return coverCache[t.id];const k='c_'+t.coverId;if(urls[k]){coverCache[t.id]=urls[k];return urls[k]}const b=await loadCover(t.coverId);if(!b){coverCache[t.id]=null;return null}const u=URL.createObjectURL(b);urls[k]=u;coverCache[t.id]=u;return u}
 
-function serialize(){return{tracks:tracks.map(t=>({id:t.id,title:t.title,artist:t.artist,album:t.album,duration:t.duration,format:t.format,mime:t.mime,audioId:t.audioId,videoId:t.videoId,videoMime:t.videoMime,videoDuration:t.videoDuration,coverId:t.coverId,coverMime:t.coverMime,_on:t._originalName,_os:t._originalSize,_lm:t._lastModified})),playlists,playlistTrackMap:trackMap,version:9}}
+// Grab a video frame as 1x1 cropped data URL for cover fallback
+function grabVideoFrame(videoUrl,trackId){
+  if(videoFrameCache[trackId])return Promise.resolve(videoFrameCache[trackId]);
+  return new Promise(resolve=>{
+    const v=document.createElement('video');
+    v.muted=true;v.playsInline=true;v.crossOrigin='anonymous';v.preload='auto';v.src=videoUrl;
+    let done=false;
+    const finish=()=>{
+      if(done)return;done=true;
+      try{
+        const size=Math.min(v.videoWidth||300,v.videoHeight||300);
+        if(!size){resolve(null);return}
+        const c=document.createElement('canvas');
+        c.width=400;c.height=400;
+        const ctx=c.getContext('2d');
+        // Crop to square center
+        const sw=v.videoWidth,sh=v.videoHeight,side=Math.min(sw,sh);
+        const sx=(sw-side)/2,sy=(sh-side)/2;
+        ctx.drawImage(v,sx,sy,side,side,0,0,400,400);
+        const data=c.toDataURL('image/jpeg',0.8);
+        videoFrameCache[trackId]=data;
+        resolve(data);
+      }catch(e){resolve(null)}
+    };
+    v.addEventListener('loadeddata',()=>{
+      try{v.currentTime=Math.min(1.5,v.duration*0.25||0.5)}catch(e){}
+    },{once:true});
+    v.addEventListener('seeked',finish,{once:true});
+    v.addEventListener('error',()=>{resolve(null)},{once:true});
+    setTimeout(()=>{try{finish()}catch(e){}},3000);
+  });
+}
+
+function serialize(){return{tracks:tracks.map(t=>({id:t.id,title:t.title,artist:t.artist,album:t.album,duration:t.duration,format:t.format,mime:t.mime,audioId:t.audioId,videoId:t.videoId,videoMime:t.videoMime,videoDuration:t.videoDuration,coverId:t.coverId,coverMime:t.coverMime,_on:t._originalName,_os:t._originalSize,_lm:t._lastModified})),playlists,playlistTrackMap:trackMap,version:10}}
 function persist(){try{localStorage.setItem(LS_KEY,JSON.stringify(serialize()))}catch(e){}}
 async function loadState(){
-  const raw=localStorage.getItem(LS_KEY)||localStorage.getItem('mzmusic_data_v8')||localStorage.getItem('mzmusic_data_v7')||localStorage.getItem('mzmusic_data_v6')||localStorage.getItem('mzmusic_data_v5')||localStorage.getItem('mzmusic_data_v4')||localStorage.getItem('mzmusic_data_v3')||localStorage.getItem('mzmusic_data_v2')||localStorage.getItem('mzmusic_data_v1');
+  const raw=localStorage.getItem(LS_KEY)||localStorage.getItem('mzmusic_data_v9')||localStorage.getItem('mzmusic_data_v8')||localStorage.getItem('mzmusic_data_v7')||localStorage.getItem('mzmusic_data_v6')||localStorage.getItem('mzmusic_data_v5')||localStorage.getItem('mzmusic_data_v4')||localStorage.getItem('mzmusic_data_v3')||localStorage.getItem('mzmusic_data_v2')||localStorage.getItem('mzmusic_data_v1');
   if(!raw)return false;
   try{
     const d=JSON.parse(raw);
@@ -547,11 +588,11 @@ async function clearAll(){
   localStorage.removeItem(LS_KEY);
   await idbClear('audio');await idbClear('videos');await idbClear('covers');
   Object.keys(urls).forEach(k=>{try{URL.revokeObjectURL(urls[k])}catch(e){}});
-  urls={};coverCache={};tracks=[];playlists=['Мой плейлист','Избранное'];trackMap={'Мой плейлист':[],'Избранное':[]};
+  urls={};coverCache={};videoFrameCache={};tracks=[];playlists=['Мой плейлист','Избранное'];trackMap={'Мой плейлист':[],'Избранное':[]};
   activeIdx=-1;isPlaying=false;
   audio.pause();audio.removeAttribute('src');audio.load();
   videoEl.pause();videoEl.removeAttribute('src');videoEl.load();
-  updPlayIcon();updPlayer();goView('library');updateStorage();toast('Данные очищены');
+  updPlayIcon();updPlayer();goView('library');updateStorage();toastShow('Данные очищены');
 }
 
 const fmt=s=>{if(!isFinite(s)||s<0)return'0:00';const m=Math.floor(s/60),x=Math.floor(s%60);return m+':'+String(x).padStart(2,'0')};
@@ -648,12 +689,19 @@ async function buildDD(t,idx){
   h+='<button class="dropdown-item" data-details-index="'+idx+'"><span class="material-icons">info</span> Подробнее</button>';
   return h;
 }
+
+// FIX: use pointerdown + click both, and separate handler for list rows
 function attachMenus(root){
-  root.querySelectorAll('.track-menu-btn,.row-menu-btn').forEach(b=>b.addEventListener('click',e=>{
-    e.stopPropagation();const i=+b.dataset.menuIndex;
-    if(isMobile()){if(mdOverlay.classList.contains('open')&&mobileMenuIdx===i){closeMD()}else openMD(i)}
-    else{const dd=document.getElementById('dropdown-'+i);if(!dd)return;const wasOpen=dd.classList.contains('open');closeDD();if(!wasOpen)dd.classList.add('open')}
-  }));
+  root.querySelectorAll('.track-menu-btn,.row-menu-btn').forEach(b=>{
+    // Prevent any parent click from swallowing the menu button
+    b.addEventListener('pointerdown',e=>{e.stopPropagation()});
+    b.addEventListener('click',e=>{
+      e.stopPropagation();e.preventDefault();
+      const i=+b.dataset.menuIndex;
+      if(isMobile()){if(mdOverlay.classList.contains('open')&&mobileMenuIdx===i){closeMD()}else openMD(i)}
+      else{const dd=document.getElementById('dropdown-'+i);if(!dd)return;const wasOpen=dd.classList.contains('open');closeDD();if(!wasOpen)dd.classList.add('open')}
+    });
+  });
 }
 function attachDDs(root){
   root.querySelectorAll('.track-dropdown').forEach(dd=>dd.addEventListener('click',e=>{
@@ -711,10 +759,69 @@ coverInput.addEventListener('change',async e=>{
   updateStorage();coverInput.value='';pendingCoverIdx=-1;
 });
 
-async function renderCoverInto(el,t){
-  const u=await getCoverUrl(t);
-  if(u){el.classList.add('has-custom');const img=document.createElement('img');img.className=el.classList.contains('row-cover')?'row-cover-img':'cover-img';img.src=u;img.loading='lazy';img.decoding='async';el.insertBefore(img,el.firstChild)}
+// Determine what to show as cover for a track (custom cover > video frame > placeholder)
+async function resolveCover(t){
+  const custom=await getCoverUrl(t);
+  if(custom)return {type:'img',url:custom};
+  if(t.videoId){
+    const vu=await getVideoUrl(t);
+    if(vu){
+      const frame=await grabVideoFrame(vu,t.id);
+      if(frame)return {type:'img',url:frame,fromVideo:true};
+    }
+  }
+  return {type:'none'};
 }
+
+async function renderCoverInto(el,t){
+  const cov=await resolveCover(t);
+  if(cov.type==='img'){
+    el.classList.add('has-custom');
+    const img=document.createElement('img');
+    img.className=el.classList.contains('row-cover')?'row-cover-img':'cover-img';
+    img.src=cov.url;img.loading='lazy';img.decoding='async';
+    el.insertBefore(img,el.firstChild);
+  }
+  // Hover video preview setup (only if track has a video)
+  if(t.videoId){
+    const vu=await getVideoUrl(t);
+    if(vu){
+      const v=document.createElement('video');
+      v.className='hover-preview';
+      v.muted=true;v.playsInline=true;v.loop=true;v.preload='none';v.src=vu;
+      // If no custom cover and this is the current track, show as cover
+      if(!el.classList.contains('has-custom'))v.classList.add('video-as-cover');
+      el.appendChild(v);
+
+      // Hover handlers - play muted from a random moment
+      el.addEventListener('mouseenter',()=>{
+        if(el.classList.contains('has-custom')&&!el.closest('.track-card.current')&&!el.closest('.track-row.current'))return;
+        try{
+          v.preload='auto';
+          v.currentTime=Math.random()*Math.max(0.1,(v.duration||10)-2);
+        }catch(e){}
+        v.play().catch(()=>{});
+        v.style.display='block';
+      });
+      el.addEventListener('mouseleave',()=>{
+        try{v.pause();v.currentTime=0}catch(e){}
+        // If it's not acting as cover for current track, hide
+        if(!el.classList.contains('has-custom')&&(el.closest('.track-card.current')||el.closest('.track-row.current'))){
+          // keep shown but paused at 0
+        }else{
+          v.style.display='none';
+        }
+      });
+      // For current track with no custom cover, keep video visible as cover
+      if(!el.classList.contains('has-custom')&&(el.closest('.track-card.current')||el.closest('.track-row.current'))){
+        v.style.display='block';
+        try{v.currentTime=0.1}catch(e){}
+        v.play().catch(()=>{});
+      }
+    }
+  }
+}
+
 async function buildGrid(){
   let h='<div class="track-grid">';
   for(let i=0;i<tracks.length;i++){
@@ -748,19 +855,29 @@ async function buildList(){
 }
 
 async function attachHandlers(root){
+  // Cover rendering (lazy)
   root.querySelectorAll('.track-cover,.row-cover').forEach(el=>{
     const idx=+el.dataset.playIndex;
     if(!isNaN(idx)&&tracks[idx])renderCoverInto(el,tracks[idx]);
   });
+  // Cover click = play
   root.querySelectorAll('.track-cover,.row-cover').forEach(c=>c.addEventListener('click',e=>{
     if(e.target.closest('.cover-upload-btn'))return;
     e.stopPropagation();playTrack(+c.dataset.playIndex,true);
   }));
-  root.querySelectorAll('.cover-upload-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();triggerCover(+b.dataset.coverUploadIndex)}));
+  // Cover upload button
+  root.querySelectorAll('.cover-upload-btn').forEach(b=>{
+    b.addEventListener('pointerdown',e=>e.stopPropagation());
+    b.addEventListener('click',e=>{e.stopPropagation();triggerCover(+b.dataset.coverUploadIndex)});
+  });
+  // Title click opens drawer
   root.querySelectorAll('.track-title,.row-info').forEach(el=>el.addEventListener('click',e=>{
     e.stopPropagation();openDrawer(+el.dataset.detailIndex);
   }));
-  attachMenus(root);attachDDs(root);
+  // Menu buttons
+  attachMenus(root);
+  // Dropdown item handlers
+  attachDDs(root);
   updMinis();
 }
 
@@ -959,8 +1076,8 @@ async function refreshDrawer(i){
   dTitle.textContent=t.title;dArtist.textContent=t.artist||'Неизвестный исполнитель';dAlbum.textContent=t.album||'—';
   dDur.textContent=fmt(t.duration||0);dFmt.textContent=t.format||'—';
   const ls=listsFor(t.id);dPl.textContent=ls.length?ls.join(', '):'Не добавлен ни в один';
-  const cu=await getCoverUrl(t);
-  if(cu){drCoverImg.src=cu;drCoverImg.style.display='block';drCover.querySelector('.material-icons').style.display='none'}
+  const cov=await resolveCover(t);
+  if(cov.type==='img'){drCoverImg.src=cov.url;drCoverImg.style.display='block';drCover.querySelector('.material-icons').style.display='none'}
   else{drCoverImg.style.display='none';drCover.querySelector('.material-icons').style.display=''}
   if(t.videoId){
     const u=await getVideoUrl(t);
@@ -972,7 +1089,7 @@ async function refreshDrawer(i){
       if(t.videoDuration&&t.duration){const diff=Math.abs(t.videoDuration-t.duration);if(diff>CLIP_TOL)warn='<div class="video-warning"><span class="material-icons">warning</span><span>Длительность клипа ('+fmt(t.videoDuration)+') отличается от песни ('+fmt(t.duration)+') более чем на '+CLIP_TOL+' секунд.</span></div>'}
       dVidBox.innerHTML='<div class="video-status"><span class="material-icons">videocam</span> Клип загружен <button class="remove-video-btn" id="removeVideoBtn">Удалить</button></div>'+warn;
       const rb=document.getElementById('removeVideoBtn');
-      if(rb)rb.addEventListener('click',async()=>{await delVideo(t.videoId);t.videoId=null;t.videoMime=null;t.videoDuration=0;videoEl.removeAttribute('src');videoEl.load();drVideo.removeAttribute('src');drVideo.load();persist();refreshDrawer(i);toastShow('Клип удалён');if(curView==='library')renderLibrary();updPlayer();updateStorage()});
+      if(rb)rb.addEventListener('click',async()=>{await delVideo(t.videoId);t.videoId=null;t.videoMime=null;t.videoDuration=0;delete videoFrameCache[t.id];videoEl.removeAttribute('src');videoEl.load();drVideo.removeAttribute('src');drVideo.load();persist();refreshDrawer(i);toastShow('Клип удалён');if(curView==='library')renderLibrary();updPlayer();updateStorage()});
     }else{t.videoId=null;t.videoDuration=0;persist();refreshDrawer(i)}
   }else{
     drVideo.style.display='none';drVideo.removeAttribute('src');drVideo.load();
@@ -1013,6 +1130,7 @@ vidInput.addEventListener('change',async e=>{
   const vUrl=URL.createObjectURL(f);
   const dur=await new Promise(res=>{const v=document.createElement('video');v.preload='metadata';v.src=vUrl;v.onloadedmetadata=()=>res((isFinite(v.duration)&&v.duration>0)?v.duration:0);v.onerror=()=>res(0);setTimeout(()=>{if(!v.duration)res(0)},3000)});
   if(t.videoId)await delVideo(t.videoId);
+  delete videoFrameCache[t.id];
   t.videoId=vId;t.videoMime=f.type;t.videoDuration=dur;
   urls['v_'+vId]=vUrl;videoEl.src=vUrl;videoEl.load();videoEl.muted=true;
   persist();toastShow('Клип загружен');await refreshDrawer(detailIdx);vidInput.value='';
