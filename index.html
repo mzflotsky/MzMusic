@@ -481,7 +481,7 @@ input,.custom-input-row input,.drawer-field .field-value input{font-size:16px}
 <script>
 (function(){
 'use strict';
-const LS_KEY='mzmusic_data_v11',LS_VIEW='mzmusic_view',LS_SHUF='mzmusic_shuffle',LS_REP='mzmusic_repeat',LS_VOL='mzmusic_volume',LS_MUTE='mzmusic_muted';
+const LS_KEY='mzmusic_data_v12',LS_VIEW='mzmusic_view',LS_SHUF='mzmusic_shuffle',LS_REP='mzmusic_repeat',LS_VOL='mzmusic_volume',LS_MUTE='mzmusic_muted';
 const MAX_V=160,MAX_VIDEO=200,MAX_AUDIO=100,MAX_COVER=5,DB_NAME='MzMusicDB',DB_VER=5,CLIP_TOL=30;
 
 let tracks=[],playlists=['Мой плейлист','Избранное'],trackMap={},activeIdx=-1,isPlaying=false,curView='library',settingsOpen=false,detailIdx=-1,expPlaylist=null,urls={},db=null,mobileMenuIdx=-1,pendingCoverIdx=-1;
@@ -531,6 +531,7 @@ async function getAudioUrl(t){if(!t||!t.audioId)return null;const k='a_'+t.audio
 async function getVideoUrl(t){if(!t||!t.videoId)return null;const k='v_'+t.videoId;if(urls[k])return urls[k];const b=await loadVideo(t.videoId);if(!b)return null;const u=URL.createObjectURL(b);urls[k]=u;return u}
 async function getCoverUrl(t){if(!t||!t.coverId)return null;if(coverCache[t.id]!==undefined)return coverCache[t.id];const k='c_'+t.coverId;if(urls[k]){coverCache[t.id]=urls[k];return urls[k]}const b=await loadCover(t.coverId);if(!b){coverCache[t.id]=null;return null}const u=URL.createObjectURL(b);urls[k]=u;coverCache[t.id]=u;return u}
 
+// Grab a frame from the MIDDLE of the video, cropped to square
 function grabVideoFrame(videoUrl,trackId){
   if(videoFrameCache[trackId])return Promise.resolve(videoFrameCache[trackId]);
   return new Promise(resolve=>{
@@ -552,17 +553,22 @@ function grabVideoFrame(videoUrl,trackId){
         resolve(data);
       }catch(e){resolve(null)}
     };
-    v.addEventListener('loadeddata',()=>{try{v.currentTime=Math.min(1.5,(v.duration||5)*0.25)}catch(e){}},{once:true});
+    v.addEventListener('loadeddata',()=>{
+      try{
+        const d=isFinite(v.duration)&&v.duration>0?v.duration:5;
+        v.currentTime=d/2; // middle of the video
+      }catch(e){}
+    },{once:true});
     v.addEventListener('seeked',finish,{once:true});
     v.addEventListener('error',()=>resolve(null),{once:true});
-    setTimeout(()=>{try{finish()}catch(e){}},3000);
+    setTimeout(()=>{try{finish()}catch(e){}},3500);
   });
 }
 
-function serialize(){return{tracks:tracks.map(t=>({id:t.id,title:t.title,artist:t.artist,album:t.album,duration:t.duration,format:t.format,mime:t.mime,audioId:t.audioId,videoId:t.videoId,videoMime:t.videoMime,videoDuration:t.videoDuration,coverId:t.coverId,coverMime:t.coverMime,_on:t._originalName,_os:t._originalSize,_lm:t._lastModified})),playlists,playlistTrackMap:trackMap,version:11}}
+function serialize(){return{tracks:tracks.map(t=>({id:t.id,title:t.title,artist:t.artist,album:t.album,duration:t.duration,format:t.format,mime:t.mime,audioId:t.audioId,videoId:t.videoId,videoMime:t.videoMime,videoDuration:t.videoDuration,coverId:t.coverId,coverMime:t.coverMime,_on:t._originalName,_os:t._originalSize,_lm:t._lastModified})),playlists,playlistTrackMap:trackMap,version:12}}
 function persist(){try{localStorage.setItem(LS_KEY,JSON.stringify(serialize()))}catch(e){}}
 async function loadState(){
-  const raw=localStorage.getItem(LS_KEY)||localStorage.getItem('mzmusic_data_v10')||localStorage.getItem('mzmusic_data_v9')||localStorage.getItem('mzmusic_data_v8')||localStorage.getItem('mzmusic_data_v7')||localStorage.getItem('mzmusic_data_v6')||localStorage.getItem('mzmusic_data_v5')||localStorage.getItem('mzmusic_data_v4')||localStorage.getItem('mzmusic_data_v3')||localStorage.getItem('mzmusic_data_v2')||localStorage.getItem('mzmusic_data_v1');
+  const raw=localStorage.getItem(LS_KEY)||localStorage.getItem('mzmusic_data_v11')||localStorage.getItem('mzmusic_data_v10')||localStorage.getItem('mzmusic_data_v9')||localStorage.getItem('mzmusic_data_v8')||localStorage.getItem('mzmusic_data_v7')||localStorage.getItem('mzmusic_data_v6')||localStorage.getItem('mzmusic_data_v5')||localStorage.getItem('mzmusic_data_v4')||localStorage.getItem('mzmusic_data_v3')||localStorage.getItem('mzmusic_data_v2')||localStorage.getItem('mzmusic_data_v1');
   if(!raw)return false;
   try{
     const d=JSON.parse(raw);
@@ -598,7 +604,7 @@ function updCardVis(){
   document.querySelectorAll('.track-card').forEach(c=>{const i=+c.dataset.index;const cur=i===activeIdx;c.classList.toggle('current',cur);c.classList.toggle('playing',cur&&isPlaying)});
   document.querySelectorAll('.track-row').forEach(r=>{const i=+r.dataset.index;const cur=i===activeIdx;r.classList.toggle('current',cur);r.classList.toggle('playing',cur&&isPlaying)});
   updMinis();
-  syncActiveVideos();
+  refreshCoverVideos();
 }
 function updMinis(){
   const dur=audio.duration||(activeIdx>=0?tracks[activeIdx]?.duration:0)||0;
@@ -616,14 +622,28 @@ function updPlayer(){
   if(t.videoId){vidBtn.style.opacity='1';vidBtn.classList.toggle('active',drVideo.style.display!=='none'&&!!drVideo.src)}else{vidBtn.style.opacity='0.4';vidBtn.classList.remove('active')}
 }
 
-// Sync all cover videos that belong to the currently active track with audio time.
-function syncActiveVideos(){
-  if(activeIdx<0)return;
-  document.querySelectorAll('.cover-video[data-active="1"]').forEach(v=>{
-    try{
-      if(Math.abs(v.currentTime-audio.currentTime)>0.3)v.currentTime=audio.currentTime;
-    }catch(e){}
-    if(isPlaying)v.play().catch(()=>{});else v.pause();
+// Re-evaluate all cover videos against current active track state.
+function refreshCoverVideos(){
+  document.querySelectorAll('.track-cover,.row-cover').forEach(el=>{
+    const idx=+el.dataset.playIndex;
+    if(isNaN(idx)||!tracks[idx])return;
+    const t=tracks[idx];
+    const v=el.querySelector('.cover-video');
+    const isActive=(idx===activeIdx);
+    const hasCustom=!!t.coverId;
+    if(!v)return;
+    if(isActive&&!hasCustom){
+      v.dataset.active='1';
+      v.style.display='block';
+      try{v.currentTime=audio.currentTime}catch(e){}
+      if(isPlaying)v.play().catch(()=>{});else v.pause();
+    } else {
+      v.dataset.active='0';
+      if(!el.matches(':hover')){
+        try{v.pause();v.currentTime=0}catch(e){}
+        v.style.display='none';
+      }
+    }
   });
 }
 
@@ -692,17 +712,8 @@ async function buildDD(t,idx){
   return h;
 }
 
-function attachMenus(root){
-  root.querySelectorAll('.track-menu-btn,.row-menu-btn').forEach(b=>{
-    b.addEventListener('pointerdown',e=>{e.stopPropagation()});
-    b.addEventListener('click',e=>{
-      e.stopPropagation();e.preventDefault();
-      const i=+b.dataset.menuIndex;
-      if(isMobile()){if(mdOverlay.classList.contains('open')&&mobileMenuIdx===i){closeMD()}else openMD(i)}
-      else{const dd=document.getElementById('dropdown-'+i);if(!dd)return;const wasOpen=dd.classList.contains('open');closeDD();if(!wasOpen)dd.classList.add('open')}
-    });
-  });
-}
+// attachMenus removed — replaced by global capture-phase delegation below.
+
 function attachDDs(root){
   root.querySelectorAll('.track-dropdown').forEach(dd=>dd.addEventListener('click',e=>{
     const it=e.target.closest('.dropdown-item');if(!it)return;e.stopPropagation();
@@ -715,6 +726,27 @@ function attachDDs(root){
 }
 const closeDD=()=>document.querySelectorAll('.track-dropdown.open').forEach(d=>d.classList.remove('open'));
 document.addEventListener('click',e=>{if(!e.target.closest('.track-dropdown')&&!e.target.closest('.track-menu-btn')&&!e.target.closest('.row-menu-btn'))closeDD()});
+
+// FIX: GLOBAL capture-phase delegation for menu buttons.
+// Fires before any per-element handler, survives re-renders, works in grid & list.
+document.addEventListener('click',(e)=>{
+  const btn=e.target.closest('.track-menu-btn, .row-menu-btn');
+  if(!btn)return;
+  e.stopPropagation();
+  e.preventDefault();
+  const i=+btn.dataset.menuIndex;
+  if(isNaN(i))return;
+  if(isMobile()){
+    if(mdOverlay.classList.contains('open')&&mobileMenuIdx===i){closeMD()}
+    else{openMD(i)}
+  }else{
+    const dd=document.getElementById('dropdown-'+i);
+    if(!dd)return;
+    const wasOpen=dd.classList.contains('open');
+    closeDD();
+    if(!wasOpen)dd.classList.add('open');
+  }
+},true); // capture phase
 
 function buildMD(idx){
   const t=tracks[idx];if(!t)return'';
@@ -761,28 +793,27 @@ coverInput.addEventListener('change',async e=>{
 
 async function resolveCover(t){
   const custom=await getCoverUrl(t);
-  if(custom)return {type:'img',url:custom};
+  if(custom)return {type:'img',url:custom,hasCustom:true};
   if(t.videoId){
     const vu=await getVideoUrl(t);
     if(vu){
       const frame=await grabVideoFrame(vu,t.id);
-      if(frame)return {type:'img',url:frame,fromVideo:true};
+      if(frame)return {type:'img',url:frame,fromVideo:true,hasCustom:false};
     }
   }
-  return {type:'none'};
+  return {type:'none',hasCustom:false};
 }
 
-// Build cover element:
-// - If has custom cover → show img.
-// - Else if has clip → show <video> that:
-//    * if track is currently active → play synced with audio (as cover)
-//    * if inactive → on hover play from random position
-// - Else placeholder icon.
+// Build cover element.
+// Rules:
+// - Custom cover → show img only. Video preview NOT used (custom covers isolated from playback).
+// - No custom cover + has clip → show video on cover.
+//    * Active track → video always visible, synced with audio (regardless of hover).
+//    * Inactive track → video hidden; on hover plays from random moment.
 async function renderCoverInto(el,t){
   const idx=tracks.indexOf(t);
   const isActiveTrack=(idx===activeIdx);
   const hasCustom=!!t.coverId;
-  let videoElInner=null;
 
   if(hasCustom){
     const cov=await getCoverUrl(t);
@@ -793,10 +824,13 @@ async function renderCoverInto(el,t){
       img.src=cov;img.loading='lazy';img.decoding='async';
       el.insertBefore(img,el.firstChild);
     }
-  } else if(t.videoId){
+    return; // no video for custom covers
+  }
+
+  if(t.videoId){
     const vu=await getVideoUrl(t);
     if(vu){
-      // Try to use a frame as fallback poster while video is paused
+      // Static poster from video middle while paused
       const frame=await grabVideoFrame(vu,t.id);
       if(frame){
         const img=document.createElement('img');
@@ -809,60 +843,34 @@ async function renderCoverInto(el,t){
       v.muted=true;v.playsInline=true;v.loop=true;v.preload='metadata';v.src=vu;
       v.dataset.trackId=t.id;
       el.appendChild(v);
-      videoElInner=v;
 
       if(isActiveTrack){
-        // Active: video is the cover; sync with audio, no hover changes.
+        // Active: video always visible, synced with audio; hover irrelevant.
         v.dataset.active='1';
         v.style.display='block';
         try{v.currentTime=audio.currentTime}catch(e){}
         if(isPlaying)v.play().catch(()=>{});
-        else v.pause();
+        // Ensure hover-leave doesn't hide active video
+        el.addEventListener('mouseleave',()=>{
+          if(v.dataset.active==='1')v.style.display='block';
+        },true);
       } else {
-        // Inactive: hover to preview from random moment.
+        // Inactive: hover to preview
         el.addEventListener('mouseenter',()=>{
           if(isMobile())return;
-          try{
-            v.preload='auto';
-            const d=Math.max(0.5,(v.duration||10)-2);
-            v.currentTime=Math.random()*d;
-          }catch(e){}
+          if(v.dataset.active==='1')return;
+          try{v.preload='auto';const d=Math.max(0.5,(v.duration||10)-2);v.currentTime=Math.random()*d}catch(e){}
           v.style.display='block';
           v.play().catch(()=>{});
         });
         el.addEventListener('mouseleave',()=>{
+          if(v.dataset.active==='1')return;
           try{v.pause();v.currentTime=0}catch(e){}
           v.style.display='none';
         });
       }
     }
   }
-}
-
-// Re-render covers on active track change to switch video behavior
-function refreshCoverVideos(){
-  document.querySelectorAll('.track-cover,.row-cover').forEach(el=>{
-    const idx=+el.dataset.playIndex;
-    if(isNaN(idx)||!tracks[idx])return;
-    const v=el.querySelector('.cover-video');
-    const t=tracks[idx];
-    const isActive=(idx===activeIdx);
-    if(v){
-      if(isActive){
-        v.dataset.active='1';
-        v.style.display='block';
-        try{v.currentTime=audio.currentTime}catch(e){}
-        if(isPlaying)v.play().catch(()=>{});else v.pause();
-      } else {
-        v.dataset.active='0';
-        // Only hide if we're not hovering
-        if(!el.matches(':hover')){
-          try{v.pause();v.currentTime=0}catch(e){}
-          v.style.display='none';
-        }
-      }
-    }
-  });
 }
 
 async function buildGrid(){
@@ -904,16 +912,16 @@ async function attachHandlers(root){
   });
   root.querySelectorAll('.track-cover,.row-cover').forEach(c=>c.addEventListener('click',e=>{
     if(e.target.closest('.cover-upload-btn'))return;
+    if(e.target.closest('.track-menu-btn')||e.target.closest('.row-menu-btn'))return;
     e.stopPropagation();playTrack(+c.dataset.playIndex,true);
   }));
   root.querySelectorAll('.cover-upload-btn').forEach(b=>{
-    b.addEventListener('pointerdown',e=>e.stopPropagation());
     b.addEventListener('click',e=>{e.stopPropagation();triggerCover(+b.dataset.coverUploadIndex)});
   });
   root.querySelectorAll('.track-title,.row-info').forEach(el=>el.addEventListener('click',e=>{
+    if(e.target.closest('.track-menu-btn')||e.target.closest('.row-menu-btn'))return;
     e.stopPropagation();openDrawer(+el.dataset.detailIndex);
   }));
-  attachMenus(root);
   attachDDs(root);
   updMinis();
 }
@@ -926,7 +934,6 @@ async function renderLibrary(){
   }
   content.innerHTML=viewMode==='list'?await buildList():await buildGrid();
   await attachHandlers(content);
-  syncActiveVideos();
 }
 
 async function renderPlaylists(){
@@ -968,7 +975,6 @@ async function renderPlaylists(){
   content.innerHTML=h;
   content.querySelectorAll('.playlist-chip').forEach(c=>c.addEventListener('click',()=>{const n=c.dataset.playlistName;expPlaylist=expPlaylist===n?null:n;renderPlaylists()}));
   await attachHandlers(content);
-  syncActiveVideos();
   const cBtn=document.getElementById('createPlaylistBtn'),nIn=document.getElementById('playlistNameInput');
   const create=()=>{
     if(!nIn)return;const nn=nIn.value.trim();
@@ -1038,7 +1044,6 @@ audio.addEventListener('timeupdate',()=>{
   if(activeIdx<0)return;const t=tracks[activeIdx];
   if(t.videoId&&videoEl.src&&Math.abs(videoEl.currentTime-audio.currentTime)>0.15){try{videoEl.currentTime=audio.currentTime}catch(e){}}
   if(drVideo.style.display!=='none'&&drVideo.src&&t.videoId&&Math.abs(drVideo.currentTime-audio.currentTime)>0.2){try{drVideo.currentTime=audio.currentTime}catch(e){}}
-  // Sync active cover videos with audio
   document.querySelectorAll('.cover-video[data-active="1"]').forEach(v=>{
     if(Math.abs(v.currentTime-audio.currentTime)>0.3){try{v.currentTime=audio.currentTime}catch(e){}}
   });
