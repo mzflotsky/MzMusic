@@ -296,7 +296,6 @@
         .track-card.active .cover-play .play-icon::before { content: 'pause'; }
         .track-card:not(.active) .cover-play .play-icon::before { content: 'play_arrow'; }
 
-        /* Cover upload button — bottom-left corner of cover */
         .cover-upload-btn {
             position: absolute;
             bottom: 8px;
@@ -391,7 +390,6 @@
             transition: width 0.15s linear;
         }
 
-        /* Three-dot menu on track card */
         .track-menu-btn {
             position: absolute;
             top: 22px;
@@ -415,7 +413,6 @@
         .track-menu-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
         .track-menu-btn .material-icons { font-size: 18px; }
 
-        /* Dropdown (desktop: attached to card) */
         .track-dropdown {
             position: absolute;
             top: 58px;
@@ -700,6 +697,15 @@
             gap: 2px;
             min-width: 160px;
             max-width: 220px;
+            cursor: pointer;
+            border-radius: 10px;
+            padding: 4px 8px;
+            margin: -4px -8px;
+            transition: background 0.2s;
+        }
+
+        .player-info:hover {
+            background: var(--bg-elevated);
         }
 
         .player-info .now-title {
@@ -795,16 +801,6 @@
 
         .drawer-overlay.open { opacity: 1; pointer-events: auto; }
 
-        /*
-           FIX: Details drawer z-index raised to 95 (above player bar z-index 55,
-           above mobile nav z-index 60, above toast z-index 100? — toast is 100, but toast is
-           pointer-events:none and appears briefly. Drawer should be above player and nav.
-           We set drawer z-index to 95 so it's above player (55) and nav (60),
-           but below toast (100) which is fine since toast doesn't block interaction.
-           Also added extra bottom padding so the last button (video upload) is not
-           hidden behind the fixed player bar on mobile. Additionally, since the drawer
-           now overlaps the player bar, the button is guaranteed to be reachable.
-        */
         .details-drawer {
             position: fixed;
             top: 0;
@@ -831,15 +827,15 @@
 
         .details-drawer.open { transform: translateX(0); }
 
+        /* 
+           FIX: Header is no longer sticky — it scrolls with the rest of the content.
+           This makes "Детали трека" move together with the menu elements.
+        */
         .drawer-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            position: sticky;
-            top: 0;
-            background: var(--bg-secondary);
             padding-bottom: 8px;
-            z-index: 2;
             flex-shrink: 0;
         }
 
@@ -861,6 +857,11 @@
 
         .drawer-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
 
+        /* 
+           Drawer cover with border around video.
+           The video gets a visible border ring (outline) via box-shadow inset,
+           while image covers don't have the ring.
+        */
         .drawer-cover {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -873,6 +874,7 @@
             overflow: hidden;
             position: relative;
             flex-shrink: 0;
+            border: 1px solid var(--border-light);
         }
 
         .drawer-cover .cover-img-drawer {
@@ -884,12 +886,16 @@
             z-index: 1;
         }
 
+        /* Video with visible outline/border */
         .drawer-cover video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             position: relative;
             z-index: 2;
+            border-radius: var(--radius-card);
+            outline: 2px solid var(--accent);
+            outline-offset: -2px;
         }
 
         .drawer-cover .material-icons { font-size: 80px; opacity: 0.5; position: relative; z-index: 1; }
@@ -1138,7 +1144,7 @@
 
         .mobile-dropdown .dropdown-item.pl { padding-left: 32px; font-size: 0.85rem; }
 
-        /* Bottom sheet music picker */
+        /* Music picker bottom sheet with device scanner */
         .music-picker-overlay {
             position: fixed;
             inset: 0;
@@ -1157,7 +1163,7 @@
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             width: 100%;
-            max-height: 85vh;
+            max-height: 88vh;
             display: flex;
             flex-direction: column;
             border-top: 1px solid var(--border-light);
@@ -1172,12 +1178,42 @@
             padding: 16px 18px 12px;
             border-bottom: 1px solid var(--border-light);
             flex-shrink: 0;
+            gap: 8px;
         }
 
         .music-picker-header h3 {
             font-size: 1rem;
             color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
+
+        .music-picker-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .music-picker-scan-btn {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            padding: 8px 14px;
+            border-radius: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .music-picker-scan-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: white; }
+        .music-picker-scan-btn .material-icons { font-size: 16px; }
 
         .music-picker-close {
             background: transparent;
@@ -1190,6 +1226,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .music-picker-close:hover { background: var(--bg-elevated); color: var(--text-primary); }
@@ -1199,6 +1236,21 @@
             -webkit-overflow-scrolling: touch;
             padding: 10px 14px 14px;
             flex: 1;
+        }
+
+        .music-picker-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .music-picker-empty .material-icons {
+            display: block;
+            font-size: 48px;
+            opacity: 0.4;
+            margin-bottom: 10px;
         }
 
         .music-picker-option {
@@ -1237,18 +1289,116 @@
             color: var(--text-secondary);
         }
 
-        .music-picker-empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
+        /* File row inside music picker */
+        .picker-file-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            background: var(--bg-elevated);
+            margin-bottom: 8px;
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
         }
 
-        .music-picker-empty .material-icons {
-            display: block;
-            font-size: 48px;
-            opacity: 0.4;
-            margin-bottom: 10px;
+        .picker-file-row:hover { border-color: var(--accent-soft); }
+
+        .picker-file-row.selected {
+            border-color: var(--accent);
+            background: var(--bg-primary);
+        }
+
+        .picker-play-indicator {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .picker-play-indicator:hover { border-color: var(--accent); }
+        .picker-play-indicator.playing { background: var(--accent); border-color: var(--accent); }
+
+        .picker-play-indicator .indicator-icon {
+            font-size: 20px;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+        }
+
+        .picker-play-indicator.playing .indicator-icon { color: white; }
+
+        .picker-file-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+            min-width: 0;
+            cursor: pointer;
+        }
+
+        .picker-file-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .picker-file-meta {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .picker-file-add-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: var(--accent);
+            border: 1px solid var(--accent);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: var(--transition);
+            padding: 0;
+        }
+
+        .picker-file-add-btn:hover { background: var(--accent-soft); }
+        .picker-file-add-btn .material-icons { font-size: 18px; }
+        .picker-file-add-btn.added {
+            background: var(--bg-elevated);
+            border-color: var(--border-light);
+            color: var(--accent);
+        }
+
+        .picker-file-preview-bar {
+            width: 100%;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--bg-secondary);
+            overflow: hidden;
+            margin-top: 2px;
+        }
+
+        .picker-file-preview-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width 0.15s linear;
         }
 
         /* ================= TABLET ================= */
@@ -1400,14 +1550,6 @@
             .player-timeline .timeline-track { height: 8px; }
             .timeline-fill::after { opacity: 1; width: 16px; height: 16px; right: -8px; }
 
-            /* 
-               MOBILE DRAWER FIX:
-               The drawer is a full-screen overlay with z-index 95 — above the player bar (55)
-               and above the mobile nav (60). This means the entire drawer, including the
-               video upload button at the bottom, renders on top of everything.
-               We add generous bottom padding so even the last element is comfortably scrollable
-               and never visually obscured by the player bar's shadow.
-            */
             .details-drawer {
                 width: 100%;
                 max-width: 100%;
@@ -1596,7 +1738,7 @@
                     <span class="material-icons">skip_next</span>
                 </button>
             </div>
-            <div class="player-info">
+            <div class="player-info" id="playerInfo" title="Открыть детали">
                 <span class="now-title" id="nowTitle">Ничего не играет</span>
                 <span class="now-artist" id="nowArtist">—</span>
             </div>
@@ -1641,10 +1783,15 @@
     <div class="music-picker-overlay" id="musicPickerOverlay">
         <div class="music-picker">
             <div class="music-picker-header">
-                <h3>Выбрать музыку</h3>
-                <button class="music-picker-close" id="musicPickerClose">
-                    <span class="material-icons">close</span>
-                </button>
+                <h3 id="musicPickerTitle">Выбрать музыку</h3>
+                <div class="music-picker-header-actions">
+                    <button class="music-picker-scan-btn" id="musicPickerScanBtn">
+                        <span class="material-icons">refresh</span> Сканировать
+                    </button>
+                    <button class="music-picker-close" id="musicPickerClose">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
             </div>
             <div class="music-picker-body" id="musicPickerBody"></div>
         </div>
@@ -1767,6 +1914,7 @@
             const videoEl = document.getElementById('videoEl');
             const nowTitle = document.getElementById('nowTitle');
             const nowArtist = document.getElementById('nowArtist');
+            const playerInfo = document.getElementById('playerInfo');
             const playPauseBtn = document.getElementById('playPauseBtn');
             const playPauseIcon = document.getElementById('playPauseIcon');
             const prevBtn = document.getElementById('prevBtn');
@@ -1802,6 +1950,8 @@
             const musicPickerOverlay = document.getElementById('musicPickerOverlay');
             const musicPickerBody = document.getElementById('musicPickerBody');
             const musicPickerClose = document.getElementById('musicPickerClose');
+            const musicPickerScanBtn = document.getElementById('musicPickerScanBtn');
+            const musicPickerTitle = document.getElementById('musicPickerTitle');
 
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toastText');
@@ -2065,11 +2215,28 @@
                 playPauseIcon.textContent = isPlaying ? 'pause' : 'play_arrow';
             }
 
+            /*
+               FIX: The play indicator on the active track card should reflect playback state.
+               The CSS uses `.track-card.active` to show the pause icon, but the active class
+               was only added when playing. Now we ensure `.active` reflects both the current
+               track AND the playing state. When paused, the card stays highlighted (border)
+               but the icon returns to play_arrow. We do this by toggling a separate `paused`
+               class OR by only adding `.active` when playing — but then the highlighted border
+               disappears on pause. Better approach: keep `.active` for the current track but
+               toggle the icon based on isPlaying. We'll use a data attribute / additional class.
+               Simplest: in updateTrackCardVisuals, we set `.active` only when `isPlaying`,
+               and also set `.selected` on the current track for the border. But the CSS
+               already uses `.active` for both border and icon. Let's refactor:
+               - Add class `.current` to the active track (for border highlight).
+               - Add class `.playing` only when isPlaying (for pause icon).
+               We'll update CSS accordingly.
+            */
             function updateTrackCardVisuals() {
                 document.querySelectorAll('.track-card').forEach((card) => {
                     const idx = parseInt(card.dataset.index, 10);
-                    if (idx === activeTrackIndex && isPlaying) card.classList.add('active');
-                    else card.classList.remove('active');
+                    const isCurrent = (idx === activeTrackIndex);
+                    card.classList.toggle('current', isCurrent);
+                    card.classList.toggle('playing', isCurrent && isPlaying);
                 });
                 updateMiniTimelines();
             }
@@ -2283,37 +2450,268 @@
             });
 
             // ========== MUSIC PICKER ==========
+            /*
+               Mobile music picker now scans the device for audio via the file input,
+               then builds a list of files the user can preview and add.
+               We use the same fileInput to open the browser picker, then read the files
+               and render them in the bottom sheet with per-file preview.
+            */
+            let pickerFiles = [];        // Array of File objects
+            let pickerPreviewAudio = null; // Audio element for preview
+            let pickerPreviewIndex = -1;   // Currently previewing file index
+            let pickerPreviewUrl = null;
+
             function openMusicPicker() {
                 if (!isMobile()) {
                     fileInput.click();
                     return;
                 }
+                musicPickerOverlay.classList.add('open');
+                musicPickerTitle.textContent = 'Выбрать музыку';
+                // Start by showing a "scan" prompt
+                renderPickerPrompt();
+            }
+
+            function renderPickerPrompt() {
                 musicPickerBody.innerHTML = `
                     <div class="music-picker-option" data-action="browse">
                         <span class="material-icons">folder_open</span>
                         <div class="option-text">
-                            <span class="option-title">Обзор файлов устройства</span>
-                            <span class="option-sub">Открыть системный проводник</span>
+                            <span class="option-title">Сканировать устройство</span>
+                            <span class="option-sub">Открыть проводник и выбрать музыку</span>
                         </div>
                     </div>
                     <div class="music-picker-empty" style="padding:20px 0 10px;">
                         <span class="material-icons">music_note</span>
-                        Выбор из проводника или загрузка своих файлов
+                        Нажмите, чтобы выбрать файлы. После выбора вы сможете прослушать каждый и добавить нужные.
                     </div>
                 `;
-                musicPickerOverlay.classList.add('open');
 
-                musicPickerBody.onclick = (e) => {
+                musicPickerBody.onclick = async (e) => {
                     const opt = e.target.closest('.music-picker-option');
                     if (!opt) return;
                     if (opt.dataset.action === 'browse') {
-                        closeMusicPicker();
-                        fileInput.click();
+                        // Use a hidden input to pick files; then render list
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'audio/*';
+                        input.multiple = true;
+                        input.style.display = 'none';
+                        document.body.appendChild(input);
+                        input.addEventListener('change', async (ev) => {
+                            const files = Array.from(ev.target.files || []).filter(f => f.type.startsWith('audio/'));
+                            document.body.removeChild(input);
+                            if (files.length === 0) {
+                                showToast('Аудиофайлы не выбраны');
+                                return;
+                            }
+                            pickerFiles = files;
+                            renderPickerFiles();
+                        });
+                        input.click();
                     }
                 };
             }
 
+            function renderPickerFiles() {
+                musicPickerTitle.textContent = `Найдено файлов: ${pickerFiles.length}`;
+                if (pickerFiles.length === 0) {
+                    musicPickerBody.innerHTML = `<div class="music-picker-empty">
+                        <span class="material-icons">music_off</span>
+                        Файлы не выбраны
+                    </div>`;
+                    return;
+                }
+
+                let html = '';
+                pickerFiles.forEach((file, i) => {
+                    const name = file.name;
+                    const size = file.size < 1024 * 1024
+                        ? (file.size / 1024).toFixed(0) + ' KB'
+                        : (file.size / (1024 * 1024)).toFixed(1) + ' MB';
+                    const isPlaying = pickerPreviewIndex === i;
+
+                    html += `
+                        <div class="picker-file-row" data-picker-index="${i}">
+                            <button class="picker-play-indicator ${isPlaying ? 'playing' : ''}" data-preview-index="${i}" title="Прослушать">
+                                <span class="material-icons indicator-icon">${isPlaying ? 'pause' : 'play_arrow'}</span>
+                            </button>
+                            <div class="picker-file-info" data-file-select-index="${i}">
+                                <span class="picker-file-name">${name}</span>
+                                <span class="picker-file-meta">${size} · нажмите для выбора</span>
+                                <div class="picker-file-preview-bar" id="picker-bar-${i}">
+                                    <div class="picker-file-preview-fill" id="picker-fill-${i}" style="width:0%"></div>
+                                </div>
+                            </div>
+                            <button class="picker-file-add-btn" data-add-file-index="${i}" title="Добавить">
+                                <span class="material-icons">add</span>
+                            </button>
+                        </div>
+                    `;
+                });
+
+                musicPickerBody.innerHTML = html;
+
+                musicPickerBody.onclick = (e) => {
+                    const previewBtn = e.target.closest('[data-preview-index]');
+                    if (previewBtn) {
+                        e.stopPropagation();
+                        const idx = parseInt(previewBtn.dataset.previewIndex, 10);
+                        togglePreview(idx);
+                        return;
+                    }
+
+                    const addBtn = e.target.closest('[data-add-file-index]');
+                    if (addBtn) {
+                        e.stopPropagation();
+                        const idx = parseInt(addBtn.dataset.addFileIndex, 10);
+                        addPickerFileToLibrary(idx);
+                        return;
+                    }
+
+                    const fileInfo = e.target.closest('[data-file-select-index]');
+                    if (fileInfo) {
+                        const idx = parseInt(fileInfo.dataset.fileSelectIndex, 10);
+                        togglePreview(idx);
+                        return;
+                    }
+                };
+
+                // Start playing first file automatically? No, let user choose.
+            }
+
+            function togglePreview(index) {
+                if (pickerPreviewIndex === index) {
+                    // stop preview
+                    stopPreview();
+                    return;
+                }
+                stopPreview();
+
+                const file = pickerFiles[index];
+                if (!file) return;
+
+                pickerPreviewUrl = URL.createObjectURL(file);
+                pickerPreviewAudio = new Audio(pickerPreviewUrl);
+                pickerPreviewAudio.preload = 'metadata';
+                pickerPreviewIndex = index;
+
+                pickerPreviewAudio.addEventListener('timeupdate', () => {
+                    if (pickerPreviewIndex !== index) return;
+                    const bar = document.getElementById('picker-fill-' + index);
+                    if (bar && pickerPreviewAudio.duration) {
+                        bar.style.width = Math.min(100, (pickerPreviewAudio.currentTime / pickerPreviewAudio.duration) * 100) + '%';
+                    }
+                });
+
+                pickerPreviewAudio.addEventListener('ended', () => {
+                    stopPreview();
+                });
+
+                pickerPreviewAudio.play().then(() => {
+                    updatePickerPreviewButtons();
+                }).catch(() => {
+                    showToast('Не удалось воспроизвести');
+                    stopPreview();
+                });
+            }
+
+            function stopPreview() {
+                if (pickerPreviewAudio) {
+                    try { pickerPreviewAudio.pause(); } catch (e) {}
+                    pickerPreviewAudio = null;
+                }
+                if (pickerPreviewUrl) {
+                    try { URL.revokeObjectURL(pickerPreviewUrl); } catch (e) {}
+                    pickerPreviewUrl = null;
+                }
+                pickerPreviewIndex = -1;
+                updatePickerPreviewButtons();
+                // Reset all preview bars
+                pickerFiles.forEach((_, i) => {
+                    const fill = document.getElementById('picker-fill-' + i);
+                    if (fill) fill.style.width = '0%';
+                });
+            }
+
+            function updatePickerPreviewButtons() {
+                document.querySelectorAll('.picker-play-indicator').forEach(btn => {
+                    const idx = parseInt(btn.dataset.previewIndex, 10);
+                    if (idx === pickerPreviewIndex) {
+                        btn.classList.add('playing');
+                        const icon = btn.querySelector('.indicator-icon');
+                        if (icon) icon.textContent = 'pause';
+                    } else {
+                        btn.classList.remove('playing');
+                        const icon = btn.querySelector('.indicator-icon');
+                        if (icon) icon.textContent = 'play_arrow';
+                    }
+                });
+            }
+
+            async function addPickerFileToLibrary(index) {
+                const file = pickerFiles[index];
+                if (!file) return;
+                if (file.size > MAX_AUDIO_SIZE_MB * 1024 * 1024) {
+                    showToast(`Файл слишком большой (макс. ${MAX_AUDIO_SIZE_MB} МБ)`);
+                    return;
+                }
+
+                // Check duplicate by name+size (quick heuristic)
+                const isDuplicate = tracks.some(t => t._originalName === file.name && t._originalSize === file.size);
+                if (isDuplicate) {
+                    showToast('Этот файл уже добавлен');
+                    return;
+                }
+
+                const audioId = uid('a');
+                const saved = await saveAudioBlob(audioId, file);
+                if (!saved) { showToast('Не удалось сохранить'); return; }
+
+                const url = URL.createObjectURL(file);
+                objectUrls['a_' + audioId] = url;
+                const meta = await readMetadata(file, url);
+
+                tracks.push({
+                    id: uid('t'),
+                    title: meta.title,
+                    artist: meta.artist,
+                    album: meta.album,
+                    duration: meta.duration || 0,
+                    format: meta.format || '—',
+                    mime: file.type,
+                    audioId: audioId,
+                    videoId: null,
+                    videoMime: null,
+                    coverId: null,
+                    coverMime: null,
+                    _originalName: file.name,
+                    _originalSize: file.size,
+                });
+
+                persistState();
+                showToast('Добавлено: ' + file.name);
+
+                // Mark button as added
+                const addBtn = musicPickerBody.querySelector(`[data-add-file-index="${index}"]`);
+                if (addBtn) {
+                    addBtn.classList.add('added');
+                    addBtn.innerHTML = '<span class="material-icons">check</span>';
+                }
+
+                if (currentView === 'library') renderLibrary();
+                else goToView('library');
+                updateStorageInfo();
+
+                // Stop preview if this file was playing
+                if (pickerPreviewIndex === index) {
+                    stopPreview();
+                }
+            }
+
             function closeMusicPicker() {
+                stopPreview();
+                pickerFiles = [];
                 musicPickerOverlay.classList.remove('open');
                 musicPickerBody.onclick = null;
             }
@@ -2321,6 +2719,14 @@
             musicPickerClose.addEventListener('click', closeMusicPicker);
             musicPickerOverlay.addEventListener('click', (e) => {
                 if (e.target === musicPickerOverlay) closeMusicPicker();
+            });
+
+            musicPickerScanBtn.addEventListener('click', () => {
+                if (!musicPickerOverlay.classList.contains('open')) {
+                    openMusicPicker();
+                } else {
+                    renderPickerPrompt();
+                }
             });
 
             // ========== PLAYBACK ==========
@@ -2456,6 +2862,9 @@
             });
 
             audioEl.addEventListener('play', () => {
+                isPlaying = true;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
                 if (activeTrackIndex >= 0 && tracks[activeTrackIndex].videoId) {
                     hardSyncVideo();
                     if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
@@ -2466,6 +2875,9 @@
             });
 
             audioEl.addEventListener('pause', () => {
+                isPlaying = false;
+                updatePlayPauseIcon();
+                updateTrackCardVisuals();
                 videoEl.pause();
                 if (drawerVideo.style.display !== 'none') drawerVideo.pause();
             });
@@ -2490,6 +2902,15 @@
             });
             prevBtn.addEventListener('click', () => playPrev());
             nextBtn.addEventListener('click', () => playNext());
+
+            // FIX: clicking the player info opens the details drawer
+            playerInfo.addEventListener('click', () => {
+                if (activeTrackIndex >= 0) {
+                    openDrawer(activeTrackIndex);
+                } else {
+                    showToast('Ничего не играет');
+                }
+            });
 
             function handleTimelineSeek(clientX) {
                 if (activeTrackIndex < 0) return;
@@ -2579,7 +3000,8 @@
 
                 let html = `<div class="track-grid">`;
                 tracks.forEach((track, index) => {
-                    const isActive = (index === activeTrackIndex && isPlaying);
+                    const isCurrent = (index === activeTrackIndex);
+                    const isPlayingTrack = (index === activeTrackIndex && isPlaying);
                     const coverUrl = track.coverId ? coverUrls[track.coverId] : null;
 
                     let dropdownItems = `<div class="dropdown-header">Добавить в плейлист</div>`;
@@ -2603,11 +3025,11 @@
                     `;
 
                     html += `
-                        <div class="track-card ${isActive ? 'active' : ''}" data-index="${index}">
+                        <div class="track-card ${isCurrent ? 'current' : ''} ${isPlayingTrack ? 'playing' : ''}" data-index="${index}">
                             <div class="track-cover ${coverUrl ? 'has-custom' : ''}" data-play-index="${index}">
                                 ${coverUrl ? `<img class="cover-img" src="${coverUrl}" alt="">` : ''}
                                 <span class="material-icons cover-icon">album</span>
-                                <div class="cover-play" title="${isActive ? 'Пауза' : 'Воспроизвести'}">
+                                <div class="cover-play" title="${isPlayingTrack ? 'Пауза' : 'Воспроизвести'}">
                                     <span class="material-icons play-icon"></span>
                                 </div>
                                 <button class="cover-upload-btn" data-cover-upload-index="${index}" title="Загрузить обложку">
@@ -2634,6 +3056,10 @@
                 });
                 html += `</div>`;
                 dynamicContent.innerHTML = html;
+
+                // FIX: CSS for current/playing classes
+                // Add a style tag to support new classes
+                ensureTrackCardStyles();
 
                 document.querySelectorAll('.track-cover').forEach(cover => {
                     cover.addEventListener('click', (e) => {
@@ -2707,6 +3133,29 @@
                 });
 
                 updateMiniTimelines();
+            }
+
+            // Inject style for .current and .playing states
+            function ensureTrackCardStyles() {
+                if (document.getElementById('track-card-dynamic-styles')) return;
+                const style = document.createElement('style');
+                style.id = 'track-card-dynamic-styles';
+                style.textContent = `
+                    .track-card.current {
+                        border-color: var(--accent);
+                        background: var(--bg-elevated);
+                    }
+                    .track-card.current .cover-play {
+                        opacity: 1;
+                    }
+                    .track-card.current .cover-play .play-icon::before {
+                        content: 'play_arrow';
+                    }
+                    .track-card.current.playing .cover-play .play-icon::before {
+                        content: 'pause';
+                    }
+                `;
+                document.head.appendChild(style);
             }
 
             // ========== RENDER PLAYLISTS ==========
@@ -2990,7 +3439,7 @@
                 updateStorageInfo();
             });
 
-            // ========== UPLOAD MUSIC ==========
+            // ========== UPLOAD MUSIC (desktop fallback) ==========
             uploadBtn.addEventListener('click', () => {
                 if (isMobile()) {
                     openMusicPicker();
@@ -3030,6 +3479,8 @@
                         videoMime: null,
                         coverId: null,
                         coverMime: null,
+                        _originalName: file.name,
+                        _originalSize: file.size,
                     });
                     added++;
                 }
