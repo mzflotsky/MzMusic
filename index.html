@@ -46,29 +46,6 @@
             position: relative;
         }
 
-        /* ========== RHYTHM POINT LIGHTS ========== */
-        .rhythm-lights-container {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 999;
-            overflow: hidden;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .rhythm-lights-container.active { opacity: 1; }
-
-        .rhythm-point {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            mix-blend-mode: screen;
-            will-change: transform, opacity, background;
-            transform: translate(-50%, -50%);
-            background: radial-gradient(circle, var(--rhythm-color, #4a7fc4) 0%, transparent 70%);
-        }
-
         /* ========== SIDEBAR ========== */
         .sidebar {
             width: 86px;
@@ -799,59 +776,6 @@
 
         .clear-storage-btn:hover { background: rgba(255,107,107,0.1); }
 
-        .switch-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 10px 0;
-        }
-
-        .switch-label { font-size: 0.85rem; color: var(--text-primary); }
-        .switch-desc { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
-
-        .toggle-switch {
-            position: relative;
-            width: 46px;
-            height: 26px;
-            flex-shrink: 0;
-        }
-
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-
-        .toggle-slider {
-            position: absolute;
-            cursor: pointer;
-            inset: 0;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-light);
-            border-radius: 26px;
-            transition: var(--transition);
-        }
-
-        .toggle-slider::before {
-            content: '';
-            position: absolute;
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--text-secondary);
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-
-        .toggle-switch input:checked + .toggle-slider {
-            background: var(--accent-soft);
-            border-color: var(--accent);
-        }
-
-        .toggle-switch input:checked + .toggle-slider::before {
-            background: white;
-            transform: translateY(-50%) translateX(20px);
-        }
-
         /* ========== PLAYLISTS ========== */
         .playlist-section { display: flex; flex-direction: column; gap: 20px; }
 
@@ -1071,6 +995,125 @@
 
         .video-toggle-btn:hover { color: var(--text-primary); border-color: var(--accent); }
         .video-toggle-btn.active { background: var(--accent-soft); border-color: var(--accent); color: white; }
+
+        /* ========== VOLUME ========== */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .volume-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .volume-btn:hover { color: var(--text-primary); background: var(--bg-elevated); }
+        .volume-btn .material-icons { font-size: 20px; }
+
+        .volume-slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 140px;
+            position: relative;
+        }
+
+        .volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--bg-elevated);
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            /* Marks 100% at 62.5% of the track (since max is 160) */
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 6px var(--accent);
+            transition: transform 0.1s;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+        .volume-slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border: none;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 6px var(--accent);
+        }
+
+        /* Boost zone styling for the slider */
+        .volume-slider-wrap::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 6px;
+            width: calc(62.5% * (var(--vol-fill, 0) / 100));
+            max-width: 62.5%;
+            border-radius: 3px;
+            background: var(--accent);
+            pointer-events: none;
+            transition: width 0.05s linear;
+            z-index: 1;
+        }
+
+        .volume-slider-wrap.boost::before {
+            background: linear-gradient(to right, var(--accent) 0%, var(--accent) 85%, #ffaa33 100%);
+        }
+
+        /* Mark for 100% threshold */
+        .volume-boost-mark {
+            position: absolute;
+            left: 62.5%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 12px;
+            background: var(--text-secondary);
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 2;
+            border-radius: 1px;
+        }
+
+        .volume-value {
+            font-size: 0.62rem;
+            color: var(--text-secondary);
+            min-width: 42px;
+            text-align: right;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .volume-value.boost { color: #ffaa33; font-weight: 600; }
 
         /* ========== DRAWER ========== */
         .drawer-overlay {
@@ -1439,6 +1482,11 @@
             .track-grid { grid-template-columns: repeat(3, 1fr); }
         }
 
+        @media (max-width: 1000px) {
+            .volume-slider-wrap { width: 100px; }
+            .volume-value { min-width: 38px; font-size: 0.58rem; }
+        }
+
         @media (max-width: 800px) {
             body { flex-direction: column; }
             .sidebar { display: none; }
@@ -1491,7 +1539,7 @@
             .main {
                 height: 100vh;
                 height: 100dvh;
-                padding-bottom: calc(var(--mobile-nav-height) + 118px + var(--safe-bottom));
+                padding-bottom: calc(var(--mobile-nav-height) + 130px + var(--safe-bottom));
                 padding-left: var(--safe-left);
                 padding-right: var(--safe-right);
             }
@@ -1528,6 +1576,7 @@
 
             .track-dropdown { display: none !important; }
 
+            /* Player bar on mobile: 3 rows — controls+info+video, timeline, volume */
             .player-bar {
                 position: fixed;
                 bottom: calc(var(--mobile-nav-height) + var(--safe-bottom));
@@ -1541,7 +1590,8 @@
                 grid-template-columns: auto 1fr auto;
                 grid-template-areas:
                     "controls info video"
-                    "timeline timeline timeline";
+                    "timeline timeline timeline"
+                    "volume volume volume";
                 gap: 6px 10px;
                 align-items: center;
                 border-top: 1px solid var(--border-light);
@@ -1552,6 +1602,7 @@
             .player-info { grid-area: info; min-width: 0; max-width: none; }
             .video-toggle-btn { grid-area: video; }
             .player-timeline { grid-area: timeline; position: static; width: 100%; gap: 8px; }
+            .volume-control { grid-area: volume; justify-content: flex-end; }
 
             .player-info .now-title { font-size: 0.76rem; }
             .player-info .now-artist { font-size: 0.63rem; }
@@ -1565,6 +1616,9 @@
             .player-timeline .time-label { font-size: 0.6rem; min-width: 30px; }
             .player-timeline .timeline-track { height: 8px; }
             .timeline-fill::after { opacity: 1; width: 16px; height: 16px; right: -8px; }
+
+            .volume-slider-wrap { width: 180px; }
+            .volume-value { min-width: 46px; font-size: 0.65rem; }
 
             .details-drawer {
                 width: 100%;
@@ -1601,7 +1655,7 @@
             .playlist-chip { padding: 8px 14px; font-size: 0.8rem; }
 
             .toast {
-                bottom: calc(var(--mobile-nav-height) + 118px + 12px + var(--safe-bottom));
+                bottom: calc(var(--mobile-nav-height) + 130px + 12px + var(--safe-bottom));
                 font-size: 0.76rem;
                 padding: 10px 18px;
             }
@@ -1639,13 +1693,14 @@
             .page-title { font-size: 1.15rem; }
             .track-cover .cover-icon { font-size: 28px; }
             .cover-play .play-icon { font-size: 38px; }
-            .main { padding-bottom: calc(var(--mobile-nav-height) + 110px + var(--safe-bottom)); }
+            .main { padding-bottom: calc(var(--mobile-nav-height) + 122px + var(--safe-bottom)); }
+            .volume-slider-wrap { width: 140px; }
         }
 
         @media (max-height: 500px) and (orientation: landscape) {
             .player-bar {
-                grid-template-areas: "controls info timeline video";
-                grid-template-columns: auto 1fr 1fr auto;
+                grid-template-areas: "controls info timeline video volume";
+                grid-template-columns: auto 1fr 1fr auto auto;
                 padding: 8px 16px;
                 padding-left: calc(16px + var(--safe-left));
                 padding-right: calc(16px + var(--safe-right));
@@ -1653,6 +1708,7 @@
                 gap: 8px;
             }
             .player-timeline { grid-area: timeline; }
+            .volume-control { grid-area: volume; }
             .main { padding-bottom: calc(var(--mobile-nav-height) + 70px + var(--safe-bottom)); }
             .details-drawer { padding: 16px; gap: 14px; padding-bottom: calc(120px + var(--safe-bottom)); }
             .drawer-cover { max-width: 140px; }
@@ -1665,9 +1721,6 @@
     </style>
 </head>
 <body>
-
-    <!-- Rhythm point lights container -->
-    <div class="rhythm-lights-container" id="rhythmLightsContainer"></div>
 
     <aside class="sidebar">
         <div class="sidebar-top">
@@ -1747,19 +1800,6 @@
                     </div>
                 </div>
                 <div class="settings-group">
-                    <label>Эффекты</label>
-                    <div class="switch-row">
-                        <div>
-                            <div class="switch-label">Свет под ритм музыки</div>
-                            <div class="switch-desc">Свечение по краям страницы, реагирующее на бас</div>
-                        </div>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="rhythmToggle">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="settings-group">
                     <label>Хранилище</label>
                     <div class="storage-info" id="storageInfo">
                         <div>Аудио и клипы: <span id="storageUsed">—</span></div>
@@ -1807,6 +1847,16 @@
                     <div class="timeline-fill" id="timelineFill"></div>
                 </div>
                 <span class="time-label" id="totalTime">0:00</span>
+            </div>
+            <div class="volume-control">
+                <button class="volume-btn" id="volumeMuteBtn" title="Без звука">
+                    <span class="material-icons" id="volumeIcon">volume_up</span>
+                </button>
+                <div class="volume-slider-wrap" id="volumeSliderWrap">
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="160" value="100" step="1">
+                    <div class="volume-boost-mark"></div>
+                </div>
+                <span class="volume-value" id="volumeValue">100%</span>
             </div>
         </div>
     </main>
@@ -1905,11 +1955,12 @@
 
     <script>
         (function() {
-            const LS_KEY = 'mzmusic_data_v7';
+            const LS_KEY = 'mzmusic_data_v8';
             const LS_VIEW_KEY = 'mzmusic_view_mode';
             const LS_SHUFFLE_KEY = 'mzmusic_shuffle';
             const LS_REPEAT_KEY = 'mzmusic_repeat';
-            const LS_RHYTHM_KEY = 'mzmusic_rhythm_light';
+            const LS_VOLUME_KEY = 'mzmusic_volume';
+            const LS_MUTED_KEY = 'mzmusic_muted';
             const MAX_VIDEO_SIZE_MB = 200;
             const MAX_AUDIO_SIZE_MB = 100;
             const MAX_COVER_SIZE_MB = 5;
@@ -1917,8 +1968,12 @@
             const DB_VERSION = 5;
             const CLIP_TOLERANCE_SEC = 30;
 
-            // Rhythm points count (left and right edges)
-            const RHYTHM_POINTS_PER_SIDE = 6;
+            // Volume: 0..160 %. 100% = normal gain 1.0. Above 100% boosts using gain node.
+            const MAX_VOLUME = 160;
+            let volumePercent = parseInt(localStorage.getItem(LS_VOLUME_KEY) || '100', 10);
+            if (isNaN(volumePercent) || volumePercent < 0) volumePercent = 100;
+            if (volumePercent > MAX_VOLUME) volumePercent = MAX_VOLUME;
+            let isMuted = localStorage.getItem(LS_MUTED_KEY) === '1';
 
             let tracks = [];
             let playlists = ['Мой плейлист', 'Избранное'];
@@ -1936,19 +1991,12 @@
             let viewMode = localStorage.getItem(LS_VIEW_KEY) || 'grid';
             let shuffleMode = localStorage.getItem(LS_SHUFFLE_KEY) === '1';
             let repeatMode = localStorage.getItem(LS_REPEAT_KEY) === '1';
-            let rhythmLightEnabled = localStorage.getItem(LS_RHYTHM_KEY) === '1';
 
-            // Rhythm analysis state
-            let rhythmAudioCtx = null;
-            let rhythmAnalyser = null;
-            let rhythmSource = null;
-            let rhythmFrameId = null;
-            let rhythmPoints = [];        // Array of DOM elements
-            let rhythmPointStates = [];   // Per-point animation state
-            let rhythmBassHistory = [];
-            let rhythmBeatCooldown = 0;
-            let rhythmPrevBass = 0;
-            let rhythmLastBeatTime = 0;
+            // Web Audio for volume boost above 100%
+            let audioCtx = null;
+            let gainNode = null;
+            let audioSource = null;
+            let boostActive = false;
 
             const libraryBtn = document.getElementById('libraryBtn');
             const playlistsBtn = document.getElementById('playlistsBtn');
@@ -1966,7 +2014,6 @@
             const clearStorageBtn = document.getElementById('clearStorageBtn');
             const storageUsedEl = document.getElementById('storageUsed');
             const storageBarFill = document.getElementById('storageBarFill');
-            const rhythmToggle = document.getElementById('rhythmToggle');
 
             const viewSwitcherBtn = document.getElementById('viewSwitcherBtn');
             const viewSwitcherMenu = document.getElementById('viewSwitcherMenu');
@@ -1989,6 +2036,12 @@
             const timelineTrack = document.getElementById('timelineTrack');
             const timelineFill = document.getElementById('timelineFill');
             const videoToggleBtn = document.getElementById('videoToggleBtn');
+
+            const volumeSlider = document.getElementById('volumeSlider');
+            const volumeValue = document.getElementById('volumeValue');
+            const volumeMuteBtn = document.getElementById('volumeMuteBtn');
+            const volumeIcon = document.getElementById('volumeIcon');
+            const volumeSliderWrap = document.getElementById('volumeSliderWrap');
 
             const drawerOverlay = document.getElementById('drawerOverlay');
             const detailsDrawer = document.getElementById('detailsDrawer');
@@ -2015,213 +2068,107 @@
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toastText');
 
-            const rhythmLightsContainer = document.getElementById('rhythmLightsContainer');
-
             const isMobile = () => window.matchMedia('(max-width: 800px)').matches;
 
-            // ========== RHYTHM POINT LIGHTS ==========
-            function createRhythmPoints() {
-                rhythmLightsContainer.innerHTML = '';
-                rhythmPoints = [];
-                rhythmPointStates = [];
-
-                const vh = window.innerHeight;
-                const vw = window.innerWidth;
-
-                for (let side = 0; side < 2; side++) {
-                    for (let i = 0; i < RHYTHM_POINTS_PER_SIDE; i++) {
-                        const el = document.createElement('div');
-                        el.className = 'rhythm-point';
-
-                        // Distribute vertically along the edge
-                        const t = (i + 0.5) / RHYTHM_POINTS_PER_SIDE;
-                        const y = t * vh;
-                        const x = side === 0 ? 0 : vw;
-
-                        // Slightly randomize sizes for organic feel
-                        const baseSize = 90 + Math.random() * 50;
-                        el.style.width = baseSize + 'px';
-                        el.style.height = baseSize + 'px';
-                        el.style.left = x + 'px';
-                        el.style.top = y + 'px';
-                        el.style.opacity = '0';
-                        el.style.transform = 'translate(-50%, -50%) scale(1)';
-
-                        rhythmLightsContainer.appendChild(el);
-                        rhythmPoints.push(el);
-                        rhythmPointStates.push({
-                            baseSize,
-                            x,
-                            y,
-                            side,
-                            intensity: 0,
-                            targetIntensity: 0,
-                            phase: Math.random() * Math.PI * 2,
-                            velocity: 0,
-                        });
-                    }
-                }
-            }
-
-            function updateRhythmColor() {
-                const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
-                let r = 79, g = 158, b = 255;
-                if (/^#[0-9a-f]{6}$/i.test(accent)) {
-                    r = parseInt(accent.slice(1,3), 16);
-                    g = parseInt(accent.slice(3,5), 16);
-                    b = parseInt(accent.slice(5,7), 16);
-                }
-                // Darken slightly toward the accent, no white blend — keeps it "чуть темнее"
-                // Slight blend toward background darkness
-                const dr = Math.max(0, Math.round(r * 0.85));
-                const dg = Math.max(0, Math.round(g * 0.85));
-                const db = Math.max(0, Math.round(b * 0.85));
-                rhythmLightsContainer.style.setProperty('--rhythm-color', `rgb(${dr}, ${dg}, ${db})`);
-                // Update each point's gradient
-                rhythmPoints.forEach(el => {
-                    el.style.background = `radial-gradient(circle, rgb(${dr}, ${dg}, ${db}) 0%, transparent 70%)`;
-                });
-            }
-
-            function setupRhythmAudio() {
-                if (rhythmAudioCtx) return;
+            // ========== VOLUME CONTROL WITH BOOST ==========
+            function setupAudioGraph() {
+                if (audioCtx) return;
                 try {
-                    rhythmAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    rhythmAnalyser = rhythmAudioCtx.createAnalyser();
-                    rhythmAnalyser.fftSize = 512;
-                    rhythmAnalyser.smoothingTimeConstant = 0.35; // less smoothing → more sensitive to transients
-                    rhythmSource = rhythmAudioCtx.createMediaElementSource(audioEl);
-                    rhythmSource.connect(rhythmAnalyser);
-                    rhythmAnalyser.connect(rhythmAudioCtx.destination);
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    audioSource = audioCtx.createMediaElementSource(audioEl);
+                    gainNode = audioCtx.createGain();
+                    audioSource.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
                 } catch (e) {
-                    console.warn('Rhythm light audio setup failed:', e);
-                    rhythmAudioCtx = null;
+                    console.warn('Volume boost setup failed:', e);
+                    audioCtx = null;
                 }
             }
 
-            function startRhythmLight() {
-                if (!rhythmLightEnabled) return;
-                if (!rhythmAudioCtx) setupRhythmAudio();
-                if (!rhythmAudioCtx) return;
-                if (rhythmAudioCtx.state === 'suspended') {
-                    rhythmAudioCtx.resume().catch(() => {});
-                }
-                updateRhythmColor();
-                rhythmLightsContainer.classList.add('active');
+            function applyVolume() {
+                const effective = isMuted ? 0 : volumePercent;
 
-                if (rhythmPoints.length === 0) createRhythmPoints();
-                // Reset all
-                rhythmPoints.forEach(el => { el.style.opacity = '0'; });
-                rhythmBassHistory = [];
-                rhythmPrevBass = 0;
-                rhythmLastBeatTime = 0;
-
-                if (rhythmFrameId) cancelAnimationFrame(rhythmFrameId);
-                rhythmFrameId = requestAnimationFrame(rhythmLoop);
-            }
-
-            function stopRhythmLight() {
-                if (rhythmFrameId) {
-                    cancelAnimationFrame(rhythmFrameId);
-                    rhythmFrameId = null;
-                }
-                // Fade out points
-                rhythmPoints.forEach(el => { el.style.opacity = '0'; });
-                setTimeout(() => {
-                    if (!isPlaying) rhythmLightsContainer.classList.remove('active');
-                }, 400);
-            }
-
-            function rhythmLoop(timestamp) {
-                if (!rhythmAnalyser || !rhythmLightEnabled) return;
-
-                const data = new Uint8Array(rhythmAnalyser.frequencyBinCount);
-                rhythmAnalyser.getByteFrequencyData(data);
-
-                // Bass range: ~20-150 Hz. With fftSize=512 and sampleRate ~44100,
-                // bin width ≈ 86 Hz. Bins 0-3 cover ~0-344 Hz. Focus on bins 0-2 for kick/bass.
-                let bassSum = 0;
-                const bassBins = 3;
-                for (let i = 0; i < bassBins; i++) bassSum += data[i];
-                const bassAvg = bassSum / bassBins;
-
-                // Also grab low-mid for snare/beat detection
-                let midSum = 0;
-                for (let i = 3; i < 10; i++) midSum += data[i];
-                const midAvg = midSum / 7;
-
-                const combined = bassAvg * 0.7 + midAvg * 0.3;
-
-                // Normalize 0..1 with stronger curve
-                let level = Math.min(1, combined / 160);
-
-                // Beat detection: sudden jump vs recent average
-                rhythmBassHistory.push(level);
-                if (rhythmBassHistory.length > 12) rhythmBassHistory.shift();
-                const avgRecent = rhythmBassHistory.reduce((a, b) => a + b, 0) / rhythmBassHistory.length;
-
-                let isBeat = false;
-                const jump = level - rhythmPrevBass;
-                const now = timestamp || performance.now();
-
-                if (level > 0.25 && jump > 0.12 && (now - rhythmLastBeatTime) > 140) {
-                    isBeat = true;
-                    rhythmLastBeatTime = now;
-                }
-
-                rhythmPrevBass = level;
-
-                // Compute point intensities
-                for (let i = 0; i < rhythmPointStates.length; i++) {
-                    const st = rhythmPointStates[i];
-                    const el = rhythmPoints[i];
-
-                    // Base level driven by audio
-                    let target = level;
-
-                    // Beat pulse: strong spike with side/position-based variation
-                    if (isBeat) {
-                        // Alternate emphasis by position — lower points hit harder
-                        const posFactor = 1.0 - (st.y / window.innerHeight) * 0.5;
-                        target = Math.min(1, level + 0.55 * posFactor);
+                // Native volume for 0..100%
+                if (effective <= 100) {
+                    // If boost was active, disable it and route through native
+                    audioEl.volume = effective / 100;
+                    if (gainNode) gainNode.gain.value = 1;
+                } else {
+                    // Above 100%: native at max, boost via gain node
+                    if (!audioCtx) setupAudioGraph();
+                    audioEl.volume = 1;
+                    if (gainNode) {
+                        // Map 100..160% → gain 1.0..1.6
+                        const boost = effective / 100;
+                        gainNode.gain.value = boost;
                     }
-
-                    // Add subtle per-point oscillation (breathing)
-                    st.phase += 0.08;
-                    const breathe = (Math.sin(st.phase) * 0.5 + 0.5) * 0.15;
-                    target = Math.min(1, target + breathe * level);
-
-                    // Smooth toward target — fast attack, slower release
-                    if (target > st.intensity) {
-                        st.intensity = st.intensity * 0.5 + target * 0.5; // fast attack
-                    } else {
-                        st.intensity = st.intensity * 0.82 + target * 0.18; // slower release
+                    if (audioCtx && audioCtx.state === 'suspended' && isPlaying) {
+                        audioCtx.resume().catch(() => {});
                     }
-
-                    // Clamp
-                    st.intensity = Math.max(0, Math.min(1, st.intensity));
-
-                    // Overall opacity: dimmer & more transparent than before
-                    const opacity = st.intensity * 0.55; // max 0.55 opacity
-                    const scale = 0.9 + st.intensity * 0.5; // scale 0.9 → 1.4
-                    el.style.opacity = opacity.toFixed(3);
-                    el.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(2)})`;
                 }
 
-                rhythmFrameId = requestAnimationFrame(rhythmLoop);
+                // Update UI
+                volumeValue.textContent = isMuted ? 'mute' : (volumePercent + '%');
+                volumeValue.classList.toggle('boost', !isMuted && volumePercent > 100);
+                volumeSlider.value = volumePercent;
+
+                // Slider fill (custom gradient element via CSS var)
+                const fillPercent = Math.min(100, (volumePercent / MAX_VOLUME) * 100);
+                // 100% mark sits at (100/160)*100 = 62.5% of slider width
+                // We set --vol-fill to the percent of MAX so the ::before width calc works
+                volumeSliderWrap.style.setProperty('--vol-fill', volumePercent);
+                // Toggle boost visual
+                volumeSliderWrap.classList.toggle('boost', !isMuted && volumePercent > 100);
+
+                // Icon
+                if (isMuted) volumeIcon.textContent = 'volume_off';
+                else if (volumePercent === 0) volumeIcon.textContent = 'volume_mute';
+                else if (volumePercent < 50) volumeIcon.textContent = 'volume_down';
+                else if (volumePercent > 100) volumeIcon.textContent = 'volume_up'; // could use a boost icon
+                else volumeIcon.textContent = 'volume_up';
+
+                // Persist
+                localStorage.setItem(LS_VOLUME_KEY, String(volumePercent));
+                localStorage.setItem(LS_MUTED_KEY, isMuted ? '1' : '0');
             }
 
-            // Recreate points on resize
-            let rhythmResizeTimer = null;
-            window.addEventListener('resize', () => {
-                if (!rhythmLightEnabled) return;
-                clearTimeout(rhythmResizeTimer);
-                rhythmResizeTimer = setTimeout(() => {
-                    createRhythmPoints();
-                    updateRhythmColor();
-                    if (isPlaying && rhythmLightEnabled) startRhythmLight();
-                }, 200);
+            volumeSlider.addEventListener('input', (e) => {
+                volumePercent = parseInt(e.target.value, 10) || 0;
+                if (isMuted && volumePercent > 0) isMuted = false;
+                applyVolume();
             });
+
+            volumeMuteBtn.addEventListener('click', () => {
+                isMuted = !isMuted;
+                if (!isMuted && volumePercent === 0) volumePercent = 100;
+                applyVolume();
+            });
+
+            // Initialize volume on load
+            audioEl.volume = isMuted ? 0 : Math.min(1, volumePercent / 100);
+            applyVolume();
+
+            // Need to setup audio graph before playing if boost is needed
+            function ensureBoostForCurrentVolume() {
+                if (volumePercent > 100 && !isMuted) {
+                    setupAudioGraph();
+                    if (audioCtx && audioCtx.state === 'suspended') {
+                        audioCtx.resume().catch(() => {});
+                    }
+                }
+            }
+
+            // Resume audio context on user gesture
+            document.addEventListener('click', () => {
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(() => {});
+                }
+            }, { passive: true });
+            document.addEventListener('touchstart', () => {
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(() => {});
+                }
+            }, { passive: true });
 
             // ========== VIEW MODE ==========
             function applyViewMode(mode) {
@@ -2277,18 +2224,6 @@
                 showToast(repeatMode ? 'Повтор трека включён' : 'Повтор трека выключен');
             });
             updateShuffleRepeatVisuals();
-
-            // ========== RHYTHM TOGGLE ==========
-            rhythmToggle.checked = rhythmLightEnabled;
-            rhythmToggle.addEventListener('change', () => {
-                rhythmLightEnabled = rhythmToggle.checked;
-                localStorage.setItem(LS_RHYTHM_KEY, rhythmLightEnabled ? '1' : '0');
-                if (rhythmLightEnabled) {
-                    if (isPlaying) startRhythmLight();
-                } else {
-                    stopRhythmLight();
-                }
-            });
 
             // ========== INDEXED DB ==========
             function openDB() {
@@ -2466,7 +2401,7 @@
                     })),
                     playlists: playlists,
                     playlistTrackMap: playlistTrackMap,
-                    version: 7
+                    version: 8
                 };
             }
 
@@ -2475,7 +2410,7 @@
             }
 
             async function loadState() {
-                const raw = localStorage.getItem(LS_KEY) || localStorage.getItem('mzmusic_data_v6') || localStorage.getItem('mzmusic_data_v5') || localStorage.getItem('mzmusic_data_v4') || localStorage.getItem('mzmusic_data_v3') || localStorage.getItem('mzmusic_data_v2') || localStorage.getItem('mzmusic_data_v1');
+                const raw = localStorage.getItem(LS_KEY) || localStorage.getItem('mzmusic_data_v7') || localStorage.getItem('mzmusic_data_v6') || localStorage.getItem('mzmusic_data_v5') || localStorage.getItem('mzmusic_data_v4') || localStorage.getItem('mzmusic_data_v3') || localStorage.getItem('mzmusic_data_v2') || localStorage.getItem('mzmusic_data_v1');
                 if (!raw) return false;
                 try {
                     const data = JSON.parse(raw);
@@ -2523,7 +2458,6 @@
                 videoEl.pause();
                 videoEl.removeAttribute('src');
                 videoEl.load();
-                stopRhythmLight();
                 updatePlayPauseIcon();
                 updatePlayerInfo();
                 goToView('library');
@@ -3155,11 +3089,11 @@
                     if (autoPlay) {
                         if (isPlaying) { audioEl.pause(); isPlaying = false; }
                         else {
+                            ensureBoostForCurrentVolume();
                             audioEl.play().then(() => {
                                 isPlaying = true;
                                 updatePlayPauseIcon();
                                 updateTrackCardVisuals();
-                                if (rhythmLightEnabled) startRhythmLight();
                                 if (track.videoId) {
                                     hardSyncVideo();
                                     if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
@@ -3196,11 +3130,11 @@
                 }
 
                 if (autoPlay) {
+                    ensureBoostForCurrentVolume();
                     audioEl.play().then(() => {
                         isPlaying = true;
                         updatePlayPauseIcon();
                         updateTrackCardVisuals();
-                        if (rhythmLightEnabled) startRhythmLight();
                         if (videoUrl) {
                             videoEl.currentTime = 0;
                             hardSyncVideo();
@@ -3221,11 +3155,11 @@
                 if (tracks.length === 0) return;
                 if (repeatMode && auto && activeTrackIndex >= 0) {
                     audioEl.currentTime = 0;
+                    ensureBoostForCurrentVolume();
                     audioEl.play().then(() => {
                         isPlaying = true;
                         updatePlayPauseIcon();
                         updateTrackCardVisuals();
-                        if (rhythmLightEnabled) startRhythmLight();
                     }).catch(() => {});
                     return;
                 }
@@ -3301,7 +3235,6 @@
                 isPlaying = true;
                 updatePlayPauseIcon();
                 updateTrackCardVisuals();
-                if (rhythmLightEnabled) startRhythmLight();
                 if (activeTrackIndex >= 0 && tracks[activeTrackIndex].videoId) {
                     hardSyncVideo();
                     if (drawerVideo.style.display !== 'none' && drawerVideo.src) {
@@ -3317,7 +3250,6 @@
                 updateTrackCardVisuals();
                 videoEl.pause();
                 if (drawerVideo.style.display !== 'none') drawerVideo.pause();
-                if (rhythmLightEnabled) stopRhythmLight();
             });
 
             audioEl.addEventListener('seeking', syncVideoSeek);
@@ -3740,7 +3672,6 @@
                 bgColorPicker.value = '#0f0f12';
                 darkThemeBtn.classList.add('active');
                 lightThemeBtn.classList.remove('active');
-                updateRhythmColor();
             });
 
             lightThemeBtn.addEventListener('click', () => {
@@ -3753,14 +3684,12 @@
                 bgColorPicker.value = '#f4f4f8';
                 lightThemeBtn.classList.add('active');
                 darkThemeBtn.classList.remove('active');
-                updateRhythmColor();
             });
 
             accentColorPicker.addEventListener('input', (e) => {
                 const color = e.target.value;
                 document.documentElement.style.setProperty('--accent', color);
                 document.documentElement.style.setProperty('--accent-soft', color + 'cc');
-                updateRhythmColor();
             });
 
             bgColorPicker.addEventListener('input', (e) => {
@@ -3823,9 +3752,8 @@
                     }
                 }
 
-                // Create rhythm points (hidden until active)
-                createRhythmPoints();
-                updateRhythmColor();
+                // Re-apply volume in case boost setup is needed
+                applyVolume();
 
                 goToView('library');
                 updatePlayPauseIcon();
