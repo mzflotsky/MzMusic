@@ -296,6 +296,31 @@
         .track-card.active .cover-play .play-icon::before { content: 'pause'; }
         .track-card:not(.active) .cover-play .play-icon::before { content: 'play_arrow'; }
 
+        /* Cover upload button — bottom-left corner of cover */
+        .cover-upload-btn {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(15, 15, 18, 0.75);
+            border: 1px solid var(--border-light);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 4;
+            transition: var(--transition);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            padding: 0;
+        }
+
+        .cover-upload-btn:hover { background: var(--accent); border-color: var(--accent); color: white; }
+        .cover-upload-btn .material-icons { font-size: 16px; }
+
         .track-meta { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding-right: 36px; }
 
         .track-title {
@@ -805,6 +830,7 @@
             background: var(--bg-secondary);
             padding-bottom: 8px;
             z-index: 2;
+            flex-shrink: 0;
         }
 
         .drawer-header h2 { font-size: 1.1rem; font-weight: 600; color: var(--text-primary); }
@@ -837,7 +863,6 @@
             overflow: hidden;
             position: relative;
             flex-shrink: 0;
-            cursor: pointer;
         }
 
         .drawer-cover .cover-img-drawer {
@@ -859,30 +884,13 @@
 
         .drawer-cover .material-icons { font-size: 80px; opacity: 0.5; position: relative; z-index: 1; }
 
-        .drawer-cover .cover-overlay-hint {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(15, 15, 18, 0.75);
-            border-radius: 10px;
-            padding: 6px 10px;
-            font-size: 0.65rem;
-            color: var(--text-secondary);
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            backdrop-filter: blur(4px);
-        }
-
-        .drawer-cover .cover-overlay-hint .material-icons { font-size: 14px; opacity: 1; }
-
         .drawer-field {
             display: flex;
             flex-direction: column;
             gap: 4px;
             padding-bottom: 14px;
             border-bottom: 1px solid var(--border-light);
+            flex-shrink: 0;
         }
 
         .drawer-field:last-child { border-bottom: none; }
@@ -955,6 +963,11 @@
         .drawer-field .field-value .save-btn:hover { background: var(--accent-soft); }
         .drawer-field .field-value .cancel-btn:hover { background: var(--bg-primary); }
 
+        /* Fixed the video upload button visibility — ensure it's always above the player bar.
+           The drawer now has extra bottom padding, but since the player bar is fixed on mobile,
+           the drawer content must account for it. We solve it by ensuring the drawer is a full
+           overlay on mobile with enough bottom padding, AND the upload button is inside a field
+           that scrolls. The key fix: give the drawer more bottom padding and use z-index properly. */
         .upload-video-btn {
             background: var(--bg-elevated);
             border: 1px dashed var(--border-light);
@@ -1058,10 +1071,7 @@
 
         .mobile-nav { display: none; }
 
-        /* ================= DESKTOP DROPDOWN (attached) ================= */
-        /* The .track-dropdown is positioned relative to .track-card and appears above other content */
-
-        /* ================= MOBILE DROPDOWN (overlay at bottom) ================= */
+        /* Mobile dropdown overlay (options menu above player) */
         .mobile-dropdown-overlay {
             position: fixed;
             inset: 0;
@@ -1070,7 +1080,6 @@
             display: none;
             align-items: flex-end;
             justify-content: center;
-            padding: 0;
             backdrop-filter: blur(2px);
         }
 
@@ -1122,7 +1131,7 @@
 
         .mobile-dropdown .dropdown-item.pl { padding-left: 32px; font-size: 0.85rem; }
 
-        /* Bottom sheet for music picker */
+        /* Bottom sheet music picker */
         .music-picker-overlay {
             position: fixed;
             inset: 0;
@@ -1185,20 +1194,6 @@
             flex: 1;
         }
 
-        .music-picker-empty {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-        }
-
-        .music-picker-empty .material-icons {
-            display: block;
-            font-size: 48px;
-            opacity: 0.4;
-            margin-bottom: 10px;
-        }
-
         .music-picker-option {
             display: flex;
             align-items: center;
@@ -1235,10 +1230,18 @@
             color: var(--text-secondary);
         }
 
-        .music-picker-option .option-size {
-            font-size: 0.65rem;
+        .music-picker-empty {
+            text-align: center;
+            padding: 40px 20px;
             color: var(--text-secondary);
-            flex-shrink: 0;
+            font-size: 0.85rem;
+        }
+
+        .music-picker-empty .material-icons {
+            display: block;
+            font-size: 48px;
+            opacity: 0.4;
+            margin-bottom: 10px;
         }
 
         /* ================= TABLET ================= */
@@ -1341,6 +1344,15 @@
             }
             .track-menu-btn .material-icons { font-size: 16px; }
 
+            .cover-upload-btn {
+                bottom: 6px;
+                left: 6px;
+                width: 28px;
+                height: 28px;
+                border-radius: 8px;
+            }
+            .cover-upload-btn .material-icons { font-size: 14px; }
+
             /* Hide attached dropdown on mobile — replaced by bottom overlay */
             .track-dropdown { display: none !important; }
 
@@ -1383,6 +1395,13 @@
             .player-timeline .timeline-track { height: 8px; }
             .timeline-fill::after { opacity: 1; width: 16px; height: 16px; right: -8px; }
 
+            /* 
+               FIX: Drawer on mobile is a full-screen overlay. 
+               We add enough bottom padding so the last fields (including video upload button)
+               are not hidden behind the fixed player bar + mobile nav.
+               Player bar height ≈ 90px, mobile nav = 60px, so total ≈ 150px.
+               We add 170px bottom padding to be safe, plus safe-area.
+            */
             .details-drawer {
                 width: 100%;
                 max-width: 100%;
@@ -1390,13 +1409,14 @@
                 transform: translateY(100%);
                 padding: 20px;
                 padding-top: calc(20px + var(--safe-top));
-                padding-bottom: calc(28px + var(--safe-bottom));
+                padding-bottom: calc(170px + var(--safe-bottom));
                 top: 0;
                 right: 0;
                 left: 0;
                 height: 100vh;
                 height: 100dvh;
                 border-radius: 0;
+                z-index: 70; /* above player (55) and nav (60) */
             }
 
             .details-drawer.open { transform: translateY(0); }
@@ -1429,6 +1449,8 @@
 
             input, .custom-input-row input, .drawer-field .field-value input { font-size: 16px; }
             .track-title, .track-artist, .drawer-field .field-value { -webkit-user-select: none; user-select: none; }
+
+            .mobile-dropdown { max-height: 70vh; }
         }
 
         @media (max-width: 420px) {
@@ -1460,7 +1482,7 @@
             }
             .player-timeline { grid-area: timeline; }
             .main { padding-bottom: calc(var(--mobile-nav-height) + 70px + var(--safe-bottom)); }
-            .details-drawer { padding: 16px; gap: 14px; }
+            .details-drawer { padding: 16px; gap: 14px; padding-bottom: calc(100px + var(--safe-bottom)); }
             .drawer-cover { max-width: 140px; }
             .toast { bottom: calc(var(--mobile-nav-height) + 75px + var(--safe-bottom)); }
         }
@@ -1609,7 +1631,7 @@
         </div>
     </div>
 
-    <!-- MUSIC PICKER BOTTOM SHEET (for mobile upload) -->
+    <!-- MUSIC PICKER BOTTOM SHEET -->
     <div class="music-picker-overlay" id="musicPickerOverlay">
         <div class="music-picker">
             <div class="music-picker-header">
@@ -1618,9 +1640,7 @@
                     <span class="material-icons">close</span>
                 </button>
             </div>
-            <div class="music-picker-body" id="musicPickerBody">
-                <!-- Filled dynamically -->
-            </div>
+            <div class="music-picker-body" id="musicPickerBody"></div>
         </div>
     </div>
 
@@ -1633,14 +1653,10 @@
                 <span class="material-icons">close</span>
             </button>
         </div>
-        <div class="drawer-cover" id="drawerCover" title="Нажмите, чтобы загрузить обложку">
+        <div class="drawer-cover" id="drawerCover">
             <span class="material-icons">album</span>
             <img class="cover-img-drawer" id="drawerCoverImg" alt="" style="display:none;">
             <video id="drawerVideo" muted playsinline preload="metadata" style="display:none;"></video>
-            <div class="cover-overlay-hint" id="drawerCoverHint">
-                <span class="material-icons">image</span> обложка
-            </div>
-            <input type="file" id="coverFileInput" accept="image/*" hidden>
         </div>
         <div class="drawer-field">
             <span class="field-label">Название
@@ -1699,6 +1715,9 @@
     <audio id="audioEl"></audio>
     <video id="videoEl" muted playsinline preload="metadata" style="position:fixed; width:0; height:0; opacity:0; pointer-events:none;"></video>
 
+    <!-- Global cover upload input -->
+    <input type="file" id="coverFileInputGlobal" accept="image/*" hidden>
+
     <script>
         (function() {
             // ---------- CONSTANTS ----------
@@ -1707,7 +1726,7 @@
             const MAX_AUDIO_SIZE_MB = 100;
             const MAX_COVER_SIZE_MB = 5;
             const DB_NAME = 'MzMusicDB';
-            const DB_VERSION = 3; // bumped for covers store
+            const DB_VERSION = 3;
 
             // ---------- STATE ----------
             let tracks = [];
@@ -1722,6 +1741,7 @@
             let objectUrls = {};
             let db = null;
             let mobileMenuTrackIndex = -1;
+            let pendingCoverTrackIndex = -1;
 
             // ---------- DOM ----------
             const libraryBtn = document.getElementById('libraryBtn');
@@ -1760,8 +1780,6 @@
             const drawerClose = document.getElementById('drawerClose');
             const drawerCover = document.getElementById('drawerCover');
             const drawerCoverImg = document.getElementById('drawerCoverImg');
-            const drawerCoverHint = document.getElementById('drawerCoverHint');
-            const coverFileInput = document.getElementById('coverFileInput');
             const drawerVideo = document.getElementById('drawerVideo');
             const detailTitle = document.getElementById('detailTitle');
             const detailArtist = document.getElementById('detailArtist');
@@ -1772,6 +1790,8 @@
             const detailVideoContainer = document.getElementById('detailVideoContainer');
             const uploadVideoBtn = document.getElementById('uploadVideoBtn');
             const videoFileInput = document.getElementById('videoFileInput');
+
+            const coverFileInputGlobal = document.getElementById('coverFileInputGlobal');
 
             const mobileDropdownOverlay = document.getElementById('mobileDropdownOverlay');
             const mobileDropdown = document.getElementById('mobileDropdown');
@@ -1784,7 +1804,6 @@
             const toast = document.getElementById('toast');
             const toastText = document.getElementById('toastText');
 
-            // Detect mobile
             const isMobile = () => window.matchMedia('(max-width: 800px)').matches;
 
             // ---------- INDEXED DB ----------
@@ -1851,7 +1870,6 @@
                 });
             }
 
-            // Audio
             async function saveAudioBlob(id, blob) { try { await idbPut('audio', id, blob); return true; } catch (e) { return false; } }
             async function loadAudioBlob(id) { try { return await idbGet('audio', id); } catch (e) { return null; } }
             async function removeAudioBlob(id) {
@@ -1859,7 +1877,6 @@
                 if (objectUrls['a_' + id]) { try { URL.revokeObjectURL(objectUrls['a_' + id]); } catch (e) {} delete objectUrls['a_' + id]; }
             }
 
-            // Video
             async function saveVideoBlob(id, blob) {
                 if (blob.size > MAX_VIDEO_SIZE_MB * 1024 * 1024) return { ok: false, reason: 'too_large' };
                 try { await idbPut('videos', id, blob); return { ok: true }; } catch (e) { return { ok: false, reason: 'error' }; }
@@ -1870,7 +1887,6 @@
                 if (objectUrls['v_' + id]) { try { URL.revokeObjectURL(objectUrls['v_' + id]); } catch (e) {} delete objectUrls['v_' + id]; }
             }
 
-            // Cover
             async function saveCoverBlob(id, blob) {
                 if (blob.size > MAX_COVER_SIZE_MB * 1024 * 1024) return { ok: false, reason: 'too_large' };
                 try { await idbPut('covers', id, blob); return { ok: true }; } catch (e) { return { ok: false, reason: 'error' }; }
@@ -2032,13 +2048,6 @@
                 return `${m}:${s.toString().padStart(2, '0')}`;
             }
 
-            function formatSize(bytes) {
-                if (!bytes) return '';
-                if (bytes < 1024) return bytes + ' B';
-                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-            }
-
             function showToast(msg) {
                 toastText.textContent = msg;
                 toast.classList.add('show');
@@ -2107,7 +2116,6 @@
 
             function getTrackById(id) { return tracks.find(t => t.id === id); }
 
-            // ---------- PLAYLIST MANAGEMENT ----------
             function getPlaylistsForTrack(trackId) {
                 const result = [];
                 playlists.forEach(p => {
@@ -2137,7 +2145,7 @@
                 return false;
             }
 
-            // ---------- MOBILE DROPDOWN (overlay above player) ----------
+            // ---------- MOBILE DROPDOWN ----------
             function buildDropdownContent(trackIndex) {
                 const track = tracks[trackIndex];
                 if (!track) return '';
@@ -2200,7 +2208,6 @@
                         addTrackToPlaylist(track.id, p);
                         showToast('Добавлено в «' + p + '»');
                     }
-                    // Rebuild dropdown to update check states
                     mobileDropdownContent.innerHTML = buildDropdownContent(trackIndex);
                     if (currentView === 'library') renderLibrary();
                     if (currentView === 'playlists') renderPlaylists();
@@ -2211,14 +2218,11 @@
                 } else if (item.hasAttribute('data-cover-index')) {
                     const idx = parseInt(item.dataset.coverIndex, 10);
                     closeMobileDropdown();
-                    // Trigger cover upload for that track
-                    pendingCoverTrackIndex = idx;
-                    coverFileInput.value = '';
-                    coverFileInput.click();
+                    triggerCoverUpload(idx);
                 }
             });
 
-            // ---------- DESKTOP 3-DOT DROPDOWN ----------
+            // ---------- DESKTOP DROPDOWN ----------
             function closeAllDesktopDropdowns() {
                 document.querySelectorAll('.track-dropdown.open').forEach(d => d.classList.remove('open'));
             }
@@ -2229,10 +2233,54 @@
                 }
             });
 
-            // Track menu click handler is attached during render.
-            // On mobile it opens the overlay; on desktop it toggles the attached dropdown.
+            // ---------- COVER UPLOAD ----------
+            function triggerCoverUpload(trackIndex) {
+                pendingCoverTrackIndex = trackIndex;
+                coverFileInputGlobal.value = '';
+                coverFileInputGlobal.click();
+            }
 
-            // ---------- MUSIC PICKER (mobile only) ----------
+            coverFileInputGlobal.addEventListener('change', async (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file || !file.type.startsWith('image/')) {
+                    if (file) showToast('Выберите изображение');
+                    coverFileInputGlobal.value = '';
+                    return;
+                }
+                const idx = pendingCoverTrackIndex;
+                if (idx < 0 || idx >= tracks.length) { coverFileInputGlobal.value = ''; return; }
+                if (file.size > MAX_COVER_SIZE_MB * 1024 * 1024) {
+                    showToast(`Обложка слишком большая (макс. ${MAX_COVER_SIZE_MB} МБ)`);
+                    coverFileInputGlobal.value = '';
+                    return;
+                }
+
+                const t = tracks[idx];
+                const coverId = uid('c');
+                const result = await saveCoverBlob(coverId, file);
+                if (!result.ok) {
+                    showToast(result.reason === 'too_large' ? 'Обложка слишком большая' : 'Не удалось сохранить обложку');
+                    coverFileInputGlobal.value = '';
+                    return;
+                }
+                if (t.coverId) await removeCoverBlob(t.coverId);
+                t.coverId = coverId;
+                t.coverMime = file.type;
+
+                const url = URL.createObjectURL(file);
+                objectUrls['c_' + coverId] = url;
+
+                persistState();
+                showToast('Обложка установлена');
+                if (currentView === 'library') renderLibrary();
+                if (currentView === 'playlists') renderPlaylists();
+                if (currentDetailIndex === idx) await refreshDrawer(idx);
+                updateStorageInfo();
+                coverFileInputGlobal.value = '';
+                pendingCoverTrackIndex = -1;
+            });
+
+            // ---------- MUSIC PICKER ----------
             function openMusicPicker() {
                 if (!isMobile()) {
                     fileInput.click();
@@ -2271,61 +2319,6 @@
             musicPickerClose.addEventListener('click', closeMusicPicker);
             musicPickerOverlay.addEventListener('click', (e) => {
                 if (e.target === musicPickerOverlay) closeMusicPicker();
-            });
-
-            // ---------- COVER UPLOAD ----------
-            let pendingCoverTrackIndex = -1;
-
-            // Drawer cover click → upload cover
-            drawerCover.addEventListener('click', (e) => {
-                // Don't trigger if clicking on video or file input
-                if (e.target.closest('video') || e.target === coverFileInput) return;
-                if (currentDetailIndex < 0) return;
-                pendingCoverTrackIndex = currentDetailIndex;
-                coverFileInput.value = '';
-                coverFileInput.click();
-            });
-
-            coverFileInput.addEventListener('change', async (e) => {
-                const file = e.target.files && e.target.files[0];
-                if (!file || !file.type.startsWith('image/')) {
-                    if (file) showToast('Выберите изображение');
-                    coverFileInput.value = '';
-                    return;
-                }
-                const idx = pendingCoverTrackIndex >= 0 ? pendingCoverTrackIndex : currentDetailIndex;
-                if (idx < 0 || idx >= tracks.length) { coverFileInput.value = ''; return; }
-                if (file.size > MAX_COVER_SIZE_MB * 1024 * 1024) {
-                    showToast(`Обложка слишком большая (макс. ${MAX_COVER_SIZE_MB} МБ)`);
-                    coverFileInput.value = '';
-                    return;
-                }
-
-                const t = tracks[idx];
-                const coverId = uid('c');
-                const result = await saveCoverBlob(coverId, file);
-                if (!result.ok) {
-                    showToast(result.reason === 'too_large' ? 'Обложка слишком большая' : 'Не удалось сохранить обложку');
-                    coverFileInput.value = '';
-                    return;
-                }
-                // remove old cover
-                if (t.coverId) await removeCoverBlob(t.coverId);
-                t.coverId = coverId;
-                t.coverMime = file.type;
-
-                // create object URL
-                const url = URL.createObjectURL(file);
-                objectUrls['c_' + coverId] = url;
-
-                persistState();
-                showToast('Обложка установлена');
-                if (currentView === 'library') renderLibrary();
-                if (currentView === 'playlists') renderPlaylists();
-                if (currentDetailIndex === idx) await refreshDrawer(idx);
-                updateStorageInfo();
-                coverFileInput.value = '';
-                pendingCoverTrackIndex = -1;
             });
 
             // ---------- PLAYBACK ----------
@@ -2537,7 +2530,6 @@
                     drawerVideo.style.display = 'none';
                     drawerVideo.removeAttribute('src');
                     drawerVideo.load();
-                    drawerCoverHint.style.display = 'flex';
                     videoToggleBtn.classList.remove('active');
                     updatePlayerInfo();
                     return;
@@ -2549,7 +2541,6 @@
                     if (url) {
                         drawerVideo.src = url;
                         drawerVideo.style.display = 'block';
-                        drawerCoverHint.style.display = 'none';
                         drawerVideo.muted = true;
                         try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
                         if (isPlaying) drawerVideo.play().catch(() => {});
@@ -2576,7 +2567,6 @@
                     return;
                 }
 
-                // Pre-load cover URLs for cards
                 const coverUrls = {};
                 for (let i = 0; i < tracks.length; i++) {
                     if (tracks[i].coverId) {
@@ -2590,7 +2580,6 @@
                     const isActive = (index === activeTrackIndex && isPlaying);
                     const coverUrl = track.coverId ? coverUrls[track.coverId] : null;
 
-                    // Build dropdown items (desktop)
                     let dropdownItems = `<div class="dropdown-header">Добавить в плейлист</div>`;
                     playlists.forEach(p => {
                         const already = (playlistTrackMap[p] || []).includes(track.id);
@@ -2619,6 +2608,9 @@
                                 <div class="cover-play" title="${isActive ? 'Пауза' : 'Воспроизвести'}">
                                     <span class="material-icons play-icon"></span>
                                 </div>
+                                <button class="cover-upload-btn" data-cover-upload-index="${index}" title="Загрузить обложку">
+                                    <span class="material-icons">photo_camera</span>
+                                </button>
                             </div>
                             <button class="track-menu-btn" data-menu-index="${index}" title="Опции">
                                 <span class="material-icons">more_vert</span>
@@ -2644,8 +2636,19 @@
                 // Cover play
                 document.querySelectorAll('.track-cover').forEach(cover => {
                     cover.addEventListener('click', (e) => {
+                        // Don't play if clicking the cover upload button
+                        if (e.target.closest('.cover-upload-btn')) return;
                         e.stopPropagation();
                         playTrack(parseInt(cover.dataset.playIndex, 10), true);
+                    });
+                });
+
+                // Cover upload button
+                document.querySelectorAll('.cover-upload-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const idx = parseInt(btn.dataset.coverUploadIndex, 10);
+                        triggerCoverUpload(idx);
                     });
                 });
 
@@ -2663,14 +2666,12 @@
                         e.stopPropagation();
                         const idx = parseInt(btn.dataset.menuIndex, 10);
                         if (isMobile()) {
-                            // toggle: if same track open → close
                             if (mobileDropdownOverlay.classList.contains('open') && mobileMenuTrackIndex === idx) {
                                 closeMobileDropdown();
                             } else {
                                 openMobileDropdown(idx);
                             }
                         } else {
-                            // desktop: toggle attached dropdown
                             const dropdown = document.getElementById('dropdown-' + idx);
                             const isOpen = dropdown.classList.contains('open');
                             closeAllDesktopDropdowns();
@@ -2679,7 +2680,7 @@
                     });
                 });
 
-                // Desktop dropdown item handlers
+                // Desktop dropdown items
                 document.querySelectorAll('.track-dropdown').forEach(dropdown => {
                     dropdown.addEventListener('click', (e) => {
                         const item = e.target.closest('.dropdown-item');
@@ -2825,7 +2826,6 @@
                 const inLists = getPlaylistsForTrack(t.id);
                 detailPlaylists.textContent = inLists.length ? inLists.join(', ') : 'Не добавлен ни в один';
 
-                // Cover
                 if (t.coverId) {
                     const url = await getCoverUrlForTrack(t);
                     if (url) {
@@ -2838,12 +2838,10 @@
                     drawerCover.querySelector('.material-icons').style.display = '';
                 }
 
-                // Video
                 if (t.videoId) {
                     const url = await getVideoUrlForTrack(t);
                     if (url) {
                         drawerVideo.style.display = 'block';
-                        drawerCoverHint.style.display = 'none';
                         if (drawerVideo.src !== url) { drawerVideo.src = url; drawerVideo.load(); }
                         drawerVideo.muted = true;
                         try { drawerVideo.currentTime = audioEl.currentTime; } catch (e) {}
@@ -2884,7 +2882,6 @@
                     drawerVideo.style.display = 'none';
                     drawerVideo.removeAttribute('src');
                     drawerVideo.load();
-                    drawerCoverHint.style.display = 'flex';
                     detailVideoContainer.innerHTML = `
                         <button class="upload-video-btn" id="uploadVideoBtnInner">
                             <span class="material-icons">video_call</span> Загрузить клип
@@ -3166,7 +3163,7 @@
                 if (confirm('Удалить все сохранённые треки, клипы и плейлисты?')) clearAllStorage();
             });
 
-            // ---------- THEME / COLORS ----------
+            // ---------- THEME ----------
             const accentColorPicker = document.getElementById('accentColorPicker');
             const bgColorPicker = document.getElementById('bgColorPicker');
             const darkThemeBtn = document.getElementById('darkThemeBtn');
@@ -3272,7 +3269,6 @@
                 if (loaded && tracks.length > 0) showToast(`MzMusic: загружено ${tracks.length} треков`);
             })();
 
-            // Prevent double-tap zoom on iOS
             document.querySelectorAll('.player-ctrl-btn, .nav-btn, .mobile-nav-btn, .settings-btn, .cover-play, .timeline-track').forEach(el => {
                 el.addEventListener('touchstart', () => {}, { passive: true });
             });
