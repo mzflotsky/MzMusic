@@ -482,16 +482,13 @@ input,.custom-input-row input,.drawer-field .field-value input{font-size:16px}
 const LS_KEY='mzmusic_data_v9',LS_VIEW='mzmusic_view',LS_SHUF='mzmusic_shuffle',LS_REP='mzmusic_repeat',LS_VOL='mzmusic_volume',LS_MUTE='mzmusic_muted';
 const MAX_V=160,MAX_VIDEO=200,MAX_AUDIO=100,MAX_COVER=5,DB_NAME='MzMusicDB',DB_VER=5,CLIP_TOL=30;
 
-// State
 let tracks=[],playlists=['Мой плейлист','Избранное'],trackMap={},activeIdx=-1,isPlaying=false,curView='library',settingsOpen=false,detailIdx=-1,expPlaylist=null,urls={},db=null,mobileMenuIdx=-1,pendingCoverIdx=-1;
 let viewMode=localStorage.getItem(LS_VIEW)||'grid',shuffleMode=localStorage.getItem(LS_SHUF)==='1',repeatMode=localStorage.getItem(LS_REP)==='1';
 let volPct=Math.min(MAX_V,Math.max(0,parseInt(localStorage.getItem(LS_VOL)||'100',10)||100));
 let isMuted=localStorage.getItem(LS_MUTE)==='1';
 let audioCtx=null,gainNode=null,audioSrc=null;
-// Cache loaded cover URLs per track id (avoid reloading)
 let coverCache={};
 
-// DOM
 const $=id=>document.getElementById(id);
 const libBtn=$('libraryBtn'),plBtn=$('playlistsBtn'),setBtn=$('settingsBtn');
 const mLibBtn=$('mobileLibraryBtn'),mPlBtn=$('mobilePlaylistsBtn'),mSetBtn=$('mobileSettingsBtn');
@@ -511,7 +508,6 @@ const mdOverlay=$('mobileDropdownOverlay'),mdContent=$('mobileDropdownContent');
 const toast=$('toast'),toastTxt=$('toastText');
 const isMobile=()=>matchMedia('(max-width:800px)').matches;
 
-// ---------- IDB ----------
 function openDB(){return new Promise((res,rej)=>{if(db)return res(db);const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const d=e.target.result;['videos','audio','covers'].forEach(s=>{if(!d.objectStoreNames.contains(s))d.createObjectStore(s)})};r.onsuccess=e=>{db=e.target.result;res(db)};r.onerror=e=>rej(e.target.error)})}
 function idbPut(s,k,v){return new Promise(async(res,rej)=>{try{const d=await openDB();const tx=d.transaction(s,'readwrite');tx.objectStore(s).put(v,k);tx.oncomplete=()=>res(true);tx.onerror=e=>rej(e.target.error)}catch(e){rej(e)}})}
 function idbGet(s,k){return new Promise(async(res,rej)=>{try{const d=await openDB();const tx=d.transaction(s,'readonly');const r=tx.objectStore(s).get(k);r.onsuccess=()=>res(r.result||null);r.onerror=e=>rej(e.target.error)}catch(e){rej(e)}})}
@@ -528,9 +524,8 @@ const saveCover=async(id,b)=>{if(b.size>MAX_COVER*1048576)return{ok:false};try{a
 const loadCover=async(id)=>{try{return await idbGet('covers',id)}catch(e){return null}};
 const delCover=async(id)=>{await idbDel('covers',id);if(urls['c_'+id]){try{URL.revokeObjectURL(urls['c_'+id])}catch(e){};delete urls['c_'+id]}};
 
-// Lazy getters — only called when actually needed
 async function getAudioUrl(t){
-  if(!t.audioId)return null;
+  if(!t||!t.audioId)return null;
   const k='a_'+t.audioId;
   if(urls[k])return urls[k];
   const b=await loadAudio(t.audioId);
@@ -538,7 +533,7 @@ async function getAudioUrl(t){
   const u=URL.createObjectURL(b);urls[k]=u;return u;
 }
 async function getVideoUrl(t){
-  if(!t.videoId)return null;
+  if(!t||!t.videoId)return null;
   const k='v_'+t.videoId;
   if(urls[k])return urls[k];
   const b=await loadVideo(t.videoId);
@@ -546,7 +541,7 @@ async function getVideoUrl(t){
   const u=URL.createObjectURL(b);urls[k]=u;return u;
 }
 async function getCoverUrl(t){
-  if(!t.coverId)return null;
+  if(!t||!t.coverId)return null;
   if(coverCache[t.id]!==undefined)return coverCache[t.id];
   const k='c_'+t.coverId;
   if(urls[k]){coverCache[t.id]=urls[k];return urls[k]}
@@ -555,7 +550,6 @@ async function getCoverUrl(t){
   const u=URL.createObjectURL(b);urls[k]=u;coverCache[t.id]=u;return u;
 }
 
-// ---------- Persistence ----------
 function serialize(){
   return{
     tracks:tracks.map(t=>({id:t.id,title:t.title,artist:t.artist,album:t.album,duration:t.duration,format:t.format,mime:t.mime,audioId:t.audioId,videoId:t.videoId,videoMime:t.videoMime,videoDuration:t.videoDuration,coverId:t.coverId,coverMime:t.coverMime,_on:t._originalName,_os:t._originalSize,_lm:t._lastModified})),
@@ -586,7 +580,6 @@ async function clearAll(){
   updPlayIcon();updPlayer();goView('library');updateStorage();toast('Данные очищены');
 }
 
-// ---------- Helpers ----------
 const fmt=s=>{if(!isFinite(s)||s<0)return'0:00';const m=Math.floor(s/60),x=Math.floor(s%60);return m+':'+String(x).padStart(2,'0')};
 function toast(msg,warn){toastTxt.textContent=msg;toast.classList.toggle('warn',!!warn);toast.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>toast.classList.remove('show'),2800)}
 const uid=p=>(p||'id')+'_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8);
@@ -617,7 +610,6 @@ function updPlayer(){
   if(t.videoId){vidBtn.style.opacity='1';vidBtn.classList.toggle('active',drVideo.style.display!=='none'&&!!drVideo.src)}else{vidBtn.style.opacity='0.4';vidBtn.classList.remove('active')}
 }
 
-// ---------- Volume ----------
 function setupAudioGraph(){
   if(audioCtx)return;
   try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();audioSrc=audioCtx.createMediaElementSource(audio);gainNode=audioCtx.createGain();audioSrc.connect(gainNode);gainNode.connect(audioCtx.destination)}catch(e){audioCtx=null}
@@ -643,7 +635,6 @@ volBtn.addEventListener('click',()=>{isMuted=!isMuted;if(!isMuted&&volPct===0)vo
 document.addEventListener('click',()=>{if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{})},{passive:true});
 document.addEventListener('touchstart',()=>{if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume().catch(()=>{})},{passive:true});
 
-// ---------- View mode ----------
 function applyView(m){
   viewMode=m;localStorage.setItem(LS_VIEW,m);
   viewIcon.textContent=m==='list'?'view_list':'grid_view';
@@ -657,13 +648,11 @@ document.addEventListener('click',e=>{if(!e.target.closest('#viewSwitcher'))view
 document.querySelectorAll('.view-switcher-item').forEach(i=>i.addEventListener('click',()=>{viewMenu.classList.remove('open');applyView(i.dataset.view)}));
 applyView(viewMode);
 
-// ---------- Shuffle/Repeat ----------
 function updSR(){shufBtn.classList.toggle('active',shuffleMode);repBtn.classList.toggle('active',repeatMode)}
 shufBtn.addEventListener('click',()=>{shuffleMode=!shuffleMode;localStorage.setItem(LS_SHUF,shuffleMode?'1':'0');updSR();toast(shuffleMode?'Перемешивание включено':'Перемешивание выключено')});
 repBtn.addEventListener('click',()=>{repeatMode=!repeatMode;localStorage.setItem(LS_REP,repeatMode?'1':'0');updSR();toast(repeatMode?'Повтор трека включён':'Повтор трека выключен')});
 updSR();
 
-// ---------- Storage info ----------
 async function updateStorage(){
   try{
     let ac=0,vc=0,cc=0;const d=await openDB();
@@ -680,7 +669,6 @@ async function updateStorage(){
   }catch(e){storageUsed.textContent='—'}
 }
 
-// ---------- Dropdowns ----------
 async function buildDD(t,idx){
   let h='<div class="dropdown-header">Добавить в плейлист</div>';
   playlists.forEach(p=>{const has=(trackMap[p]||[]).includes(t.id);h+='<button class="dropdown-item pl" data-add-pl="'+p.replace(/"/g,'&quot;')+'" data-track-index="'+idx+'"><span class="material-icons">'+(has?'check':'playlist_add')+'</span>'+p+'</button>'});
@@ -709,7 +697,6 @@ function attachDDs(root){
 const closeDD=()=>document.querySelectorAll('.track-dropdown.open').forEach(d=>d.classList.remove('open'));
 document.addEventListener('click',e=>{if(!e.target.closest('.track-dropdown')&&!e.target.closest('.track-menu-btn')&&!e.target.closest('.row-menu-btn'))closeDD()});
 
-// ---------- Mobile menu ----------
 function buildMD(idx){
   const t=tracks[idx];if(!t)return'';
   let h='<div class="mobile-dropdown-title">'+t.title+'</div>';
@@ -736,7 +723,6 @@ mdContent.addEventListener('click',e=>{
   else if(it.hasAttribute('data-cover-index')){closeMD();triggerCover(+it.dataset.coverIndex)}
 });
 
-// ---------- Cover upload ----------
 function triggerCover(i){pendingCoverIdx=i;coverInput.value='';coverInput.click()}
 coverInput.addEventListener('change',async e=>{
   const f=e.target.files&&e.target.files[0];
@@ -754,9 +740,7 @@ coverInput.addEventListener('change',async e=>{
   updateStorage();coverInput.value='';pendingCoverIdx=-1;
 });
 
-// ---------- Render helpers ----------
 async function renderCoverInto(el,t){
-  // Lazy: only load cover when card is rendered
   const u=await getCoverUrl(t);
   if(u){el.classList.add('has-custom');const img=document.createElement('img');img.className=el.classList.contains('row-cover')?'row-cover-img':'cover-img';img.src=u;img.loading='lazy';img.decoding='async';el.insertBefore(img,el.firstChild)}
 }
@@ -793,19 +777,15 @@ async function buildList(){
 }
 
 async function attachHandlers(root){
-  // Covers - lazy load AFTER DOM insert
   root.querySelectorAll('.track-cover,.row-cover').forEach(el=>{
     const idx=+el.dataset.playIndex;
     if(!isNaN(idx)&&tracks[idx])renderCoverInto(el,tracks[idx]);
   });
-  // Play on cover
   root.querySelectorAll('.track-cover,.row-cover').forEach(c=>c.addEventListener('click',e=>{
     if(e.target.closest('.cover-upload-btn'))return;
     e.stopPropagation();playTrack(+c.dataset.playIndex,true);
   }));
-  // Cover upload button
   root.querySelectorAll('.cover-upload-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();triggerCover(+b.dataset.coverUploadIndex)}));
-  // Title click opens drawer
   root.querySelectorAll('.track-title,.row-info').forEach(el=>el.addEventListener('click',e=>{
     e.stopPropagation();openDrawer(+el.dataset.detailIndex);
   }));
@@ -862,7 +842,6 @@ async function renderPlaylists(){
   content.innerHTML=h;
   content.querySelectorAll('.playlist-chip').forEach(c=>c.addEventListener('click',()=>{const n=c.dataset.playlistName;expPlaylist=expPlaylist===n?null:n;renderPlaylists()}));
   await attachHandlers(content);
-  // Create playlist
   const cBtn=document.getElementById('createPlaylistBtn'),nIn=document.getElementById('playlistNameInput');
   const create=()=>{
     if(!nIn)return;const nn=nIn.value.trim();
@@ -874,7 +853,6 @@ async function renderPlaylists(){
   if(nIn){nIn.addEventListener('keypress',e=>{if(e.key==='Enter'){e.preventDefault();create()}});nIn.focus()}
 }
 
-// ---------- Playback ----------
 function shuffled(current){
   if(tracks.length<=1)return current;
   const cand=[];for(let i=0;i<tracks.length;i++)if(i!==current)cand.push(i);
@@ -985,7 +963,6 @@ vidBtn.addEventListener('click',async()=>{
   },120);
 });
 
-// ---------- Upload ----------
 uploadBtn.addEventListener('click',()=>fileInput.click());
 fileInput.addEventListener('change',async e=>{
   const files=Array.from(e.target.files||[]);if(!files.length)return;
@@ -1005,7 +982,6 @@ fileInput.addEventListener('change',async e=>{
 });
 function readMeta(url){return new Promise(res=>{const a=new Audio();a.preload='metadata';a.src=url;const done=()=>{const d=(isFinite(a.duration)&&a.duration>0)?a.duration:0;a.src='';res({duration:d})};a.addEventListener('loadedmetadata',done,{once:true});a.addEventListener('error',done,{once:true});setTimeout(()=>{if(!a.duration)res({duration:0})},2500)})}
 
-// ---------- Drawer ----------
 async function refreshDrawer(i){
   if(i<0||i>=tracks.length)return;const t=tracks[i];
   dTitle.textContent=t.title;dArtist.textContent=t.artist||'Неизвестный исполнитель';dAlbum.textContent=t.album||'—';
@@ -1072,7 +1048,6 @@ vidInput.addEventListener('change',async e=>{
   if(curView==='library')renderLibrary();updPlayer();updateStorage();
 });
 
-// ---------- Navigation ----------
 function updNav(v){
   libBtn.classList.toggle('active',v==='library');
   plBtn.classList.toggle('active',v==='playlists');
@@ -1102,7 +1077,6 @@ if(mPlBtn)mPlBtn.addEventListener('click',()=>goView('playlists'));
 if(mSetBtn)mSetBtn.addEventListener('click',()=>{if(settingsOpen)goView(curView);else showSettings()});
 clearBtn.addEventListener('click',()=>{if(confirm('Удалить все сохранённые треки, клипы и плейлисты?'))clearAll()});
 
-// ---------- Theme ----------
 const accentPick=$('accentColorPicker'),bgPick=$('bgColorPicker'),darkBtn=$('darkThemeBtn'),lightBtn=$('lightThemeBtn');
 darkBtn.addEventListener('click',()=>{
   const s=document.documentElement.style;
@@ -1132,14 +1106,11 @@ bgPick.addEventListener('input',e=>{
   else{lightBtn.classList.add('active');darkBtn.classList.remove('active')}
 });
 
-// ---------- Init ----------
 (async function(){
   document.documentElement.style.setProperty('--accent-soft','#2a5a9e');
   const ov=document.createElement('div');ov.className='loading-overlay';ov.innerHTML='<div class="spinner"></div><span>Загрузка MzMusic...</span>';document.body.appendChild(ov);
   try{await openDB()}catch(e){}
   const loaded=await loadState();
-  // IMPORTANT: Do NOT preload audio/video/cover blobs here.
-  // They are loaded lazily on play or render.
   applyVolume();
   goView('library');
   updPlayIcon();updPlayer();await updateStorage();
@@ -1147,7 +1118,6 @@ bgPick.addEventListener('input',e=>{
   if(loaded&&tracks.length)toast('MzMusic: загружено '+tracks.length+' треков');
 })();
 
-// Prevent double-tap zoom
 document.querySelectorAll('.player-ctrl-btn,.nav-btn,.mobile-nav-btn,.settings-btn,.cover-play,.timeline-track').forEach(el=>el.addEventListener('touchstart',()=>{},{passive:true}));
 })();
 </script>
