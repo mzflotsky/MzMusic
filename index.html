@@ -70,6 +70,9 @@ body{font-family:var(--font-mono);background:var(--bg-primary);color:var(--text-
 .cover-upload-btn{position:absolute;bottom:8px;left:8px;width:32px;height:32px;border-radius:10px;background:rgba(15,15,18,.75);border:1px solid var(--border-light);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:4;transition:var(--transition);backdrop-filter:blur(6px);padding:0}
 .cover-upload-btn:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .cover-upload-btn .material-icons{font-size:16px}
+.cover-remove-btn{position:absolute;bottom:8px;left:46px;width:32px;height:32px;border-radius:10px;background:rgba(15,15,18,.75);border:1px solid var(--border-light);color:#ff6b6b;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:4;transition:var(--transition);backdrop-filter:blur(6px);padding:0}
+.cover-remove-btn:hover{background:#ff6b6b;border-color:#ff6b6b;color:#fff}
+.cover-remove-btn .material-icons{font-size:16px}
 .track-meta{display:flex;flex-direction:column;gap:3px;min-width:0;padding-right:36px}
 .track-title{font-weight:600;font-size:.9rem;color:var(--text-primary);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;transition:color .15s}
 .track-title:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
@@ -120,7 +123,11 @@ body{font-family:var(--font-mono);background:var(--bg-primary);color:var(--text-
 .dropdown-item .material-icons{font-size:16px;color:var(--accent)}
 .dropdown-item.pl{padding-left:32px;font-size:.78rem}
 .dropdown-item.pl .material-icons{font-size:14px}
+.dropdown-item.danger{color:#ff6b6b}
+.dropdown-item.danger .material-icons{color:#ff6b6b}
+.dropdown-item.danger:hover{background:rgba(255,107,107,.1)}
 .dropdown-header{padding:8px 14px 4px;font-size:.6rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px}
+.dropdown-sep{border-top:1px solid var(--border-light);margin:4px 0}
 .settings-panel{display:none;flex-direction:column;gap:30px;background:var(--bg-secondary);padding:30px;border-radius:var(--radius-card);border:1px solid var(--border-light)}
 .settings-panel.visible{display:flex}
 .settings-group{display:flex;flex-direction:column;gap:12px}
@@ -195,6 +202,12 @@ body{font-family:var(--font-mono);background:var(--bg-primary);color:var(--text-
 .drawer-cover .cover-img-drawer{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:1}
 .drawer-cover video{width:100%;height:100%;object-fit:cover;position:relative;z-index:2;border-radius:var(--radius-card);outline:2px solid var(--accent);outline-offset:-2px}
 .drawer-cover .material-icons{font-size:80px;opacity:.5;position:relative;z-index:1}
+.drawer-cover-actions{display:flex;gap:8px;flex-wrap:wrap}
+.drawer-action-btn{flex:1;background:var(--bg-elevated);border:1px solid var(--border-light);color:var(--text-primary);padding:10px 14px;border-radius:12px;font-family:var(--font-mono);font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:var(--transition);min-width:0}
+.drawer-action-btn:hover{border-color:var(--accent);color:var(--accent)}
+.drawer-action-btn.danger{color:#ff6b6b;border-color:rgba(255,107,107,.4)}
+.drawer-action-btn.danger:hover{background:rgba(255,107,107,.12);border-color:#ff6b6b}
+.drawer-action-btn .material-icons{font-size:16px}
 .drawer-field{display:flex;flex-direction:column;gap:4px;padding-bottom:14px;border-bottom:1px solid var(--border-light);flex-shrink:0}
 .drawer-field:last-child{border-bottom:none}
 .drawer-field .field-label{font-size:.65rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:6px}
@@ -261,7 +274,8 @@ body{flex-direction:column}
 .track-menu-btn{top:18px;right:18px;width:30px;height:30px;border-radius:9px}
 .track-menu-btn .material-icons{font-size:16px}
 .cover-upload-btn{bottom:6px;left:6px;width:28px;height:28px;border-radius:8px}
-.cover-upload-btn .material-icons{font-size:14px}
+.cover-remove-btn{bottom:6px;left:38px;width:28px;height:28px;border-radius:8px}
+.cover-upload-btn .material-icons,.cover-remove-btn .material-icons{font-size:14px}
 .track-dropdown{display:none!important}
 .player-bar{position:fixed;bottom:calc(var(--mobile-nav-height) + var(--safe-bottom));left:0;right:0;padding:10px 14px;padding-left:calc(14px + var(--safe-left));padding-right:calc(14px + var(--safe-right));z-index:55;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"controls info video" "timeline timeline timeline" "volume volume volume";gap:6px 10px;align-items:center;border-top:1px solid var(--border-light);box-shadow:0 -4px 16px rgba(0,0,0,.35)}
 .player-controls{grid-area:controls;gap:0}
@@ -276,7 +290,7 @@ body{flex-direction:column}
 .video-toggle-btn{width:34px;height:34px}
 .video-toggle-btn .material-icons{font-size:18px}
 .player-timeline .time-label{font-size:.6rem;min-width:30px}
-.player-timeline .timeline-track{height:8px}
+.player-timeline .player-timeline .timeline-track{height:8px}
 .timeline-fill::after{opacity:1;width:16px;height:16px;right:-8px}
 .volume-slider-wrap{width:180px}
 .volume-value{min-width:46px;font-size:.65rem}
@@ -448,6 +462,10 @@ input,.custom-input-row input,.drawer-field .field-value input{font-size:16px}
 <img class="cover-img-drawer" id="drawerCoverImg" alt="" style="display:none">
 <video id="drawerVideo" muted playsinline preload="metadata" style="display:none"></video>
 </div>
+<div class="drawer-cover-actions">
+<button class="drawer-action-btn" id="drawerChangeCoverBtn"><span class="material-icons">photo_camera</span> Сменить обложку</button>
+<button class="drawer-action-btn danger" id="drawerRemoveCoverBtn"><span class="material-icons">image_not_supported</span> Удалить обложку</button>
+</div>
 <div class="drawer-field">
 <span class="field-label">Название <button class="edit-btn" data-edit="title"><span class="material-icons">edit</span></button></span>
 <div class="field-value" id="detailTitle">—</div>
@@ -470,6 +488,7 @@ input,.custom-input-row input,.drawer-field .field-value input{font-size:16px}
 <input type="file" id="videoFileInput" accept="video/*" hidden>
 </div>
 </div>
+<button class="drawer-action-btn danger" id="drawerDeleteTrackBtn" style="width:100%"><span class="material-icons">delete_forever</span> Удалить трек</button>
 </aside>
 
 <div class="toast" id="toast"><span class="material-icons">check_circle</span><span id="toastText">Готово</span></div>
@@ -481,7 +500,7 @@ input,.custom-input-row input,.drawer-field .field-value input{font-size:16px}
 <script>
 (function(){
 'use strict';
-const LS_KEY='mzmusic_data_v12',LS_VIEW='mzmusic_view',LS_SHUF='mzmusic_shuffle',LS_REP='mzmusic_repeat',LS_VOL='mzmusic_volume',LS_MUTE='mzmusic_muted';
+const LS_KEY='mzmusic_data_v13',LS_VIEW='mzmusic_view',LS_SHUF='mzmusic_shuffle',LS_REP='mzmusic_repeat',LS_VOL='mzmusic_volume',LS_MUTE='mzmusic_muted';
 const MAX_V=160,MAX_VIDEO=200,MAX_AUDIO=100,MAX_COVER=5,DB_NAME='MzMusicDB',DB_VER=5,CLIP_TOL=30;
 
 let tracks=[],playlists=['Мой плейлист','Избранное'],trackMap={},activeIdx=-1,isPlaying=false,curView='library',settingsOpen=false,detailIdx=-1,expPlaylist=null,urls={},db=null,mobileMenuIdx=-1,pendingCoverIdx=-1;
@@ -507,6 +526,7 @@ const vidBtn=$('videoToggleBtn');
 const drOverlay=$('drawerOverlay'),dr=$('detailsDrawer'),drClose=$('drawerClose'),drCover=$('drawerCover'),drCoverImg=$('drawerCoverImg'),drVideo=$('drawerVideo');
 const dTitle=$('detailTitle'),dArtist=$('detailArtist'),dAlbum=$('detailAlbum'),dDur=$('detailDuration'),dFmt=$('detailFormat'),dPl=$('detailPlaylists'),dVidBox=$('detailVideoContainer');
 const upVidBtn=$('uploadVideoBtn'),vidInput=$('videoFileInput'),coverInput=$('coverFileInputGlobal');
+const drawerChangeCoverBtn=$('drawerChangeCoverBtn'),drawerRemoveCoverBtn=$('drawerRemoveCoverBtn'),drawerDeleteTrackBtn=$('drawerDeleteTrackBtn');
 const mdOverlay=$('mobileDropdownOverlay'),mdContent=$('mobileDropdownContent');
 const toast=$('toast'),toastTxt=$('toastText');
 const isMobile=()=>matchMedia('(max-width:800px)').matches;
@@ -531,7 +551,6 @@ async function getAudioUrl(t){if(!t||!t.audioId)return null;const k='a_'+t.audio
 async function getVideoUrl(t){if(!t||!t.videoId)return null;const k='v_'+t.videoId;if(urls[k])return urls[k];const b=await loadVideo(t.videoId);if(!b)return null;const u=URL.createObjectURL(b);urls[k]=u;return u}
 async function getCoverUrl(t){if(!t||!t.coverId)return null;if(coverCache[t.id]!==undefined)return coverCache[t.id];const k='c_'+t.coverId;if(urls[k]){coverCache[t.id]=urls[k];return urls[k]}const b=await loadCover(t.coverId);if(!b){coverCache[t.id]=null;return null}const u=URL.createObjectURL(b);urls[k]=u;coverCache[t.id]=u;return u}
 
-// Grab a frame from the MIDDLE of the video, cropped to square
 function grabVideoFrame(videoUrl,trackId){
   if(videoFrameCache[trackId])return Promise.resolve(videoFrameCache[trackId]);
   return new Promise(resolve=>{
@@ -556,7 +575,7 @@ function grabVideoFrame(videoUrl,trackId){
     v.addEventListener('loadeddata',()=>{
       try{
         const d=isFinite(v.duration)&&v.duration>0?v.duration:5;
-        v.currentTime=d/2; // middle of the video
+        v.currentTime=d/2;
       }catch(e){}
     },{once:true});
     v.addEventListener('seeked',finish,{once:true});
@@ -565,10 +584,10 @@ function grabVideoFrame(videoUrl,trackId){
   });
 }
 
-function serialize(){return{tracks:tracks.map(t=>({id:t.id,title:t.title,artist:t.artist,album:t.album,duration:t.duration,format:t.format,mime:t.mime,audioId:t.audioId,videoId:t.videoId,videoMime:t.videoMime,videoDuration:t.videoDuration,coverId:t.coverId,coverMime:t.coverMime,_on:t._originalName,_os:t._originalSize,_lm:t._lastModified})),playlists,playlistTrackMap:trackMap,version:12}}
+function serialize(){return{tracks:tracks.map(t=>({id:t.id,title:t.title,artist:t.artist,album:t.album,duration:t.duration,format:t.format,mime:t.mime,audioId:t.audioId,videoId:t.videoId,videoMime:t.videoMime,videoDuration:t.videoDuration,coverId:t.coverId,coverMime:t.coverMime,_on:t._originalName,_os:t._originalSize,_lm:t._lastModified})),playlists,playlistTrackMap:trackMap,version:13}}
 function persist(){try{localStorage.setItem(LS_KEY,JSON.stringify(serialize()))}catch(e){}}
 async function loadState(){
-  const raw=localStorage.getItem(LS_KEY)||localStorage.getItem('mzmusic_data_v11')||localStorage.getItem('mzmusic_data_v10')||localStorage.getItem('mzmusic_data_v9')||localStorage.getItem('mzmusic_data_v8')||localStorage.getItem('mzmusic_data_v7')||localStorage.getItem('mzmusic_data_v6')||localStorage.getItem('mzmusic_data_v5')||localStorage.getItem('mzmusic_data_v4')||localStorage.getItem('mzmusic_data_v3')||localStorage.getItem('mzmusic_data_v2')||localStorage.getItem('mzmusic_data_v1');
+  const raw=localStorage.getItem(LS_KEY)||localStorage.getItem('mzmusic_data_v12')||localStorage.getItem('mzmusic_data_v11')||localStorage.getItem('mzmusic_data_v10')||localStorage.getItem('mzmusic_data_v9')||localStorage.getItem('mzmusic_data_v8')||localStorage.getItem('mzmusic_data_v7')||localStorage.getItem('mzmusic_data_v6')||localStorage.getItem('mzmusic_data_v5')||localStorage.getItem('mzmusic_data_v4')||localStorage.getItem('mzmusic_data_v3')||localStorage.getItem('mzmusic_data_v2')||localStorage.getItem('mzmusic_data_v1');
   if(!raw)return false;
   try{
     const d=JSON.parse(raw);
@@ -622,7 +641,6 @@ function updPlayer(){
   if(t.videoId){vidBtn.style.opacity='1';vidBtn.classList.toggle('active',drVideo.style.display!=='none'&&!!drVideo.src)}else{vidBtn.style.opacity='0.4';vidBtn.classList.remove('active')}
 }
 
-// Re-evaluate all cover videos against current active track state.
 function refreshCoverVideos(){
   document.querySelectorAll('.track-cover,.row-cover').forEach(el=>{
     const idx=+el.dataset.playIndex;
@@ -707,12 +725,12 @@ async function buildDD(t,idx){
   let h='<div class="dropdown-header">Добавить в плейлист</div>';
   playlists.forEach(p=>{const has=(trackMap[p]||[]).includes(t.id);h+='<button class="dropdown-item pl" data-add-pl="'+p.replace(/"/g,'&quot;')+'" data-track-index="'+idx+'"><span class="material-icons">'+(has?'check':'playlist_add')+'</span>'+p+'</button>'});
   if(!playlists.length)h+='<div style="padding:8px 14px;font-size:.7rem;color:var(--text-secondary)">Нет плейлистов</div>';
-  h+='<div style="border-top:1px solid var(--border-light);margin:4px 0"></div>';
+  h+='<div class="dropdown-sep"></div>';
   h+='<button class="dropdown-item" data-details-index="'+idx+'"><span class="material-icons">info</span> Подробнее</button>';
+  if(t.coverId)h+='<button class="dropdown-item danger" data-remove-cover-index="'+idx+'"><span class="material-icons">image_not_supported</span> Удалить обложку</button>';
+  h+='<button class="dropdown-item danger" data-delete-track-index="'+idx+'"><span class="material-icons">delete_forever</span> Удалить трек</button>';
   return h;
 }
-
-// attachMenus removed — replaced by global capture-phase delegation below.
 
 function attachDDs(root){
   root.querySelectorAll('.track-dropdown').forEach(dd=>dd.addEventListener('click',e=>{
@@ -722,13 +740,14 @@ function attachDDs(root){
       if((trackMap[p]||[]).includes(t.id)){removeFromPl(t.id,p);toastShow('Удалено из «'+p+'»')}else{addToPl(t.id,p);toastShow('Добавлено в «'+p+'»')}
       closeDD();if(curView==='library')renderLibrary();if(curView==='playlists')renderPlaylists();
     }else if(it.hasAttribute('data-details-index')){closeDD();openDrawer(+it.dataset.detailsIndex)}
+    else if(it.hasAttribute('data-remove-cover-index')){closeDD();removeCoverFromTrack(+it.dataset.removeCoverIndex)}
+    else if(it.hasAttribute('data-delete-track-index')){closeDD();deleteTrack(+it.dataset.deleteTrackIndex)}
   }));
 }
 const closeDD=()=>document.querySelectorAll('.track-dropdown.open').forEach(d=>d.classList.remove('open'));
 document.addEventListener('click',e=>{if(!e.target.closest('.track-dropdown')&&!e.target.closest('.track-menu-btn')&&!e.target.closest('.row-menu-btn'))closeDD()});
 
-// FIX: GLOBAL capture-phase delegation for menu buttons.
-// Fires before any per-element handler, survives re-renders, works in grid & list.
+// Global capture-phase delegation for menu buttons
 document.addEventListener('click',(e)=>{
   const btn=e.target.closest('.track-menu-btn, .row-menu-btn');
   if(!btn)return;
@@ -746,7 +765,7 @@ document.addEventListener('click',(e)=>{
     closeDD();
     if(!wasOpen)dd.classList.add('open');
   }
-},true); // capture phase
+},true);
 
 function buildMD(idx){
   const t=tracks[idx];if(!t)return'';
@@ -755,9 +774,11 @@ function buildMD(idx){
     h+='<div class="dropdown-header">Добавить в плейлист</div>';
     playlists.forEach(p=>{const has=(trackMap[p]||[]).includes(t.id);h+='<button class="dropdown-item pl" data-add-pl="'+p.replace(/"/g,'&quot;')+'" data-track-index="'+idx+'"><span class="material-icons">'+(has?'check':'playlist_add')+'</span>'+p+'</button>'});
   }
-  h+='<div style="border-top:1px solid var(--border-light);margin:6px 0"></div>';
+  h+='<div class="dropdown-sep"></div>';
   h+='<button class="dropdown-item" data-details-index="'+idx+'"><span class="material-icons">info</span> Подробнее</button>';
   h+='<button class="dropdown-item" data-cover-index="'+idx+'"><span class="material-icons">image</span> Загрузить обложку</button>';
+  if(t.coverId)h+='<button class="dropdown-item danger" data-remove-cover-index="'+idx+'"><span class="material-icons">image_not_supported</span> Удалить обложку</button>';
+  h+='<button class="dropdown-item danger" data-delete-track-index="'+idx+'"><span class="material-icons">delete_forever</span> Удалить трек</button>';
   return h;
 }
 function openMD(i){mobileMenuIdx=i;mdContent.innerHTML=buildMD(i);mdOverlay.classList.add('open')}
@@ -772,6 +793,8 @@ mdContent.addEventListener('click',e=>{
     if(curView==='library')renderLibrary();if(curView==='playlists')renderPlaylists();
   }else if(it.hasAttribute('data-details-index')){closeMD();openDrawer(+it.dataset.detailsIndex)}
   else if(it.hasAttribute('data-cover-index')){closeMD();triggerCover(+it.dataset.coverIndex)}
+  else if(it.hasAttribute('data-remove-cover-index')){closeMD();removeCoverFromTrack(+it.dataset.removeCoverIndex)}
+  else if(it.hasAttribute('data-delete-track-index')){closeMD();deleteTrack(+it.dataset.deleteTrackIndex)}
 });
 
 function triggerCover(i){pendingCoverIdx=i;coverInput.value='';coverInput.click()}
@@ -791,6 +814,71 @@ coverInput.addEventListener('change',async e=>{
   updateStorage();coverInput.value='';pendingCoverIdx=-1;
 });
 
+// Remove custom cover from a track
+async function removeCoverFromTrack(i){
+  if(i<0||i>=tracks.length)return;
+  const t=tracks[i];
+  if(!t.coverId){toastShow('У трека нет обложки');return}
+  await delCover(t.coverId);
+  delete coverCache[t.id];
+  t.coverId=null;t.coverMime=null;
+  persist();
+  toastShow('Обложка удалена');
+  if(curView==='library')renderLibrary();else if(curView==='playlists')renderPlaylists();
+  if(detailIdx===i)await refreshDrawer(i);
+  updateStorage();
+}
+
+// Delete a whole track (audio, video, cover) and remove from playlists
+async function deleteTrack(i){
+  if(i<0||i>=tracks.length)return;
+  const t=tracks[i];
+  const name=t.title||'этот трек';
+  if(!confirm('Удалить трек «'+name+'»? Это необратимо.'))return;
+
+  // 1) Stop playback if this is the active track
+  if(activeIdx===i){
+    audio.pause();audio.removeAttribute('src');audio.load();
+    videoEl.pause();videoEl.removeAttribute('src');videoEl.load();
+    isPlaying=false;updPlayIcon();
+  }
+
+  // 2) Delete blobs from IndexedDB
+  if(t.audioId){try{await delAudio(t.audioId)}catch(e){}}
+  if(t.videoId){try{await delVideo(t.videoId)}catch(e){}}
+  if(t.coverId){try{await delCover(t.coverId)}catch(e){}}
+  delete coverCache[t.id];
+  delete videoFrameCache[t.id];
+
+  // 3) Remove from all playlists
+  playlists.forEach(p=>{
+    if(Array.isArray(trackMap[p])){
+      const pos=trackMap[p].indexOf(t.id);
+      if(pos>=0)trackMap[p].splice(pos,1);
+    }
+  });
+
+  // 4) Remove from tracks array
+  tracks.splice(i,1);
+
+  // 5) Adjust active/detail indices
+  if(activeIdx>i)activeIdx--;
+  else if(activeIdx===i)activeIdx=-1;
+  if(detailIdx>i)detailIdx--;
+  else if(detailIdx===i){
+    // close drawer
+    dr.classList.remove('open');drOverlay.classList.remove('open');detailIdx=-1;
+    if(drVideo.style.display!=='none')drVideo.pause();
+  }
+
+  persist();
+  toastShow('Трек удалён');
+
+  // 6) Refresh UI
+  if(curView==='library')renderLibrary();else if(curView==='playlists')renderPlaylists();
+  updPlayer();updateStorage();
+}
+
 async function resolveCover(t){
   const custom=await getCoverUrl(t);
   if(custom)return {type:'img',url:custom,hasCustom:true};
@@ -804,12 +892,6 @@ async function resolveCover(t){
   return {type:'none',hasCustom:false};
 }
 
-// Build cover element.
-// Rules:
-// - Custom cover → show img only. Video preview NOT used (custom covers isolated from playback).
-// - No custom cover + has clip → show video on cover.
-//    * Active track → video always visible, synced with audio (regardless of hover).
-//    * Inactive track → video hidden; on hover plays from random moment.
 async function renderCoverInto(el,t){
   const idx=tracks.indexOf(t);
   const isActiveTrack=(idx===activeIdx);
@@ -824,13 +906,12 @@ async function renderCoverInto(el,t){
       img.src=cov;img.loading='lazy';img.decoding='async';
       el.insertBefore(img,el.firstChild);
     }
-    return; // no video for custom covers
+    return;
   }
 
   if(t.videoId){
     const vu=await getVideoUrl(t);
     if(vu){
-      // Static poster from video middle while paused
       const frame=await grabVideoFrame(vu,t.id);
       if(frame){
         const img=document.createElement('img');
@@ -845,17 +926,14 @@ async function renderCoverInto(el,t){
       el.appendChild(v);
 
       if(isActiveTrack){
-        // Active: video always visible, synced with audio; hover irrelevant.
         v.dataset.active='1';
         v.style.display='block';
         try{v.currentTime=audio.currentTime}catch(e){}
         if(isPlaying)v.play().catch(()=>{});
-        // Ensure hover-leave doesn't hide active video
         el.addEventListener('mouseleave',()=>{
           if(v.dataset.active==='1')v.style.display='block';
         },true);
       } else {
-        // Inactive: hover to preview
         el.addEventListener('mouseenter',()=>{
           if(isMobile())return;
           if(v.dataset.active==='1')return;
@@ -878,10 +956,13 @@ async function buildGrid(){
   for(let i=0;i<tracks.length;i++){
     const t=tracks[i],cur=i===activeIdx,play=cur&&isPlaying;
     const dd=await buildDD(t,i);
+    const hasCover=!!t.coverId;
     h+='<div class="track-card '+(cur?'current ':'')+(play?'playing':'')+'" data-index="'+i+'">'
       +'<div class="track-cover" data-play-index="'+i+'"><span class="material-icons cover-icon">album</span>'
       +'<div class="cover-play"><span class="material-icons play-icon"></span></div>'
-      +'<button class="cover-upload-btn" data-cover-upload-index="'+i+'" title="Загрузить обложку"><span class="material-icons">photo_camera</span></button></div>'
+      +'<button class="cover-upload-btn" data-cover-upload-index="'+i+'" title="Загрузить обложку"><span class="material-icons">photo_camera</span></button>'
+      +(hasCover?'<button class="cover-remove-btn" data-cover-remove-index="'+i+'" title="Удалить обложку"><span class="material-icons">close</span></button>':'')
+      +'</div>'
       +'<button class="track-menu-btn" data-menu-index="'+i+'" title="Опции"><span class="material-icons">more_vert</span></button>'
       +'<div class="track-dropdown" id="dropdown-'+i+'">'+dd+'</div>'
       +'<div class="track-meta"><span class="track-title" data-detail-index="'+i+'">'+t.title+'</span><span class="track-artist">'+(t.artist||'Неизвестный исполнитель')+'</span></div>'
@@ -912,11 +993,15 @@ async function attachHandlers(root){
   });
   root.querySelectorAll('.track-cover,.row-cover').forEach(c=>c.addEventListener('click',e=>{
     if(e.target.closest('.cover-upload-btn'))return;
+    if(e.target.closest('.cover-remove-btn'))return;
     if(e.target.closest('.track-menu-btn')||e.target.closest('.row-menu-btn'))return;
     e.stopPropagation();playTrack(+c.dataset.playIndex,true);
   }));
   root.querySelectorAll('.cover-upload-btn').forEach(b=>{
     b.addEventListener('click',e=>{e.stopPropagation();triggerCover(+b.dataset.coverUploadIndex)});
+  });
+  root.querySelectorAll('.cover-remove-btn').forEach(b=>{
+    b.addEventListener('click',e=>{e.stopPropagation();removeCoverFromTrack(+b.dataset.coverRemoveIndex)});
   });
   root.querySelectorAll('.track-title,.row-info').forEach(el=>el.addEventListener('click',e=>{
     if(e.target.closest('.track-menu-btn')||e.target.closest('.row-menu-btn'))return;
@@ -960,8 +1045,12 @@ async function renderPlaylists(){
       h+='<div class="playlist-tracks visible"><div class="track-grid">';
       for(const t of plT){
         const ri=tracks.indexOf(t),cur=ri===activeIdx,play=cur&&isPlaying,dd=await buildDD(t,ri);
+        const hasCover=!!t.coverId;
         h+='<div class="track-card '+(cur?'current ':'')+(play?'playing':'')+'" data-index="'+ri+'">'
-          +'<div class="track-cover" data-play-index="'+ri+'"><span class="material-icons cover-icon">album</span><div class="cover-play"><span class="material-icons play-icon"></span></div><button class="cover-upload-btn" data-cover-upload-index="'+ri+'" title="Загрузить обложку"><span class="material-icons">photo_camera</span></button></div>'
+          +'<div class="track-cover" data-play-index="'+ri+'"><span class="material-icons cover-icon">album</span><div class="cover-play"><span class="material-icons play-icon"></span></div>'
+          +'<button class="cover-upload-btn" data-cover-upload-index="'+ri+'" title="Загрузить обложку"><span class="material-icons">photo_camera</span></button>'
+          +(hasCover?'<button class="cover-remove-btn" data-cover-remove-index="'+ri+'" title="Удалить обложку"><span class="material-icons">close</span></button>':'')
+          +'</div>'
           +'<button class="track-menu-btn" data-menu-index="'+ri+'" title="Опции"><span class="material-icons">more_vert</span></button>'
           +'<div class="track-dropdown" id="dropdown-'+ri+'">'+dd+'</div>'
           +'<div class="track-meta"><span class="track-title" data-detail-index="'+ri+'">'+t.title+'</span><span class="track-artist">'+(t.artist||'Неизвестный исполнитель')+'</span></div>'
@@ -1129,6 +1218,8 @@ async function refreshDrawer(i){
   const cov=await resolveCover(t);
   if(cov.type==='img'){drCoverImg.src=cov.url;drCoverImg.style.display='block';drCover.querySelector('.material-icons').style.display='none'}
   else{drCoverImg.style.display='none';drCover.querySelector('.material-icons').style.display=''}
+  // Hide "remove cover" if there's no custom cover
+  drawerRemoveCoverBtn.style.display=t.coverId?'flex':'none';
   if(t.videoId){
     const u=await getVideoUrl(t);
     if(u){
@@ -1152,6 +1243,11 @@ async function openDrawer(i){detailIdx=i;await refreshDrawer(i);dr.classList.add
 function closeDrawer(){dr.classList.remove('open');drOverlay.classList.remove('open');detailIdx=-1;if(drVideo.style.display!=='none')drVideo.pause()}
 drClose.addEventListener('click',closeDrawer);
 drOverlay.addEventListener('click',closeDrawer);
+
+// Drawer action buttons
+drawerChangeCoverBtn.addEventListener('click',()=>{if(detailIdx>=0)triggerCover(detailIdx)});
+drawerRemoveCoverBtn.addEventListener('click',async()=>{if(detailIdx>=0)await removeCoverFromTrack(detailIdx)});
+drawerDeleteTrackBtn.addEventListener('click',async()=>{if(detailIdx>=0)await deleteTrack(detailIdx)});
 
 dr.addEventListener('click',e=>{
   const eb=e.target.closest('.edit-btn');if(!eb)return;e.preventDefault();e.stopPropagation();
